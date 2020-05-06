@@ -1,4 +1,4 @@
-package object.Repositories;
+package object.repositories;
 
 import object.model.Tags;
 import org.springframework.data.repository.CrudRepository;

@@ -1,42 +1,65 @@
 package object.services;
 
-import object.Repositories.PostsRepository;
-import object.dto.respose.ListPostResponseDto;
-import object.dto.respose.PostDto;
-import object.dto.respose.PostLDCVDto;
-import object.dto.respose.UserDto;
+import object.dto.response.PostLDCVDto;
+import object.repositories.PostsRepository;
+import object.dto.response.ListPostResponseDto;
+import object.dto.response.UserResponseDto;
 import object.model.Posts;
 import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
 public class PostsService {
 
     @Autowired
-    PostsRepository postsRepository;
+    private PostsRepository postsRepository;
 
-    public ListPostResponseDto getListPost(Mode mode){
+    public ListPostResponseDto getListPost(Integer offset, Integer limit, Mode mode){
+        return createListPostResponseDto(getPostsByMode(offset,limit,mode));
+    }
 
-        List<Posts> postsList = postsRepository.findByMode(mode,1, ModerationStatus.ACCEPTED);
-        PostDto postLDCVDto;
-        ListPostResponseDto listPostResponseDto = new ListPostResponseDto();
+    private ListPostResponseDto createListPostResponseDto (List<Posts> posts){
+        List<PostLDCVDto> listResponseDto = new ArrayList<>();
+        for (Posts post : posts){
 
-        for (Posts request: postsList){
-            postLDCVDto = new PostDto(request.getId(), request.getTime(), new UserDto(),request.getTitle(), request.getTitle());
-            listPostResponseDto.getPosts().add(postLDCVDto);
+            PostLDCVDto response = new  PostLDCVDto();
+            response.setId(post.getId());
+            response.setTime(post.getTime());
+            response.setTitle(post.getTitle());
+            response.setAnnounce(post.getText().substring(0, 15) + "...");// от балды беру первые слова
+            response.setUserResponseDto(
+                    new UserResponseDto(
+                            post.getAuthor().getId(),
+                            post.getAuthor().getName()));
+            listResponseDto.add(response);
         }
-
-        return ListPostResponseDto.builder()
-                .count((int)postsRepository.count())
-                .build();
+        return new ListPostResponseDto((int)postsRepository.count(), listResponseDto);
     }
 
-    public Integer countPosts(){
-        return (int) postsRepository.count();
-    }
+    private List<Posts> getPostsByMode(Integer offset, Integer limit, Mode mode){
+        List<Posts> posts;
 
+        Pageable pageable = null;
+        switch (mode){
+            case BEST: pageable = PageRequest.of(offset, limit, Sort.by(Sort.Direction.ASC, "postVotesList"));
+                break;
+            case EARLY: pageable = PageRequest.of(offset, limit, Sort.by(Sort.Direction.DESC));
+                break;
+            case RECENT: pageable = PageRequest.of(offset, limit, Sort.by(Sort.Direction.ASC));
+                break;
+            case POPULAR:  pageable = PageRequest.of(offset, limit, Sort.by(Sort.Direction.ASC, "postCommentsList"));
+                break;
+        }
+        posts = postsRepository.findByIsActiveAndModerationStatusAndTimeBefore(1,ModerationStatus.ACCEPTED, new Date(), pageable);
+        return posts;
+    }
 }

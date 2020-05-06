@@ -1,26 +1,26 @@
 package object.controllers.api;
-import object.dto.respose.InitResponseDto;
+import object.dto.response.InitResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping
+@RequestMapping("api/")
 public class ApiGeneralController {
 
-    @GetMapping("/api/init/")
+    @GetMapping("init")
     public ResponseEntity getInfo(){
         return ResponseEntity.ok(new InitResponseDto());
     }
 
-    @PostMapping("/api/moderation/")
+    @PostMapping("moderation")
     public void moderation(int postId, String decision){ }
 
-    @GetMapping("/api/settings")
+    @GetMapping("settings")
     public ResponseEntity getSettings(){
         return null;
     }
 
-    @PutMapping("/api/settings/")
+    @PutMapping("settings")
     public ResponseEntity setSettings(){
         return null;
     }

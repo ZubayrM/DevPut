@@ -1,6 +1,6 @@
 package object.services;
 
-import object.Repositories.UsersRepository;
+import object.repositories.UsersRepository;
 import org.springframework.stereotype.Service;
 
 

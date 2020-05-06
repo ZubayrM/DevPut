@@ -1,11 +1,9 @@
-package object.dto.respose;
+package object.dto.response;
 
-import com.wordnik.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-//@ApiModel
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

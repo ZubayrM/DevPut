@@ -1,4 +1,4 @@
-package object.Repositories;
+package object.repositories;
 
 import object.model.PostComments;
 import org.springframework.data.repository.CrudRepository;
@@ -10,5 +10,7 @@ import java.util.List;
 public interface PostCommentsRepository extends CrudRepository <PostComments, Integer> {
 
     List<PostComments> findByPostId(int postId);
+
+    Integer countByPostId(Integer postId);
 
 }

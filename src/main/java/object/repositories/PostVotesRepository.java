@@ -1,4 +1,4 @@
-package object.Repositories;
+package object.repositories;
 
 import object.model.PostVotes;
 import org.springframework.data.repository.CrudRepository;
@@ -10,5 +10,7 @@ import java.util.List;
 public interface PostVotesRepository extends CrudRepository<PostVotes,Integer> {
 
     List<PostVotes> findByPostIdAndValue(int postId, int value);
+
+    Integer countByPostIdAndValue(Integer postId, Integer value);
 
 }

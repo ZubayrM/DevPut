@@ -1,4 +1,4 @@
-package object.dto.respose;
+package object.dto.response;
 
 import lombok.*;
 
@@ -13,6 +13,6 @@ public class ListPostResponseDto {
     private Integer count;
 
     @Singular
-    private List<PostDto> posts;
+    private List<PostLDCVDto> posts;
 
 }

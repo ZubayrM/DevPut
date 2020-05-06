@@ -28,7 +28,7 @@ public class Posts {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private Users user;
+    private Users author;
 
     @Column(nullable = false)
     private Date time;

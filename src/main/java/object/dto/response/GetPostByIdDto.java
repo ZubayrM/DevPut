@@ -1,7 +1,6 @@
-package object.dto.respose;
+package object.dto.response;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
