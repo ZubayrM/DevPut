@@ -1,5 +1,6 @@
 package object.services;
 
+import object.dto.response.PostAllCommentsAndAllTagsDto;
 import object.dto.response.ListPostResponseDto;
 import object.repositories.PostVotesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +13,17 @@ public class PostVotesService {
 
     public ListPostResponseDto getCountVotes(ListPostResponseDto dto) {
         dto.getPosts().stream().forEach(responseDto -> {
-            responseDto.setLiceCount(postVotesRepository.countByPostIdAndValue(responseDto.getId(), 1));
+            responseDto.setLikeCount(postVotesRepository.countByPostIdAndValue(responseDto.getId(), 1));
             responseDto.setDislikeCount(postVotesRepository.countByPostIdAndValue(responseDto.getId(), -1));
         });
+        return dto;
+    }
+
+    public PostAllCommentsAndAllTagsDto getCountVotes(PostAllCommentsAndAllTagsDto dto) {
+
+        dto.setLikeCount(postVotesRepository.countByPostIdAndValue(dto.getId(), 1));
+        dto.setDislikeCount(postVotesRepository.countByPostIdAndValue(dto.getId(), -1));
+
         return dto;
     }
 }

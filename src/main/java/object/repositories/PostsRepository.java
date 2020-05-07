@@ -54,8 +54,8 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
     List<Posts> findByEarly(@Param("active") int isActive, @Param("status") ModerationStatus status, Date date, Pageable pageable);
 
 
-    List<Posts> findByIsActiveAndModerationStatusAndTimeBefore(int active, ModerationStatus status, Date date, Pageable pageable); // здравствуй ultimate
+    List<Posts> findAllByIsActiveAndModerationStatusAndTimeBefore(Integer active, ModerationStatus status, Date date, Pageable pageable); // здравствуй ultimate
 
-
+    List<Posts> findAllByIsActiveAndModerationStatusAndTimeBeforeAndTagList(Integer active, ModerationStatus status, Date date, String query, Pageable pageable);
 
 }

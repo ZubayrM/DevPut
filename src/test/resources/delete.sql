@@ -1,0 +1,2 @@
+DELETE FROM Users;
+DELETE FROM Posts;

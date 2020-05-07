@@ -1,10 +1,13 @@
 package object.controllers.api;
+import lombok.AllArgsConstructor;
 import object.dto.response.ListPostResponseDto;
+import object.dto.response.PostAllCommentsAndAllTagsDto;
 import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
 import object.services.PostCommentsService;
 import object.services.PostVotesService;
 import object.services.PostsService;
+import object.services.TagsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,38 +16,46 @@ import java.time.LocalDate;
 
 @RestController
 @RequestMapping("api/")
+@AllArgsConstructor
 public class ApiPostController {
 
     private PostsService postsService;
     private PostVotesService postVotesService;
     private PostCommentsService postCommentsService;
+    private TagsService tagsService;
 
-    @Autowired
-    public ApiPostController(PostsService postsService, PostVotesService postVotesService, PostCommentsService postCommentsService) {
-        this.postsService = postsService;
-        this.postVotesService = postVotesService;
-        this.postCommentsService = postCommentsService;
-    }
+
 
     @GetMapping("post")
-    public ResponseEntity postsList(@RequestParam(defaultValue = "0") Integer offset,
-                                    @RequestParam(defaultValue = "10") Integer limit,
-                                    @RequestBody Mode mode){
-        ListPostResponseDto listPostResponseDto =
+    public ResponseEntity findAllPosts(@RequestParam("offset") Integer offset,
+                                    @RequestParam("limit") Integer limit,
+                                    @RequestParam("mode") Mode mode){
+        ListPostResponseDto dto =
                 postCommentsService.getCountComment(
                         postVotesService.getCountVotes(
-                                postsService.getListPost(offset, limit, mode)));
-        return ResponseEntity.ok(listPostResponseDto);
+                                postsService.getListPost(offset, limit, mode, 1)));
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("post/search")
-    public ResponseEntity getPosts(Integer offset, Integer limit, String query){
-        return null;
+    public ResponseEntity getPosts(@RequestParam Integer offset,
+                                   @RequestParam Integer limit,
+                                   @RequestParam String query){
+        ListPostResponseDto dto =
+                postCommentsService.getCountComment(
+                        postVotesService.getCountVotes(
+                                postsService.getListPost(offset, limit, query)));
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("post/{id}")
-    public ResponseEntity getPost(@PathVariable String id){
-        return null;
+    public ResponseEntity getPost(@PathVariable Integer id){
+
+        PostAllCommentsAndAllTagsDto dto = tagsService.getAllTags(
+                postCommentsService.getAllComment(
+                        postVotesService.getCountVotes(
+                                postsService.getPostById(id))));
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("post/byDate")

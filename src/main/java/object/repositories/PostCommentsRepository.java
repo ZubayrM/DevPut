@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface PostCommentsRepository extends CrudRepository <PostComments, Integer> {
 
-    List<PostComments> findByPostId(int postId);
+    List<PostComments> findAllByPostId(int postId);
 
     Integer countByPostId(Integer postId);
 

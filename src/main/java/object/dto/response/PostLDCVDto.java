@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PostLDCVDto extends PostDto {
 
-    private Integer liceCount;
+    private Integer likeCount;
 
     private Integer dislikeCount;
 

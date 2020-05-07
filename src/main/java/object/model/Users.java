@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Date;
 
 @Builder
 @Data
@@ -19,7 +20,7 @@ public class Users {
     private Integer isModerator;
 
     @Column(name = "reg_time", nullable = false)
-    private LocalDate regTime;
+    private Date regTime;
 
     @Column(nullable = false)
     private String name;

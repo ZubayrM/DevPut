@@ -6,7 +6,9 @@ import object.model.enums.ModerationStatus;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -52,5 +54,11 @@ public class Posts {
     @JoinTable(name = "post_comments",
             joinColumns = {@JoinColumn(name = "post_id", referencedColumnName = "id")})
     private List<PostComments> postCommentsList;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "tag2post",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    Set<Tags> tagList = new HashSet<>();
 
 }
