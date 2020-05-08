@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PostsRepository extends CrudRepository<Posts,Integer> {
@@ -56,6 +57,12 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
 
     List<Posts> findAllByIsActiveAndModerationStatusAndTimeBefore(Integer active, ModerationStatus status, Date date, Pageable pageable); // здравствуй ultimate
 
-    List<Posts> findAllByIsActiveAndModerationStatusAndTimeBeforeAndTagList(Integer active, ModerationStatus status, Date date, String query, Pageable pageable);
+    List<Posts> findAllByIsActiveAndModerationStatusAndTimeBeforeAndTitle (Integer active, ModerationStatus status, Date date, String query, Pageable pageable);
+
+    Optional<Posts> findByTitle(String query);
+
+    List<Posts> findAllByIsActiveAndModerationStatusAndTime(Integer active, ModerationStatus status, Date time, Pageable pageable);
+
+    List<Posts> findAllByIsActiveAndModerationStatusAndTimeBeforeAndTagListContaining(Integer active, ModerationStatus status, Date date, String tag, Pageable pageable);
 
 }

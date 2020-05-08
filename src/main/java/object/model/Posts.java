@@ -52,13 +52,15 @@ public class Posts {
 
     @OneToMany
     @JoinTable(name = "post_comments",
-            joinColumns = {@JoinColumn(name = "post_id", referencedColumnName = "id")})
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "id")
+    )
     private List<PostComments> postCommentsList;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "tag2post",
             joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+            inverseJoinColumns = @JoinColumn(name = "id"))
     Set<Tags> tagList = new HashSet<>();
 
 }

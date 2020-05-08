@@ -8,11 +8,11 @@ import object.services.PostCommentsService;
 import object.services.PostVotesService;
 import object.services.PostsService;
 import object.services.TagsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 @RestController
 @RequestMapping("api/")
@@ -27,24 +27,24 @@ public class ApiPostController {
 
 
     @GetMapping("post")
-    public ResponseEntity findAllPosts(@RequestParam("offset") Integer offset,
-                                    @RequestParam("limit") Integer limit,
-                                    @RequestParam("mode") Mode mode){
+    public ResponseEntity getAllPosts(@RequestParam Integer offset,
+                                      @RequestParam Integer limit,
+                                      @RequestParam Mode mode){
         ListPostResponseDto dto =
                 postCommentsService.getCountComment(
                         postVotesService.getCountVotes(
-                                postsService.getListPost(offset, limit, mode, 1)));
+                                postsService.getListPostResponseDtoByMode(offset, limit, mode, 1)));
         return ResponseEntity.ok(dto);
     }
 
     @GetMapping("post/search")
-    public ResponseEntity getPosts(@RequestParam Integer offset,
-                                   @RequestParam Integer limit,
-                                   @RequestParam String query){
+    public ResponseEntity getPostsBySearch(@RequestParam Integer offset,
+                                           @RequestParam Integer limit,
+                                           @RequestParam String query){
         ListPostResponseDto dto =
                 postCommentsService.getCountComment(
                         postVotesService.getCountVotes(
-                                postsService.getListPost(offset, limit, query)));
+                                postsService.getListPostResponseDtoBySearch(offset, limit, query)));
         return ResponseEntity.ok(dto);
     }
 
@@ -54,18 +54,30 @@ public class ApiPostController {
         PostAllCommentsAndAllTagsDto dto = tagsService.getAllTags(
                 postCommentsService.getAllComment(
                         postVotesService.getCountVotes(
-                                postsService.getPostById(id))));
+                                postsService.getPostAllCommentsAndAllTagsDto(id))));
         return ResponseEntity.ok(dto);
     }
 
     @GetMapping("post/byDate")
-    public ResponseEntity getPostsByDate(LocalDate date){
-        return null;
+    public ResponseEntity getPostsByDate(@RequestParam Integer offset,
+                                         @RequestParam Integer limit,
+                                         @RequestParam Date date){
+        ListPostResponseDto dto =
+                postCommentsService.getCountComment(
+                        postVotesService.getCountVotes(
+                                postsService.getListPostResponseDtoByDate(offset, limit, date)));
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("post/byTag")
-    public ResponseEntity getPostsByTag(String tag){
-        return null;
+    public ResponseEntity getPostsByTag(@RequestParam Integer offset,
+                                        @RequestParam Integer limit,
+                                        @RequestParam String tag){
+        ListPostResponseDto dto =
+                postCommentsService.getCountComment(
+                        postVotesService.getCountVotes(
+                                postsService.getListPostResponseDtoByTag(offset, limit, tag)));
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("post/moderation")
