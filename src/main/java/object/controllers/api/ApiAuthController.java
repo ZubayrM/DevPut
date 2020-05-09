@@ -8,12 +8,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 @RestController
 public class ApiAuthController {
 
     @GetMapping("/api/calendar/")
-    public ResponseEntity getCalendar(LocalDate date){
+    public ResponseEntity getCalendar(Date date){
         return null;
     }
 

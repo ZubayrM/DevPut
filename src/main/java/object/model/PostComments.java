@@ -17,8 +17,9 @@ public class PostComments {
     @Column(name = "parent_id")
     private Integer parentId;
 
-    @Column(name = "post_id", nullable = false)
-    private Integer postId;
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    private Posts post;
 
     @Column(name = "user_id", nullable = false)
     private Integer userId;

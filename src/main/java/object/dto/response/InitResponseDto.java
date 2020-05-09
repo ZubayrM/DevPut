@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class InitResponseDto {
     private String title = "DevPut";
     private String subtitle = "Рассказы разработчиков";
-    private String phone = "+7 996 420-81-88";
+    private String phone = "+7 938 203-24-99";
     private String email = "zubayr_@live.com";
     private String copyright = "Зубайр Мухтаров";
     private String copyrightFrom = "2020";

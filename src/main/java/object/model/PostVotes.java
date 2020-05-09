@@ -17,8 +17,9 @@ public class PostVotes {
     @Column(name = "user_id", nullable = false)
     private Integer userId;
 
-    @Column(name = "post_id", nullable = false)
-    private Integer postId;
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    private Posts post;
 
     @Column(nullable = false)
     private Date time;

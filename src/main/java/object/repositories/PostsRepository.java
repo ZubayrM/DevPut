@@ -57,12 +57,13 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
 
     List<Posts> findAllByIsActiveAndModerationStatusAndTimeBefore(Integer active, ModerationStatus status, Date date, Pageable pageable); // здравствуй ultimate
 
-    List<Posts> findAllByIsActiveAndModerationStatusAndTimeBeforeAndTitle (Integer active, ModerationStatus status, Date date, String query, Pageable pageable);
+    Optional<List<Posts>> findAllByIsActiveAndModerationStatusAndTimeBeforeAndTitleContaining (Integer active, ModerationStatus status, Date date, String query, Pageable pageable);
 
     Optional<Posts> findByTitle(String query);
 
     List<Posts> findAllByIsActiveAndModerationStatusAndTime(Integer active, ModerationStatus status, Date time, Pageable pageable);
 
-    List<Posts> findAllByIsActiveAndModerationStatusAndTimeBeforeAndTagListContaining(Integer active, ModerationStatus status, Date date, String tag, Pageable pageable);
+    Optional<List<Posts>> findAllByIsActiveAndModerationStatusAndTimeBeforeAndTagListContaining(Integer active, ModerationStatus status, Date date, String tag, Pageable pageable);
+
 
 }

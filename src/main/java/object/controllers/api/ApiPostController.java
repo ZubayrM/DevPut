@@ -27,13 +27,10 @@ public class ApiPostController {
 
 
     @GetMapping("post")
-    public ResponseEntity getAllPosts(@RequestParam Integer offset,
-                                      @RequestParam Integer limit,
-                                      @RequestParam Mode mode){
-        ListPostResponseDto dto =
-                postCommentsService.getCountComment(
-                        postVotesService.getCountVotes(
-                                postsService.getListPostResponseDtoByMode(offset, limit, mode, 1)));
+    public ResponseEntity<?> getAllPosts(@RequestParam Integer offset,
+                                         @RequestParam Integer limit,
+                                         @RequestParam Mode mode){
+        ListPostResponseDto dto = postsService.getListPostResponseDtoByMode(offset, limit, mode, 1);
         return ResponseEntity.ok(dto);
     }
 
@@ -41,20 +38,13 @@ public class ApiPostController {
     public ResponseEntity getPostsBySearch(@RequestParam Integer offset,
                                            @RequestParam Integer limit,
                                            @RequestParam String query){
-        ListPostResponseDto dto =
-                postCommentsService.getCountComment(
-                        postVotesService.getCountVotes(
-                                postsService.getListPostResponseDtoBySearch(offset, limit, query)));
+        ListPostResponseDto dto = postsService.getListPostResponseDtoBySearch(offset, limit, query);
         return ResponseEntity.ok(dto);
     }
 
     @GetMapping("post/{id}")
     public ResponseEntity getPost(@PathVariable Integer id){
-
-        PostAllCommentsAndAllTagsDto dto = tagsService.getAllTags(
-                postCommentsService.getAllComment(
-                        postVotesService.getCountVotes(
-                                postsService.getPostAllCommentsAndAllTagsDto(id))));
+        PostAllCommentsAndAllTagsDto dto = postsService.getPostAllCommentsAndAllTagsDto(id);
         return ResponseEntity.ok(dto);
     }
 
@@ -62,10 +52,7 @@ public class ApiPostController {
     public ResponseEntity getPostsByDate(@RequestParam Integer offset,
                                          @RequestParam Integer limit,
                                          @RequestParam Date date){
-        ListPostResponseDto dto =
-                postCommentsService.getCountComment(
-                        postVotesService.getCountVotes(
-                                postsService.getListPostResponseDtoByDate(offset, limit, date)));
+        ListPostResponseDto dto = postsService.getListPostResponseDtoByDate(offset, limit, date);
         return ResponseEntity.ok(dto);
     }
 
@@ -73,10 +60,7 @@ public class ApiPostController {
     public ResponseEntity getPostsByTag(@RequestParam Integer offset,
                                         @RequestParam Integer limit,
                                         @RequestParam String tag){
-        ListPostResponseDto dto =
-                postCommentsService.getCountComment(
-                        postVotesService.getCountVotes(
-                                postsService.getListPostResponseDtoByTag(offset, limit, tag)));
+        ListPostResponseDto dto = postsService.getListPostResponseDtoByTag(offset, limit, tag);
         return ResponseEntity.ok(dto);
     }
 

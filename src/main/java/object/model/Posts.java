@@ -5,10 +5,7 @@ import lombok.Data;
 import object.model.enums.ModerationStatus;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @Entity
@@ -44,23 +41,16 @@ public class Posts {
     @Column(name = "view_count", nullable = false)
     private Integer viewCount;
 
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<PostVotes> postVotesList = new ArrayList<>();
 
-    @OneToMany
-    @JoinTable(name = "post_votes",
-            joinColumns = {@JoinColumn(name = "post_id", referencedColumnName = "id")})
-    private List<PostVotes> postVotesList;
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<PostComments> postCommentsList = new ArrayList<>();
 
-    @OneToMany
-    @JoinTable(name = "post_comments",
-            joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "id")
-    )
-    private List<PostComments> postCommentsList;
-
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "tag2post",
             joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "id"))
-    Set<Tags> tagList = new HashSet<>();
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private Set<Tags> tagList = new HashSet<>();
 
 }
