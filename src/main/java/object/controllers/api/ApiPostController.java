@@ -2,20 +2,20 @@ package object.controllers.api;
 import lombok.AllArgsConstructor;
 import object.dto.response.ListPostResponseDto;
 import object.dto.response.PostAllCommentsAndAllTagsDto;
+import object.dto.response.PostDto;
+import object.model.Users;
 import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
-import object.services.PostCommentsService;
-import object.services.PostVotesService;
-import object.services.PostsService;
-import object.services.TagsService;
+import object.services.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.Date;
 
 @RestController
-@RequestMapping("api/")
+@RequestMapping("/api/")
 @AllArgsConstructor
 public class ApiPostController {
 
@@ -23,13 +23,14 @@ public class ApiPostController {
     private PostVotesService postVotesService;
     private PostCommentsService postCommentsService;
     private TagsService tagsService;
+    private UsersService usersService;
 
 
 
     @GetMapping("post")
-    public ResponseEntity<?> getAllPosts(@RequestParam Integer offset,
-                                         @RequestParam Integer limit,
-                                         @RequestParam Mode mode){
+    public ResponseEntity getAllPosts(@RequestParam Integer offset,
+                                      @RequestParam Integer limit,
+                                      @RequestParam Mode mode, HttpServletRequest request){
         ListPostResponseDto dto = postsService.getListPostResponseDtoByMode(offset, limit, mode, 1);
         return ResponseEntity.ok(dto);
     }
@@ -43,7 +44,7 @@ public class ApiPostController {
     }
 
     @GetMapping("post/{id}")
-    public ResponseEntity getPost(@PathVariable Integer id){
+    public ResponseEntity getPostById(@PathVariable Integer id){
         PostAllCommentsAndAllTagsDto dto = postsService.getPostAllCommentsAndAllTagsDto(id);
         return ResponseEntity.ok(dto);
     }
@@ -51,7 +52,7 @@ public class ApiPostController {
     @GetMapping("post/byDate")
     public ResponseEntity getPostsByDate(@RequestParam Integer offset,
                                          @RequestParam Integer limit,
-                                         @RequestParam Date date){
+                                         @RequestParam String date){
         ListPostResponseDto dto = postsService.getListPostResponseDtoByDate(offset, limit, date);
         return ResponseEntity.ok(dto);
     }
@@ -65,8 +66,11 @@ public class ApiPostController {
     }
 
     @GetMapping("post/moderation")
-    public ResponseEntity getPostsModeration(int offset, int limit, ModerationStatus status){
-        return null;
+    public ResponseEntity getPostsModeration(@RequestParam Integer offset,
+                                             @RequestParam Integer limit,
+                                             @RequestParam ModerationStatus status){
+        ListPostResponseDto dto = postsService.getPostDto(offset, limit, status);
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("post/my")

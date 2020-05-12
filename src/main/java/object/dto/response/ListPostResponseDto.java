@@ -8,11 +8,11 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListPostResponseDto {
+public class ListPostResponseDto<T> {
 
     private Integer count;
 
     @Singular
-    private List<PostLDCVDto> posts;
+    private List<T> posts;
 
 }

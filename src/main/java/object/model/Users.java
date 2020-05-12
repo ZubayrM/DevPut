@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Date;
 
-@Builder
+
 @Data
 @Entity
 public class Users {
