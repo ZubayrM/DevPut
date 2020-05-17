@@ -3,15 +3,28 @@ package object.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class InitResponseDto {
-    private String title = "DevPut";
-    private String subtitle = "Рассказы разработчиков";
-    private String phone = "+7 938 203-24-99";
-    private String email = "zubayr_@live.com";
-    private String copyright = "Зубайр Мухтаров";
-    private String copyrightFrom = "2020";
+
+    @Value("${title}")
+    private String title;
+
+    @Value("${subtitle}")
+    private String subtitle;
+
+    @Value("${phone}")
+    private String phone;
+
+    @Value("${email}")
+    private String email;
+
+    @Value("${copyright}")
+    private String copyright;
+
+    @Value("${copyrightFrom}")
+    private String copyrightFrom;
 }
