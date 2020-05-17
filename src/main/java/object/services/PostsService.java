@@ -125,7 +125,16 @@ public class PostsService<T> {
     }
 
     private PostAllCommentsAndAllTagsDto createPostAllCommentsAndAllTagsDto(Posts post){
-        PostAllCommentsAndAllTagsDto dto = (PostAllCommentsAndAllTagsDto) createPostLDCVDto(post);
+        PostAllCommentsAndAllTagsDto dto = new PostAllCommentsAndAllTagsDto();
+        dto.setId(post.getId());
+        dto.setTime(post.getTime());
+        dto.setUserResponseDto(new UserResponseDto(post.getAuthor().getId(), post.getAuthor().getName()));
+        dto.setTitle(post.getTitle());
+        dto.setAnnounce(post.getText().substring(0, 3));
+        dto.setViewCount(post.getViewCount());
+        dto.setLikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() > 0).count());
+        dto.setDislikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() < 0).count());
+        dto.setCommentCount(post.getPostCommentsList().size());
         dto.setComments(post.getPostCommentsList());
         dto.setTags(post.getTagList().stream().map(Tags::getName).collect(Collectors.toList()));
         return dto;
