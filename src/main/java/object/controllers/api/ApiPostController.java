@@ -1,6 +1,6 @@
 package object.controllers.api;
-import object.dto.response.ListPostResponseDto;
-import object.dto.response.PostAllCommentsAndAllTagsDto;
+import object.dto.response.post.ListPostResponseDto;
+import object.dto.response.post.PostAllCommentsAndAllTagsDto;
 import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
 import object.services.PostCommentsService;
@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @RestController
 @RequestMapping("/api")
@@ -72,8 +71,8 @@ public class ApiPostController {
     @GetMapping("post/moderation")
     public ResponseEntity getPostsModeration(@RequestParam Integer offset,
                                              @RequestParam Integer limit,
-                                             @RequestParam ModerationStatus status){
-        ListPostResponseDto dto = postsService.getPostDto(offset, limit, status);
+                                             @RequestParam String status){
+        ListPostResponseDto dto = postsService.getPostDtoModeration(offset, limit, ModerationStatus.valueOf(status.toUpperCase()));
         return ResponseEntity.ok(dto);
     }
 

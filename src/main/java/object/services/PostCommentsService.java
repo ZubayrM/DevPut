@@ -1,11 +1,10 @@
 package object.services;
 
 import lombok.AllArgsConstructor;
-import object.dto.response.ListPostResponseDto;
-import object.dto.response.PostAllCommentsAndAllTagsDto;
-import object.dto.response.PostLDCVDto;
+import object.dto.response.post.ListPostResponseDto;
+import object.dto.response.post.PostAllCommentsAndAllTagsDto;
+import object.dto.response.post.PostLDCVDto;
 import object.repositories.PostCommentsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service

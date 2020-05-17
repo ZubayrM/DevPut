@@ -1,7 +1,7 @@
 package object.services;
 
 import lombok.AllArgsConstructor;
-import object.dto.response.PostAllCommentsAndAllTagsDto;
+import object.dto.response.post.PostAllCommentsAndAllTagsDto;
 import object.model.Tag2Post;
 import object.model.Tags;
 import object.repositories.Tag2PostRepository;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
