@@ -1,6 +1,6 @@
 package object.repositories;
 
-import object.model.enums.Mode;
+
 import object.model.enums.ModerationStatus;
 import object.model.Posts;
 import org.springframework.data.domain.Pageable;
@@ -57,7 +57,7 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
 
     List<Posts> findAllByIsActiveAndModerationStatusAndTimeBefore(Integer active, ModerationStatus status, Date date, Pageable pageable); // здравствуй ultimate
 
-    Optional<List<Posts>> findAllByIsActiveAndModerationStatusAndTimeBeforeAndTitleContaining (Integer active, ModerationStatus status, Date date, String query, Pageable pageable);
+    Optional<List<Posts>> findAllByIsActiveAndModerationStatusAndTimeBeforeAndTitleContains (Integer active, ModerationStatus status, Date date, String query, Pageable pageable);
 
     Optional<Posts> findByTitle(String query);
 
@@ -65,5 +65,6 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
 
     Optional<List<Posts>> findAllByIsActiveAndModerationStatusAndTimeBeforeAndTagListContaining(Integer active, ModerationStatus status, Date date, String tag, Pageable pageable);
 
+    Optional<List<Posts>> findAllByIsActiveAndModerationStatus(Integer active, ModerationStatus status, Pageable pageable);
 
 }

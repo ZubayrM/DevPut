@@ -26,11 +26,63 @@ class ApiPostControllerTest {
 
     @Test
     @SneakyThrows
-    void postsList() {
+    void getAllPosts() {
         mvc.perform(get("/api/post")
                 .param("offset", "0")
                 .param("limit", "10")
                 .param("mode", "EARLY"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @SneakyThrows
+    void getPostsBySearch() {
+        mvc.perform(get("/api/post/search")
+                .param("offset", "0")
+                .param("limit", "10")
+                .param("query", "title"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @SneakyThrows
+    void getPostById() {
+        mvc.perform(get("/api/post/1"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @SneakyThrows
+    void getPostsByDate() {
+        mvc.perform(get("/api/post/byDate")
+                .param("offset", "0")
+                .param("limit", "10")
+                .param("date", "2018"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @SneakyThrows
+    void getPostsByTag() {
+        mvc.perform(get("/api/post/byTag")
+                .param("offset", "0")
+                .param("limit", "10")
+                .param("tag", "tag"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @SneakyThrows
+    void getPostsModeration() {
+        mvc.perform(get("/api/post/moderation")
+                .param("offset", "0")
+                .param("limit", "10")
+                .param("status", "NEW"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

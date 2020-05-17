@@ -56,7 +56,7 @@ public class ApiPostController {
     @GetMapping("/post/byDate")
     public ResponseEntity getPostsByDate(@RequestParam Integer offset,
                                          @RequestParam Integer limit,
-                                         @RequestParam Date date){
+                                         @RequestParam String date){
         ListPostResponseDto dto = postsService.getListPostResponseDtoByDate(offset, limit, date);
         return ResponseEntity.ok(dto);
     }
@@ -69,9 +69,12 @@ public class ApiPostController {
         return ResponseEntity.ok(dto);
     }
 
-    @GetMapping("/post/moderation")
-    public ResponseEntity getPostsModeration(int offset, int limit, ModerationStatus status){
-        return null;
+    @GetMapping("post/moderation")
+    public ResponseEntity getPostsModeration(@RequestParam Integer offset,
+                                             @RequestParam Integer limit,
+                                             @RequestParam ModerationStatus status){
+        ListPostResponseDto dto = postsService.getPostDto(offset, limit, status);
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/post/my")
