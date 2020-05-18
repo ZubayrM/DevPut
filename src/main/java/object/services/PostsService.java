@@ -12,6 +12,7 @@ import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +26,8 @@ public class PostsService<T> {
     @Autowired
     private PostsRepository postsRepository;
 
-    public ListPostResponseDto<PostLDCVDto> getListPostResponseDtoByMode(Integer offset, Integer limit, Mode mode, Integer isActive){
-        return createListPostResponseDto(getPostsByMode(offset,limit,mode,isActive));
+    public ListPostResponseDto<PostLDCVDto> getListPostResponseDtoByMode(Integer offset, Integer limit, Mode mode){
+        return createListPostResponseDto(getPostsByMode(offset,limit,mode));
     }
 
     public ListPostResponseDto getListPostResponseDtoBySearch(Integer offset, Integer limit, String query){
@@ -38,7 +39,7 @@ public class PostsService<T> {
                 PageRequest.of(offset, limit, Sort.by(Sort.Direction.DESC, "time")));
         return optionalPostsList
                 .map(this::createListPostResponseDto)
-                .orElseGet(() -> createListPostResponseDto(getPostsByMode(offset, limit, Mode.EARLY, 1)));
+                .orElseGet(() -> createListPostResponseDto(getPostsByMode(offset, limit, Mode.EARLY)));
     }
 
     public PostAllCommentsAndAllTagsDto getPostAllCommentsAndAllTagsDto(Integer id) {
@@ -75,7 +76,7 @@ public class PostsService<T> {
 
         return optionalTags
                 .map(this::createListPostResponseDto)
-                .orElseGet(() -> createListPostResponseDto(getPostsByMode(offset, limit, Mode.EARLY, 1)));
+                .orElseGet(() -> createListPostResponseDto(getPostsByMode(offset, limit, Mode.EARLY)));
     }
 
     public ListPostResponseDto<PostDto> getPostDtoModeration(Integer offset, Integer limit, ModerationStatus status) {
@@ -145,27 +146,23 @@ public class PostsService<T> {
         for (Posts post : posts){
             listResponseDto.add(createPostLDCVDto(post));
         }
-        return new ListPostResponseDto<>((int)postsRepository.count(), listResponseDto);
+        return new ListPostResponseDto<>(listResponseDto.size(), listResponseDto);
     }
 
-    private List<Posts> getPostsByMode(Integer offset, Integer limit, Mode mode, Integer isActive){
+    private List<Posts> getPostsByMode(Integer offset, Integer limit, Mode mode){
         List<Posts> posts;
         Sort sort = null;
         switch (mode){
-            case BEST: sort = Sort.by(Sort.Direction.DESC, "postVotesList");
+            case BEST: sort = Sort.by(Sort.Direction.DESC, "time"); //"postVotesList");
                 break;
             case EARLY: sort = Sort.by(Sort.Direction.ASC, "time");
                 break;
             case RECENT: sort = Sort.by(Sort.Direction.DESC, "time");
                 break;
-            case POPULAR:  sort = Sort.by(Sort.Direction.DESC, "postCommentsList");
+            case POPULAR:  sort = Sort.by(Sort.Direction.DESC,"time");//"postCommentsList");
                 break;
         }
-        posts = postsRepository.findAllByIsActiveAndModerationStatusAndTimeBefore(
-                isActive,
-                ModerationStatus.ACCEPTED,
-                new Date(),
-                PageRequest.of(offset, limit, sort));
+        posts = postsRepository.findAll(PageRequest.of(offset, limit, sort));
         return posts;
     }
 

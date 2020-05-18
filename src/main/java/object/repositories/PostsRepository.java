@@ -17,25 +17,21 @@ import java.util.Optional;
 @Repository
 public interface PostsRepository extends CrudRepository<Posts,Integer> {
 
-    Integer countByModerationStatus(ModerationStatus status);
 
-//    @Query(value = "SELECT * FROM Posts " +
-//            "WHERE is_active = :active and " +
-//            "moderation_status = :status and" +
-//            "time < :date" +
-//            "ORDER BY time DESC",
-//            nativeQuery = true )
-//    List<Posts> findByRecent(@Param(value = "active") int isActive, @Param("status") ModerationStatus moderationStatus, Date date, Pageable pageable);
-//
-//    @Query(value = "SELECT * FROM Posts p " +
+    @Query(value = "FROM Posts WHERE isActive = 1 and moderationStatus = 'ACCEPTED' and time <= current_date")
+    List<Posts> findAll(Pageable pageable);
+
+//    @Query(value = "select count(p) from Posts p WHERE isActive = 1 and moderationStatus = 'ACCEPTED' and time <= current_date")
+//    Integer getCount();
+
+//    @Query(value = "FROM Posts p " +
 //            "JOIN Post_Comments pc ON pc.post_id = p.id " +
 //            "WHERE p.is_active = :active and " +
-//            "p.moderation_status = :status and" +
-//            "p.time < :date" +
+//            "p.moderation_status = :status and " +
+//            "p.time < :date " +
 //            "GROUP BY p.id " +
-//            "ORDER BY count(pc.id)",
-//            nativeQuery = true )
-//    List<Posts> findByPopular(@Param("active") int isActive, @Param("status") ModerationStatus status, Date date, Pageable pageable);
+//            "ORDER BY count(pc.id)")
+//    List<Posts> findByPopular(Integer active, ModerationStatus status, Date date, Pageable pageable);
 //
 //    @Query(value = "SELECT * FROM Posts p" +
 //            "JOIN Posts_Votes pv ON pv.post_id == p.id " +
@@ -54,6 +50,10 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
 //            "ORDER BY time",
 //            nativeQuery = true )
 //    List<Posts> findByEarly(@Param("active") int isActive, @Param("status") ModerationStatus status, Date date, Pageable pageable);
+
+    @Query(value = "SELECT * from posts", nativeQuery = true)
+    List<Posts> getAll();
+
 
 
     List<Posts> findAllByIsActiveAndModerationStatusAndTimeBefore(Integer active, ModerationStatus status, Date date, Pageable pageable); // здравствуй ultimate

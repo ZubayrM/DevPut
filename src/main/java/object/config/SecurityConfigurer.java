@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.sql.DataSource;
 
@@ -22,21 +23,21 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers(
-                        "/**",
-                        path + "/",
-                        path + "/search",
-                        path + "/byDate",
-                        path + "/byTag")
-                .permitAll()
-                .anyRequest().authenticated()
-                .and()
+                    .antMatchers(
+                            "/**",
+                            path + "/",
+                            path + "/search",
+                            path + "/byDate",
+                            path + "/byTag")
+                    .permitAll()
+                    .anyRequest().authenticated()
+                    .and()
                 .formLogin()
-                .loginPage(path + "login")
-                .permitAll()
-                .and()
+                    .loginPage(path + "login")
+                    .permitAll()
+                    .and()
                 .logout()
-                .permitAll();
+                    .permitAll();
 
     }
 
@@ -45,6 +46,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
         auth
                 .jdbcAuthentication()
                 .dataSource(dataSource)
-                .authoritiesByUsernameQuery("SELECT email, password FROM Users WHERE email=?");
+                .authoritiesByUsernameQuery("SELECT email, password FROM Users WHERE email=?")
+                .passwordEncoder(new BCryptPasswordEncoder());
     }
 }

@@ -34,7 +34,7 @@ public class ApiPostController {
     public ResponseEntity<?> getAllPosts(@RequestParam Integer offset,
                                          @RequestParam Integer limit,
                                          @RequestParam String mode){
-        ListPostResponseDto dto = postsService.getListPostResponseDtoByMode(offset, limit, Mode.valueOf(mode.toUpperCase()), 1);
+        ListPostResponseDto dto = postsService.getListPostResponseDtoByMode(offset, limit, Mode.valueOf(mode.toUpperCase()));
         return ResponseEntity.ok(dto);
     }
 
