@@ -21,6 +21,9 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
     @Query(value = "FROM Posts WHERE isActive = 1 and moderationStatus = 'ACCEPTED' and time <= current_date")
     List<Posts> findAll(Pageable pageable);
 
+    @Query(value = "FROM Posts WHERE isActive = 1 and moderationStatus = 'ACCEPTED' and time <= current_date and text LIKE CONCAT('%', :query, '%')")
+    Optional<List<Posts>> findBySearch(String query, Pageable pageable);
+
 //    @Query(value = "select count(p) from Posts p WHERE isActive = 1 and moderationStatus = 'ACCEPTED' and time <= current_date")
 //    Integer getCount();
 
@@ -68,4 +71,6 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
 
 
     Optional<List<Posts>> findAllByIsActiveAndModerationStatus(Integer active, ModerationStatus status, PageRequest time);
+
+
 }

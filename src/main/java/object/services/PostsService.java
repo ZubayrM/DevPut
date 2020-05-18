@@ -37,12 +37,11 @@ public class PostsService<T> {
     }
 
     public ListPostResponseDto getListPostResponseDtoBySearch(Integer offset, Integer limit, String query){
-        Optional<List<Posts>> optionalPostsList = postsRepository.findAllByIsActiveAndModerationStatusAndTimeBeforeAndTitleContaining(
-                1,
-                ModerationStatus.ACCEPTED,
-                new Date(),
+        Optional<List<Posts>> optionalPostsList = postsRepository.findBySearch(
                 query,
-                PageRequest.of(offset, limit, Sort.by(Sort.Direction.DESC, "time")));
+                PageRequest.of(offset, limit, Sort.by(Sort.Direction.DESC, "time"))
+        );
+
         return optionalPostsList
                 .map(this::createListPostResponseDto)
                 .orElseGet(() -> createListPostResponseDto(getPostsByMode(offset, limit, Mode.EARLY)));
