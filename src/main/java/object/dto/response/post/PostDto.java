@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import object.dto.response.UserResponseDto;
 
-import java.util.Date;
-
 @Builder
 @Data
 @NoArgsConstructor
@@ -16,9 +14,9 @@ public class PostDto {
 
     private Integer id;
 
-    private Date time;
+    private String time;
 
-    private UserResponseDto userResponseDto;
+    private UserResponseDto user;
 
     private String title;
 

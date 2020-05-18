@@ -1,5 +1,6 @@
 package object.services;
 
+import lombok.SneakyThrows;
 import object.dto.response.*;
 import object.dto.response.post.ListPostResponseDto;
 import object.dto.response.post.PostAllCommentsAndAllTagsDto;
@@ -10,12 +11,17 @@ import object.repositories.PostsRepository;
 import object.model.Posts;
 import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
+import org.hibernate.annotations.SortComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,17 +56,21 @@ public class PostsService<T> {
         return dto;
     }
 
+    @SneakyThrows
     public ListPostResponseDto<PostLDCVDto> getListPostResponseDtoByDate(Integer offset, Integer limit, String date) {
 
-        long d = Long.parseLong(date);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(d);
-        Date newDate = calendar.getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM.dd");
+        Date time = formatter.parse(date);
+
+//        long d = Long.parseLong(date);
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.setTimeInMillis(d);
+//        Date newDate = calendar.getTime();
 
         return createListPostResponseDto(postsRepository.findAllByIsActiveAndModerationStatusAndTime(
                 1,
                 ModerationStatus.ACCEPTED,
-                newDate,
+                time,
                 PageRequest.of(offset,limit, Sort.by(Sort.Direction.DESC, "time")))
         );
 
@@ -96,8 +106,8 @@ public class PostsService<T> {
     private PostDto createPostDto(Posts post) {
         PostDto dto = new PostDto();
         dto.setId(post.getId());
-        dto.setTime(post.getTime());
-        dto.setUserResponseDto(new UserResponseDto(post.getAuthor().getId(), post.getAuthor().getName()));
+        dto.setTime(createTime(post.getTime()));
+        dto.setUser(new UserResponseDto(post.getAuthor().getId(), post.getAuthor().getName()));
         dto.setTitle(post.getTitle());
         dto.setAnnounce(post.getText().substring(0, 15));
         return dto;
@@ -114,10 +124,10 @@ public class PostsService<T> {
     private PostLDCVDto createPostLDCVDto(Posts post){
         PostLDCVDto dto = new PostLDCVDto();
         dto.setId(post.getId());
-        dto.setTime(post.getTime());
-        dto.setUserResponseDto(new UserResponseDto(post.getAuthor().getId(), post.getAuthor().getName()));
+        dto.setTime(createTime(post.getTime()));
+        dto.setUser(new UserResponseDto(post.getAuthor().getId(), post.getAuthor().getName()));
         dto.setTitle(post.getTitle());
-        dto.setAnnounce(post.getText().substring(0, 3));
+        dto.setAnnounce(post.getText().substring(0, 15));
         dto.setViewCount(post.getViewCount());
         dto.setLikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() > 0).count());
         dto.setDislikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() < 0).count());
@@ -126,16 +136,7 @@ public class PostsService<T> {
     }
 
     private PostAllCommentsAndAllTagsDto createPostAllCommentsAndAllTagsDto(Posts post){
-        PostAllCommentsAndAllTagsDto dto = new PostAllCommentsAndAllTagsDto();
-        dto.setId(post.getId());
-        dto.setTime(post.getTime());
-        dto.setUserResponseDto(new UserResponseDto(post.getAuthor().getId(), post.getAuthor().getName()));
-        dto.setTitle(post.getTitle());
-        dto.setAnnounce(post.getText().substring(0, 3));
-        dto.setViewCount(post.getViewCount());
-        dto.setLikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() > 0).count());
-        dto.setDislikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() < 0).count());
-        dto.setCommentCount(post.getPostCommentsList().size());
+        PostAllCommentsAndAllTagsDto dto = (PostAllCommentsAndAllTagsDto) createPostLDCVDto(post);
         dto.setComments(post.getPostCommentsList());
         dto.setTags(post.getTagList().stream().map(Tags::getName).collect(Collectors.toList()));
         return dto;
@@ -153,17 +154,47 @@ public class PostsService<T> {
         List<Posts> posts;
         Sort sort = null;
         switch (mode){
-            case BEST: sort = Sort.by(Sort.Direction.DESC, "time"); //"postVotesList");
-                break;
             case EARLY: sort = Sort.by(Sort.Direction.ASC, "time");
                 break;
             case RECENT: sort = Sort.by(Sort.Direction.DESC, "time");
                 break;
-            case POPULAR:  sort = Sort.by(Sort.Direction.DESC,"time");//"postCommentsList");
-                break;
+            default: sort = Sort.by(Sort.Direction.ASC, "id");
         }
         posts = postsRepository.findAll(PageRequest.of(offset, limit, sort));
+
+
+        if (mode == Mode.BEST){
+            posts.sort(Comparator.comparing((p) -> p.getPostVotesList().size()));
+        }
+
+        else if (mode == Mode.POPULAR){
+            posts.sort(Comparator.comparing((p)-> p.getPostVotesList().size()));
+        }
         return posts;
+    }
+
+    private String createTime(Date time) {
+        Date today = new Date();
+
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(time);
+
+        Calendar todayCalendar = new GregorianCalendar();
+        todayCalendar.setTime(today);
+
+        SimpleDateFormat format;
+
+        if (calendar.get(Calendar.DAY_OF_YEAR) == todayCalendar.get(Calendar.DAY_OF_YEAR) )
+            format = new SimpleDateFormat("HH:mm");
+
+        else if (calendar.get(Calendar.MONTH) == todayCalendar.get(Calendar.MONTH))
+            format = new SimpleDateFormat("EEEE HH:mm");
+
+        else
+            format = new SimpleDateFormat("dd.MM.yyyy");
+
+        return format.format(time);
+
     }
 
 }
