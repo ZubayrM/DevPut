@@ -46,12 +46,17 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+    @Query(value = "FROM Posts WHERE isActive = 1 and moderationStatus = ?1", nativeQuery = true)
+    Optional<List<Posts>> findByModerationStatus(String status, Pageable pageable);
 
 
 
 
 
 
+
+
+    //////////////////////////////////////////////////////////////////////
     @Query(value = "SELECT * from posts", nativeQuery = true)
     List<Posts> getAll();
 

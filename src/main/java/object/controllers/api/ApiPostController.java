@@ -72,7 +72,7 @@ public class ApiPostController {
     public ResponseEntity getPostsModeration(@RequestParam Integer offset,
                                              @RequestParam Integer limit,
                                              @RequestParam String status){
-        ListPostResponseDto dto = postsService.getPostDtoModeration(offset, limit, ModerationStatus.valueOf(status.toUpperCase()));
+        ListPostResponseDto dto = postsService.getPostDtoModeration(offset, limit, status);
         return ResponseEntity.ok(dto);
     }
 

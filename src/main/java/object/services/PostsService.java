@@ -83,11 +83,10 @@ public class PostsService<T> {
 //                .orElseGet(() -> createListPostResponseDto(getPostsByMode(offset, limit, Mode.EARLY)));
     }
 
-    public ListPostResponseDto<PostDto> getPostDtoModeration(Integer offset, Integer limit, ModerationStatus status) {
+    public ListPostResponseDto<PostDto> getPostDtoModeration(Integer offset, Integer limit, String status) {
         Optional<List<Posts>> listPostModeration = postsRepository
-                .findAllByIsActiveAndModerationStatus(
-                        1,
-                        status,
+                .findByModerationStatus(
+                        "'ACCEPTED'",
                         PageRequest.of(offset, limit, Sort.by(Sort.Direction.ASC, "time")));
         return listPostModeration
                 .map(this::createListPostDto).get();

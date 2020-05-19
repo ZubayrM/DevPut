@@ -87,7 +87,7 @@ class ApiPostControllerTest {
         mvc.perform(get("/api/post/moderation")
                 .param("offset", "0")
                 .param("limit", "10")
-                .param("status", "NEW"))
+                .param("status", "ACCEPTED"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
