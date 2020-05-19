@@ -32,6 +32,11 @@ public class PostsService<T> {
     @Autowired
     private PostsRepository postsRepository;
 
+    private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat year = new SimpleDateFormat("yyyy");
+    private static final SimpleDateFormat month = new SimpleDateFormat("MM");
+    private static final SimpleDateFormat day = new SimpleDateFormat("dd");
+
     public ListPostResponseDto<PostLDCVDto> getListPostResponseDtoByMode(Integer offset, Integer limit, Mode mode){
         return createListPostResponseDto(getPostsByMode(offset,limit,mode));
     }
@@ -52,25 +57,17 @@ public class PostsService<T> {
         return createPostAllCommentsAndAllTagsDto(post);
     }
 
-    @SneakyThrows
+
     public ListPostResponseDto<PostLDCVDto> getListPostResponseDtoByDate(Integer offset, Integer limit, String date) {
-
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM.dd");
-        Date time = formatter.parse(date);
-
-//        long d = Long.parseLong(date);
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.setTimeInMillis(d);
-//        Date newDate = calendar.getTime();
-
-        return createListPostResponseDto(postsRepository.findAllByIsActiveAndModerationStatusAndTime(
-                1,
-                ModerationStatus.ACCEPTED,
-                time,
+        return createListPostResponseDto(postsRepository.findByDate(
+                getTime(year, date),
+                getTime(month, date),
+                getTime(day, date),
                 PageRequest.of(offset,limit, Sort.by(Sort.Direction.DESC, "time")))
         );
 
     }
+
 
     public ListPostResponseDto getListPostResponseDtoByTag(Integer offset, Integer limit, String tag) {
         Optional<List<Posts>> optionalTags = postsRepository.findAllByIsActiveAndModerationStatusAndTimeBeforeAndTagListContaining(
@@ -200,6 +197,12 @@ public class PostsService<T> {
 
         return format.format(time);
 
+    }
+
+    @SneakyThrows
+    private Integer getTime(SimpleDateFormat format, String date){
+        Date time = formatter.parse(date);
+        return Integer.valueOf(format.format(time));
     }
 
 }
