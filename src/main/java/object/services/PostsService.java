@@ -1,27 +1,22 @@
 package object.services;
 
 import lombok.SneakyThrows;
-import object.dto.response.*;
+import object.dto.response.UserResponseDto;
 import object.dto.response.post.ListPostResponseDto;
 import object.dto.response.post.PostAllCommentsAndAllTagsDto;
 import object.dto.response.post.PostDto;
 import object.dto.response.post.PostLDCVDto;
-import object.model.Tags;
-import object.repositories.PostsRepository;
 import object.model.Posts;
+import object.model.Tags;
 import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
-import org.hibernate.annotations.SortComparator;
+import object.repositories.PostsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -70,10 +65,7 @@ public class PostsService<T> {
 
 
     public ListPostResponseDto getListPostResponseDtoByTag(Integer offset, Integer limit, String tag) {
-        Optional<List<Posts>> optionalTags = postsRepository.findAllByIsActiveAndModerationStatusAndTimeBeforeAndTagListContaining(
-                1,
-                ModerationStatus.ACCEPTED,
-                new Date(),
+        Optional<List<Posts>> optionalTags = postsRepository.findByTag(
                 tag,
                 PageRequest.of(offset, limit, Sort.by(Sort.Direction.DESC, "time")));
 

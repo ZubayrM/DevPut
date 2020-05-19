@@ -76,7 +76,7 @@ class ApiPostControllerTest {
         mvc.perform(get("/api/post/byTag")
                 .param("offset", "0")
                 .param("limit", "10")
-                .param("tag", "tag"))
+                .param("tag", "testTag"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
