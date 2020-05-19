@@ -11,6 +11,7 @@ import object.model.Tags;
 import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
 import object.repositories.PostsRepository;
+import object.repositories.TagsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -26,6 +27,9 @@ public class PostsService<T> {
 
     @Autowired
     private PostsRepository postsRepository;
+
+    @Autowired
+    private TagsRepository tagsRepository;
 
     private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat year = new SimpleDateFormat("yyyy");
@@ -69,9 +73,14 @@ public class PostsService<T> {
                 tag,
                 PageRequest.of(offset, limit, Sort.by(Sort.Direction.DESC, "time")));
 
-        return optionalTags
-                .map(this::createListPostResponseDto)
-                .orElseGet(() -> createListPostResponseDto(getPostsByMode(offset, limit, Mode.EARLY)));
+        return createListPostResponseDto(optionalTags.get()
+                .stream()
+                .filter(o-> o.getTagList().contains(tagsRepository.findByName(tag).get()))
+                .collect(Collectors.toList()));
+//        return createListPostResponseDto(optionalTags.get().stream().filter(posts -> posts.getTagList().forEach(tags -> tags.getName().equals(tag))).collect(Collectors.toList()));//не пошло(
+//        return optionalTags
+//                .map(this::createListPostResponseDto)
+//                .orElseGet(() -> createListPostResponseDto(getPostsByMode(offset, limit, Mode.EARLY)));
     }
 
     public ListPostResponseDto<PostDto> getPostDtoModeration(Integer offset, Integer limit, ModerationStatus status) {
