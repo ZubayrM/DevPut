@@ -1,6 +1,9 @@
 package object.controllers.api;
 import object.dto.response.post.ListPostResponseDto;
 import object.dto.response.post.PostAllCommentsAndAllTagsDto;
+import object.dto.response.resultPost.ResultPostDto;
+import object.dto.response.resultPostComment.ResultPostCommentDto;
+import object.dto.response.tag.TagsDto;
 import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
 import object.services.PostCommentsService;
@@ -10,8 +13,6 @@ import object.services.TagsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api")
@@ -72,38 +73,61 @@ public class ApiPostController {
     public ResponseEntity getPostsModeration(@RequestParam Integer offset,
                                              @RequestParam Integer limit,
                                              @RequestParam String status){
-        ListPostResponseDto dto = postsService.getPostDtoModeration(offset, limit, status);
+        ListPostResponseDto dto = postsService.getPostDtoModeration(offset, limit, ModerationStatus.valueOf(status.toUpperCase()));
         return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/post/my")
-    public ResponseEntity getMyPosts(int id){
-        return null;
+    public ResponseEntity getMyPosts(@RequestParam Integer offset,
+                                     @RequestParam Integer limit,
+                                     @RequestParam String status){
+        ListPostResponseDto dto = postsService.getMyListPost(offset, limit, status);
+        return ResponseEntity.ok(dto);
     }
 
+    //NO
     @PostMapping("/post")
-    public ResponseEntity addPost(LocalDate time, int active, String title, String text, String tags){
-        return null;
+    public ResponseEntity addPost(@RequestParam String time,
+                                  @RequestParam Integer active,
+                                  @RequestParam String title,
+                                  @RequestParam String text,
+                                  @RequestParam String tags){
+        ResultPostDto dto = postsService.addPost(time, active, title, text, tags);
+        return ResponseEntity.ok(dto);
     }
 
-    @PostMapping("/image")
-    public String addImage(String path){
-        return null;
-    }
 
+//    @PostMapping("/post")
+//    public ResponseEntity addPost(@RequestBody NewPostDto newPostDto){
+//        ResultPostDto dto = postsService.addPost(newPostDto);
+//        return ResponseEntity.ok(dto);
+//    }
+
+    //NO
     @PutMapping("/post/{id}")
-    public ResponseEntity update(LocalDate time, int active, String title, String text, String tags, @PathVariable String id){
-        return null;
+    public ResponseEntity update(@RequestParam String time,
+                                 @RequestParam Integer active,
+                                 @RequestParam String title,
+                                 @RequestParam String text,
+                                 @RequestParam String tags,
+                                 @PathVariable Integer id){
+        ResultPostDto dto = postsService.update(time, active, title, text, tags, id);
+        return ResponseEntity.ok(dto);
     }
 
+    //NO
     @PostMapping("/comment")
-    public ResponseEntity addComment(int parentId, int postId, String text){
-        return null;
+    public ResponseEntity addComment(@RequestParam("parent_id") Integer parentId,
+                                     @RequestParam("post_id") Integer postId,
+                                     @RequestParam String text){
+        ResultPostCommentDto dto = postsService.addComment(parentId, postId, text);
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/tag")
-    public ResponseEntity getTags(String query){
-        return null;
+    public ResponseEntity getTags(@RequestParam String query){
+        TagsDto dto = tagsService.getTagByQuery(query);
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/post/like")

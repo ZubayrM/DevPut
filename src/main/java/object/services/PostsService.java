@@ -6,12 +6,22 @@ import object.dto.response.post.ListPostResponseDto;
 import object.dto.response.post.PostAllCommentsAndAllTagsDto;
 import object.dto.response.post.PostDto;
 import object.dto.response.post.PostLDCVDto;
+import object.dto.response.resultPostComment.ErrorCommentDto;
+import object.dto.response.resultPostComment.OkCommentDto;
+import object.dto.response.resultPostComment.ResultPostCommentDto;
+import object.dto.response.resultPost.ErrorPostDto;
+import object.dto.response.resultPost.OkPostDto;
+import object.dto.response.resultPost.ParamError;
+import object.dto.response.resultPost.ResultPostDto;
+import object.model.PostComments;
 import object.model.Posts;
 import object.model.Tags;
 import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
+import object.repositories.PostCommentsRepository;
 import object.repositories.PostsRepository;
 import object.repositories.TagsRepository;
+import object.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -24,6 +34,8 @@ import java.util.stream.Collectors;
 @Service
 public class PostsService<T> {
 
+    @Autowired
+    private PostCommentsRepository postCommentsRepository;
 
     @Autowired
     private PostsRepository postsRepository;
@@ -31,10 +43,14 @@ public class PostsService<T> {
     @Autowired
     private TagsRepository tagsRepository;
 
+    @Autowired
+    private UsersRepository usersRepository;
+
+    private static final SimpleDateFormat TIME_NEW_POST = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-    private static final SimpleDateFormat year = new SimpleDateFormat("yyyy");
-    private static final SimpleDateFormat month = new SimpleDateFormat("MM");
-    private static final SimpleDateFormat day = new SimpleDateFormat("dd");
+    private static final SimpleDateFormat YEAR = new SimpleDateFormat("yyyy");
+    private static final SimpleDateFormat MONTH = new SimpleDateFormat("MM");
+    private static final SimpleDateFormat DAY = new SimpleDateFormat("dd");
 
     public ListPostResponseDto<PostLDCVDto> getListPostResponseDtoByMode(Integer offset, Integer limit, Mode mode){
         return createListPostResponseDto(getPostsByMode(offset,limit,mode));
@@ -59,9 +75,9 @@ public class PostsService<T> {
 
     public ListPostResponseDto<PostLDCVDto> getListPostResponseDtoByDate(Integer offset, Integer limit, String date) {
         return createListPostResponseDto(postsRepository.findByDate(
-                getTime(year, date),
-                getTime(month, date),
-                getTime(day, date),
+                getTime(YEAR, date),
+                getTime(MONTH, date),
+                getTime(DAY, date),
                 PageRequest.of(offset,limit, Sort.by(Sort.Direction.DESC, "time")))
         );
 
@@ -83,16 +99,93 @@ public class PostsService<T> {
 //                .orElseGet(() -> createListPostResponseDto(getPostsByMode(offset, limit, Mode.EARLY)));
     }
 
-    public ListPostResponseDto<PostDto> getPostDtoModeration(Integer offset, Integer limit, String status) {
+    public ListPostResponseDto<PostDto> getPostDtoModeration(Integer offset, Integer limit, ModerationStatus status) {
         Optional<List<Posts>> listPostModeration = postsRepository
                 .findByModerationStatus(
-                        "'ACCEPTED'",
+                        status,
                         PageRequest.of(offset, limit, Sort.by(Sort.Direction.ASC, "time")));
         return listPostModeration
                 .map(this::createListPostDto).get();
     }
 
+    public ListPostResponseDto getMyListPost(Integer offset, Integer limit, String status) {
+        Integer active;
+        ModerationStatus moderationStatus;
 
+        switch (status){
+            case "inactive": active = 0; moderationStatus = ModerationStatus.NEW;
+            break;
+            case "pending": active = 1; moderationStatus = ModerationStatus.NEW;
+            break;
+            case "declined": active = 1; moderationStatus = ModerationStatus.DECLINED;
+            break;
+            default: //published
+                active = 1; moderationStatus = ModerationStatus.ACCEPTED;
+        }
+        Optional<List<Posts>> postsList = postsRepository
+                .findAllMyPosts(active, moderationStatus, PageRequest.of(offset, limit, Sort.by(Sort.Direction.DESC, "time")));
+        return postsList.map(this::createListPostResponseDto).get();
+
+    }
+
+    @SneakyThrows
+    public ResultPostDto addPost(String time, Integer active, String title, String text, String tags) {
+        Posts post = new Posts();
+        post.setAuthor(usersRepository.findById(1)); // временно
+        post.setTime(TIME_NEW_POST.parse(time));
+        post.setIsActive(active);
+        post.setTitle(title);
+        post.setText(text);
+        post.setTagList(generateTagList(tags));
+        post.setModerationStatus(ModerationStatus.NEW);
+        post.setViewCount(0);
+        Posts result = postsRepository.save(post);
+        if (result != null) return new OkPostDto();
+        else return new ErrorPostDto();
+    }
+
+    @SneakyThrows
+    public ResultPostDto update(String time, Integer active, String title, String text, String tags, Integer id) {
+        if (title.length() > 15 && text.length() > 15 ) {
+            Posts post = postsRepository.findById(id).get();
+            post.setTime(TIME_NEW_POST.parse(time));
+            post.setIsActive(active);
+            post.setTitle(title);
+            post.setText(text);
+            post.setTagList(generateTagList(tags));
+            postsRepository.save(post);
+            return new OkPostDto();
+        } else {
+            ParamError error = new ParamError(title.length() < 15 ? "Заголовок слишком короткий" : "",
+                    text.length() < 15 ? "Текст публикации слишком короткий" : "");
+            ErrorPostDto dto = new ErrorPostDto();
+            dto.setErrors(error);
+            return dto;
+    }
+
+    }
+
+    public ResultPostCommentDto addComment(Integer parentId, Integer postId, String text) {
+        if (parentId != null && postId != null && text.length() < 1){
+            PostComments p = new PostComments();
+            p.setParentId(parentId);
+            p.setPost(postsRepository.findById(parentId).get());
+            p.setText(text);
+            p.setTime(new Date());
+
+            PostComments res = postCommentsRepository.save(p);
+            return new OkCommentDto(res.getId());
+        } else if (parentId == null && postId != null && text.length() < 1){
+            PostComments p = new PostComments();
+            p.setPost(postsRepository.findById(parentId).get());
+            p.setText(text);
+            p.setTime(new Date());
+
+            PostComments res =postCommentsRepository.save(p);
+            return new OkCommentDto(res.getId());
+        } else return new  ErrorCommentDto();
+
+    }
 
     ////////////////////////// private methods //////////////////////////////////////////////////
 
@@ -111,7 +204,7 @@ public class PostsService<T> {
         for (Posts post: posts) {
             postsList.add(createPostDto(post));
         }
-        return new ListPostResponseDto<>(postsList.size(), postsList);
+        return new ListPostResponseDto<>(postsRepository.getCount().size(), postsList);
     }
 
     private PostLDCVDto createPostLDCVDto(Posts post){
@@ -145,11 +238,12 @@ public class PostsService<T> {
     }
 
     private ListPostResponseDto<PostLDCVDto> createListPostResponseDto (List<Posts> posts){
+
         List<PostLDCVDto> listResponseDto = new ArrayList<>();
         for (Posts post : posts){
             listResponseDto.add(createPostLDCVDto(post));
         }
-        return new ListPostResponseDto<>(listResponseDto.size(), listResponseDto);
+        return new ListPostResponseDto<>(postsRepository.getCount().size(), listResponseDto);
     }
 
     private List<Posts> getPostsByMode(Integer offset, Integer limit, Mode mode){
@@ -204,5 +298,23 @@ public class PostsService<T> {
         Date time = formatter.parse(date);
         return Integer.valueOf(format.format(time));
     }
+
+    private Set<Tags> generateTagList(String tags) {
+        Set<Tags> tagsSet = new HashSet<>();
+        String[] result = tags.split(", ");
+        for (String tag: result){
+            if (tagsRepository.findByName(tag).isPresent()){
+                tagsSet.add(tagsRepository.findByName(tag).get());
+            }
+            else {
+                Tags newTag = new Tags();
+                newTag.setName(tag);
+                tagsSet.add(tagsRepository.save(newTag));
+            }
+        }
+        return tagsSet;
+    }
+
+
 
 }

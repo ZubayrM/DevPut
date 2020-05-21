@@ -33,4 +33,8 @@ class ApiGeneralControllerTest {
                 .andExpect(jsonPath("$.phone", is("+7 938 203-24-99")))
                 .andExpect(jsonPath("$.email", is("zubayr_@live.com")));
     }
+
+    @Test
+    void addImage() {
+    }
 }

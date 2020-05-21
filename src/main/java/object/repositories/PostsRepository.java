@@ -45,36 +45,15 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
     Optional<List<Posts>> findByTag(String tag, Pageable pageable);
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    @Query(value = "FROM Posts WHERE isActive = 1 and moderationStatus = :status")
+    Optional<List<Posts>> findByModerationStatus(ModerationStatus status, Pageable pageable);
 
-    @Query(value = "FROM Posts WHERE isActive = 1 and moderationStatus = ?1", nativeQuery = true)
-    Optional<List<Posts>> findByModerationStatus(String status, Pageable pageable);
+    @Query(value = "FROM Posts WHERE isActive = :active and moderationStatus = :status")
+    Optional<List<Posts>> findAllMyPosts(Integer active, ModerationStatus status, Pageable pageable);
 
-
-
-
-
-
-
-
-    //////////////////////////////////////////////////////////////////////
-    @Query(value = "SELECT * from posts", nativeQuery = true)
-    List<Posts> getAll();
-
-
-
-    List<Posts> findAllByIsActiveAndModerationStatusAndTimeBefore(Integer active, ModerationStatus status, Date date, Pageable pageable); // здравствуй ultimate
-
-    Optional<List<Posts>> findAllByIsActiveAndModerationStatusAndTimeBeforeAndTitleContaining (Integer active, ModerationStatus status, Date date, String query, Pageable pageable);
-
-    Optional<Posts> findByTitle(String query);
-
-    List<Posts> findAllByIsActiveAndModerationStatusAndTime(Integer active, ModerationStatus status, Date time, Pageable pageable);
-
-    Optional<List<Posts>> findAllByIsActiveAndModerationStatusAndTimeBeforeAndTagListContaining(Integer active, ModerationStatus status, Date date, String tag, Pageable pageable);
-
-
-    Optional<List<Posts>> findAllByIsActiveAndModerationStatus(Integer active, ModerationStatus status, PageRequest time);
-
+    //todo ПО ДРУГОМУ ПОКА НЕ ПОЛУЧАЕТСЯ...  SELECT COUNT(Posts)- не работает
+    @Query(value = "FROM Posts WHERE isActive = 1 and moderationStatus = 'ACCEPTED' and time <= current_date")
+    List getCount();
 
 
 }

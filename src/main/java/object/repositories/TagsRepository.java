@@ -15,5 +15,7 @@ public interface TagsRepository extends CrudRepository<Tags, Integer> {
     @Query(value = "FROM Tags where name = :name")
     Optional<Tags> findByName(String name);
 
-    List<String> findAllById(Integer[] tagIds);
+
+    @Query(value = "FROM Tags WHERE  name LIKE concat(:query, '%')")
+    List<Tags> findAllByName(String query);
 }

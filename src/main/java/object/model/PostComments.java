@@ -27,4 +27,7 @@ public class PostComments {
     @Column(nullable = false)
     private Date time;
 
+    @Column(nullable = false)
+    private String text;
+
 }

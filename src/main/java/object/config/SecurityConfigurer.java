@@ -25,6 +25,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                     .antMatchers(
                             "/**",
+                            path,
                             path + "/",
                             path + "/search",
                             path + "/byDate",
