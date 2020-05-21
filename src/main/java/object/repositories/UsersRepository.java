@@ -1,5 +1,6 @@
 package object.repositories;
 
+import object.config.UserAuth;
 import object.model.Users;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -9,4 +10,5 @@ public interface UsersRepository extends CrudRepository<Users,Integer> {
 
     Users findById(int id);
 
+    Users findByName(String s);
 }
