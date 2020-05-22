@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/api")
 public class ApiPostController {
@@ -64,8 +66,8 @@ public class ApiPostController {
     @GetMapping("/post/byTag")
     public ResponseEntity getPostsByTag(@RequestParam Integer offset,
                                         @RequestParam Integer limit,
-                                        @RequestParam String tag){
-        ListPostResponseDto dto = postsService.getListPostResponseDtoByTag(offset, limit, tag);
+                                        @RequestParam String query){
+        ListPostResponseDto dto = postsService.getListPostResponseDtoByTag(offset, limit, query);
         return ResponseEntity.ok(dto);
     }
 
@@ -119,9 +121,9 @@ public class ApiPostController {
     @PostMapping("/comment")
     public ResponseEntity addComment(@RequestParam("parent_id") Integer parentId,
                                      @RequestParam("post_id") Integer postId,
-                                     @RequestParam String text){
-        ResultPostCommentDto dto = postsService.addComment(parentId, postId, text);
-        return ResponseEntity.ok(dto);
+                                     @RequestParam String text, HttpServletRequest request){
+        //ResultPostCommentDto dto = postsService.addComment(parentId, postId, text);
+        return ResponseEntity.ok(null);
     }
 
     @GetMapping("/tag")

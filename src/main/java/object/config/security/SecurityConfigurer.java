@@ -1,4 +1,4 @@
-package object.config;
+package object.config.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -23,18 +23,14 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                    .antMatchers(
-                            "/**",
-                            path,
-                            path + "/",
-                            path + "/search",
-                            path + "/byDate",
-                            path + "/byTag")
+                    .antMatchers("/**",
+                            path ,
+                            path + "/**")
                     .permitAll()
                     .anyRequest().authenticated()
                     .and()
                 .formLogin()
-                    .loginPage(path + "login")
+                    .loginPage("/api/auth/login")
                     .permitAll()
                     .and()
                 .logout()
@@ -44,10 +40,14 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth
+//                .jdbcAuthentication()
+//                .dataSource(dataSource)
+//                .authoritiesByUsernameQuery("SELECT email, password FROM Users WHERE email=?")
+//                .passwordEncoder(new BCryptPasswordEncoder());
         auth
-                .jdbcAuthentication()
-                .dataSource(dataSource)
-                .authoritiesByUsernameQuery("SELECT email, password FROM Users WHERE email=?")
-                .passwordEncoder(new BCryptPasswordEncoder());
+                .inMemoryAuthentication()
+                .withUser("z@test.ru")
+                .password("123123").roles("User");
     }
 }

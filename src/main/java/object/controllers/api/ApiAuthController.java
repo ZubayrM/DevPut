@@ -5,8 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.ServletRequest;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -18,9 +20,10 @@ public class ApiAuthController {
         return null;
     }
 
-    @PostMapping("/api/auth/login/")
-    public ResponseEntity entrance(String email, String password){
-        return null;
+    @PostMapping("/api/auth/login")
+    public ResponseEntity entrance(@RequestParam("e_mail") String email,
+                                   @RequestParam String password, ServletRequest request){
+        return ResponseEntity.ok(null);
     }
 
     @GetMapping("/api/auth/check/")

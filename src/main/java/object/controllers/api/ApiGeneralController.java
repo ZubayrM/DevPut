@@ -1,6 +1,7 @@
 package object.controllers.api;
-import object.config.UserService;
+import object.config.security.UserAuthService;
 import object.dto.response.InitResponseDto;
+import object.services.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,7 @@ public class ApiGeneralController {
     @Autowired
     private InitResponseDto initResponseDto;
 
-    private UserService userService;
+    private UsersService userService;
 
     @GetMapping("/init")
     public ResponseEntity getInfo(){

@@ -144,7 +144,8 @@ class ApiPostControllerTest {
     @SneakyThrows
     void addComment() {
         mvc.perform(post("/api/comment")
-                .param("parent_id" , "null")
+                .header("Authentication", "KluchOtBaldi")
+                .param("parent_id" , "1")
                 .param("post_id", "1")
                 .param("text", "new test comment"))
                 .andDo(print())
