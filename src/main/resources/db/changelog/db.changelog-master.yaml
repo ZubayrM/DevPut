@@ -5,7 +5,7 @@ databaseChangeLog:
       author: Zubayr
       changes:
         - updateTable:
-            tableName: testTable
+            tableName: postComments
             columns:
               - column:
                   name: id
@@ -15,23 +15,17 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: isModerator
+                  name: parentId
                   type: int(50)
               - column:
-                  name: regTime
-                  type: date(512)
+                  name: postId
+                  type: int(512)
               - column:
-                  name: name
-                  type: varchar(50)
+                  name: time
+                  type: date(50)
               - column:
-                  name: email
-                  type: varchar(50)
+                  name: userId
+                  type: int(50)
               - column:
-                  name: password
-                  type: varchar(50)
-              - column:
-                  name: code
-                  type: varchar(50)
-              - column:
-                  name: photo
-                  type: varchar(50)
+                  name: text
+                  type: varchar(300)

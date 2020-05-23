@@ -10,7 +10,7 @@ public class NewPostDto {
 
     private String time;
 
-    private Integer actual;
+    private Integer active;
 
     private String title;
 

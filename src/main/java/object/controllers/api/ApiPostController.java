@@ -1,4 +1,5 @@
 package object.controllers.api;
+import object.dto.request.NewPostDto;
 import object.dto.response.post.ListPostResponseDto;
 import object.dto.response.post.PostAllCommentsAndAllTagsDto;
 import object.dto.response.resultPost.ResultPostDto;
@@ -66,8 +67,8 @@ public class ApiPostController {
     @GetMapping("/post/byTag")
     public ResponseEntity getPostsByTag(@RequestParam Integer offset,
                                         @RequestParam Integer limit,
-                                        @RequestParam String query){
-        ListPostResponseDto dto = postsService.getListPostResponseDtoByTag(offset, limit, query);
+                                        @RequestParam String tag){
+        ListPostResponseDto dto = postsService.getListPostResponseDtoByTag(offset, limit, tag);
         return ResponseEntity.ok(dto);
     }
 
@@ -101,8 +102,8 @@ public class ApiPostController {
 
 //    @PostMapping("/post")
 //    public ResponseEntity addPost(@RequestBody NewPostDto newPostDto){
-//        ResultPostDto dto = postsService.addPost(newPostDto);
-//        return ResponseEntity.ok(dto);
+//        //ResultPostDto dto = postsService.addPost(newPostDto);
+//        return ResponseEntity.ok(null);
 //    }
 
     //NO
@@ -121,7 +122,7 @@ public class ApiPostController {
     @PostMapping("/comment")
     public ResponseEntity addComment(@RequestParam("parent_id") Integer parentId,
                                      @RequestParam("post_id") Integer postId,
-                                     @RequestParam String text, HttpServletRequest request){
+                                     @RequestParam String text ){
         //ResultPostCommentDto dto = postsService.addComment(parentId, postId, text);
         return ResponseEntity.ok(null);
     }

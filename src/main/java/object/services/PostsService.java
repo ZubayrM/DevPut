@@ -2,10 +2,7 @@ package object.services;
 
 import lombok.SneakyThrows;
 import object.dto.response.UserResponseDto;
-import object.dto.response.post.ListPostResponseDto;
-import object.dto.response.post.PostAllCommentsAndAllTagsDto;
-import object.dto.response.post.PostDto;
-import object.dto.response.post.PostLDCVDto;
+import object.dto.response.post.*;
 import object.dto.response.resultPostComment.ErrorCommentDto;
 import object.dto.response.resultPostComment.OkCommentDto;
 import object.dto.response.resultPostComment.ResultPostCommentDto;
@@ -187,6 +184,20 @@ public class PostsService<T> {
 
     }
 
+    public void moderationPost(Integer postId, ModerationStatus status, Integer moderatorId) {
+        Posts post = postsRepository.findById(postId).get();
+        post.setModerationId(moderatorId);
+        post.setModerationStatus(status);
+        postsRepository.save(post);
+    }
+
+
+    @SneakyThrows
+    public CalendarDto getCalendar(String year) {
+        return generateCalendarDto(postsRepository.getAllPosts(), year);
+    }
+
+
     ////////////////////////// private methods //////////////////////////////////////////////////
 
     private PostDto createPostDto(Posts post) {
@@ -204,7 +215,7 @@ public class PostsService<T> {
         for (Posts post: posts) {
             postsList.add(createPostDto(post));
         }
-        return new ListPostResponseDto<>(postsRepository.getCount().size(), postsList);
+        return new ListPostResponseDto<>(postsRepository.getAllPosts().size(), postsList);
     }
 
     private PostLDCVDto createPostLDCVDto(Posts post){
@@ -243,7 +254,7 @@ public class PostsService<T> {
         for (Posts post : posts){
             listResponseDto.add(createPostLDCVDto(post));
         }
-        return new ListPostResponseDto<>(postsRepository.getCount().size(), listResponseDto);
+        return new ListPostResponseDto<>(postsRepository.getAllPosts().size(), listResponseDto);
     }
 
     private List<Posts> getPostsByMode(Integer offset, Integer limit, Mode mode){
@@ -313,6 +324,22 @@ public class PostsService<T> {
             }
         }
         return tagsSet;
+    }
+    private CalendarDto generateCalendarDto(List<Posts> list, String year) {
+        CalendarDto dto = new CalendarDto();
+        for (Posts p : list){
+            String y = YEAR.format(p.getTime()).trim();
+
+            dto.getYears().add(y);
+
+            if (y.equals(year) ){
+                if (dto.getPosts().containsKey(y)){
+                    dto.getPosts().put(y,  dto.getPosts().get(y) + 1);
+                } else
+                    dto.getPosts().put(y, 1);
+            }
+        }
+        return dto;
     }
 
 

@@ -1,6 +1,11 @@
 package object.controllers.api;
+import lombok.AllArgsConstructor;
 import object.config.security.UserAuthService;
 import object.dto.response.InitResponseDto;
+import object.model.Posts;
+import object.model.enums.ModerationStatus;
+import object.repositories.PostsRepository;
+import object.services.PostsService;
 import object.services.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,9 +15,12 @@ import java.awt.*;
 
 @RestController
 @RequestMapping("/api")
+@AllArgsConstructor
 public class ApiGeneralController {
-    @Autowired
+
     private InitResponseDto initResponseDto;
+
+    private PostsService postsService;
 
     private UsersService userService;
 
@@ -29,7 +37,10 @@ public class ApiGeneralController {
     }
 
     @PostMapping("/moderation")
-    public void moderation(int postId, String decision){ }
+    public void moderation(@RequestParam("post_id") Integer postId,
+                           @RequestParam String decision){
+        postsService.moderationPost(postId, ModerationStatus.valueOf(decision.toUpperCase()), 1);
+    }
 
     @GetMapping("/settings")
     public ResponseEntity getSettings(){

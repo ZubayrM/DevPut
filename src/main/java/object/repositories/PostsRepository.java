@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface PostsRepository extends CrudRepository<Posts,Integer> {
@@ -53,7 +54,9 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
 
     //todo ПО ДРУГОМУ ПОКА НЕ ПОЛУЧАЕТСЯ...  SELECT COUNT(Posts)- не работает
     @Query(value = "FROM Posts WHERE isActive = 1 and moderationStatus = 'ACCEPTED' and time <= current_date")
-    List getCount();
+    List<Posts> getAllPosts();
 
+    @Query(value = "SELECT p FROM Posts p WHERE p.isActive = 1 and p.moderationStatus = 'ACCEPTED'  and  year(p.time) = year(:year) and p.time <= current_date", nativeQuery = true)
+    Set<Posts> getYears(Date year);
 
 }

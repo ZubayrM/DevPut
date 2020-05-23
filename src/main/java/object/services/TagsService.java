@@ -41,7 +41,7 @@ public class TagsService {
     private Double getWight(Tags tag) {
 //        Double countTag = tag2PostRepository.countByTag(tag.getId()).doubleValue(); // count не работает
         Double countTag =(double) tag2PostRepository.countByTag(tag.getId()).size(); // пока так
-        Integer countPost = postsRepository.getCount().size();
+        Integer countPost = postsRepository.getAllPosts().size();
 
         return  (countTag / countPost.doubleValue()) * 2;
     }
