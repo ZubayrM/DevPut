@@ -2,9 +2,12 @@ package object.controllers.api;
 
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import object.dto.response.ResultDto;
+import object.dto.response.auth.AuthUserResponseDto;
 import object.dto.response.post.CalendarDto;
 import object.model.Users;
 import object.services.PostsService;
+import object.services.UsersService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,15 +16,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
 public class ApiAuthController {
 
     private PostsService postsService;
+    private UsersService usersService;
 
 
     @GetMapping("/api/calendar")
@@ -31,29 +37,45 @@ public class ApiAuthController {
     }
 
     @PostMapping("/api/auth/login")
-    public ResponseEntity entrance(@RequestParam("e_mail") String email,
-                                   @RequestParam String password, ServletRequest request){
+    public ResponseEntity login(@RequestParam Map<String, Integer> id){
+        System.out.println(id);
         return ResponseEntity.ok(null);
     }
+//    public ResponseEntity login (@RequestParam String email,
+//                                 @RequestParam String password){
+//        ResultDto dto = usersService.login(email, password);
+//        return ResponseEntity.ok(dto);
+//    }
 
     @GetMapping("/api/auth/check")
-    public ResponseEntity check(Users user){
-        return null;
+    public ResponseEntity check(HttpServletRequest request){
+        ResultDto dto = usersService.check(request);
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/api/auth/restore")
-    public ResponseEntity restore(){
-        return null;
+    public ResponseEntity restore(@RequestParam String email){
+        ResultDto dto = usersService.restore(email);
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/api/auth/password")
-    public ResponseEntity upPassword(String code, String password, int captcha, String captchaSecret){
+    public ResponseEntity upPassword(@RequestParam String code,
+                                     @RequestParam String password,
+                                     @RequestParam String captcha,
+                                     @RequestParam("captcha_secret") String captchaSecret){
+        ResultDto dto = usersService.password(code, password, captcha, captchaSecret);
         return null;
     }
 
     @PostMapping("/api/auth/register")
-    public ResponseEntity register(String email, String name, String password, int captcha, String captchaSecret){
-        return null;
+    public ResponseEntity register(@RequestParam("e_mail") String email,
+                                   @RequestParam String name,
+                                   @RequestParam String password,
+                                   @RequestParam String captcha,
+                                   @RequestParam("captcha_secret") String captchaSecret){
+        ResultDto dto = usersService.register(email,name,password,captcha,captchaSecret);
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/api/profile/my")

@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResultDto {
-    private Boolean result = true;
+    private Boolean result;
 }

@@ -49,6 +49,9 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
     @Query(value = "FROM Posts WHERE isActive = 1 and moderationStatus = :status")
     Optional<List<Posts>> findByModerationStatus(ModerationStatus status, Pageable pageable);
 
+    @Query(value = "FROM Posts WHERE isActive = 1 and moderationStatus = :status")
+    Optional<List<Posts>> findByModerationStatus(ModerationStatus status);
+
     @Query(value = "FROM Posts WHERE isActive = :active and moderationStatus = :status")
     Optional<List<Posts>> findAllMyPosts(Integer active, ModerationStatus status, Pageable pageable);
 

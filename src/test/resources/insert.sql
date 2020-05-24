@@ -1,4 +1,4 @@
-INSERT INTO `users` (`id`, `email`, `is_moderator`, `name`, `password`, `reg_time`) VALUES ('1', 'test@mail.ru', '1', 'testName', '123', '2018-07-16 17:35');
+INSERT INTO `users` (`id`, `email`, `is_moderator`, `name`, `password`, `reg_time`) VALUES ('1', 'test@mail.ru', '1', 'testName', '123123', '2018-07-16 17:35');
 
 INSERT INTO `tags` (`id`, `name`) VALUES ('1', 'testTag');
 

@@ -1,6 +1,5 @@
 package object.controllers.api;
 import lombok.AllArgsConstructor;
-import object.config.security.UserAuthService;
 import object.dto.response.InitResponseDto;
 import object.model.Posts;
 import object.model.enums.ModerationStatus;

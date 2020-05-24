@@ -31,6 +31,8 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                     .and()
                 .formLogin()
                     .loginPage("/api/auth/login")
+                    .usernameParameter("e_mail")
+                    .passwordParameter("password")
                     .permitAll()
                     .and()
                 .logout()
@@ -40,14 +42,17 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth
-//                .jdbcAuthentication()
-//                .dataSource(dataSource)
-//                .authoritiesByUsernameQuery("SELECT email, password FROM Users WHERE email=?")
-//                .passwordEncoder(new BCryptPasswordEncoder());
+
+
         auth
-                .inMemoryAuthentication()
-                .withUser("z@test.ru")
-                .password("123123").roles("User");
+                .jdbcAuthentication()
+                .dataSource(dataSource)
+                .usersByUsernameQuery("SELECT email, password FROM Users WHERE email=?")
+                .authoritiesByUsernameQuery("SELECT email, password FROM Users");
+                //.passwordEncoder(new BCryptPasswordEncoder());
+//        auth
+//                .inMemoryAuthentication()
+//                .withUser("z@test.ru")
+//                .password("123123").roles("User");
     }
 }

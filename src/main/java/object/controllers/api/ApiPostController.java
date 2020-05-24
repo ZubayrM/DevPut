@@ -1,9 +1,7 @@
 package object.controllers.api;
-import object.dto.request.NewPostDto;
+import object.dto.response.ResultDto;
 import object.dto.response.post.ListPostResponseDto;
 import object.dto.response.post.PostAllCommentsAndAllTagsDto;
-import object.dto.response.resultPost.ResultPostDto;
-import object.dto.response.resultPostComment.ResultPostCommentDto;
 import object.dto.response.tag.TagsDto;
 import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
@@ -15,7 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -90,13 +89,14 @@ public class ApiPostController {
 
     //NO
     @PostMapping("/post")
-    public ResponseEntity addPost(@RequestParam String time,
-                                  @RequestParam Integer active,
-                                  @RequestParam String title,
+    public ResponseEntity addPost(@RequestParam Integer active,
+                                  @RequestParam Map<Integer, String> tags,
                                   @RequestParam String text,
-                                  @RequestParam String tags){
-        ResultPostDto dto = postsService.addPost(time, active, title, text, tags);
-        return ResponseEntity.ok(dto);
+                                  @RequestParam Date time,
+                                  @RequestParam String title){
+        //ResultDto dto = postsService.addPost(time, active, title, text, tags);
+        System.out.println("dd");
+        return ResponseEntity.ok(null);
     }
 
 
@@ -114,7 +114,7 @@ public class ApiPostController {
                                  @RequestParam String text,
                                  @RequestParam String tags,
                                  @PathVariable Integer id){
-        ResultPostDto dto = postsService.update(time, active, title, text, tags, id);
+        ResultDto dto = postsService.update(time, active, title, text, tags, id);
         return ResponseEntity.ok(dto);
     }
 

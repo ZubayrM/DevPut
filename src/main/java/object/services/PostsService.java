@@ -1,15 +1,14 @@
 package object.services;
 
 import lombok.SneakyThrows;
+import object.dto.response.ResultDto;
 import object.dto.response.UserResponseDto;
 import object.dto.response.post.*;
 import object.dto.response.resultPostComment.ErrorCommentDto;
 import object.dto.response.resultPostComment.OkCommentDto;
 import object.dto.response.resultPostComment.ResultPostCommentDto;
 import object.dto.response.resultPost.ErrorPostDto;
-import object.dto.response.resultPost.OkPostDto;
 import object.dto.response.resultPost.ParamError;
-import object.dto.response.resultPost.ResultPostDto;
 import object.model.PostComments;
 import object.model.Posts;
 import object.model.Tags;
@@ -44,7 +43,7 @@ public class PostsService<T> {
     private UsersRepository usersRepository;
 
     private static final SimpleDateFormat TIME_NEW_POST = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-    private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat YEAR = new SimpleDateFormat("yyyy");
     private static final SimpleDateFormat MONTH = new SimpleDateFormat("MM");
     private static final SimpleDateFormat DAY = new SimpleDateFormat("dd");
@@ -126,9 +125,9 @@ public class PostsService<T> {
     }
 
     @SneakyThrows
-    public ResultPostDto addPost(String time, Integer active, String title, String text, String tags) {
+    public ResultDto addPost(String time, Integer active, String title, String text, String tags) {
         Posts post = new Posts();
-        post.setAuthor(usersRepository.findById(1)); // временно
+        post.setAuthor(usersRepository.findById(1).get()); // временно
         post.setTime(TIME_NEW_POST.parse(time));
         post.setIsActive(active);
         post.setTitle(title);
@@ -137,12 +136,12 @@ public class PostsService<T> {
         post.setModerationStatus(ModerationStatus.NEW);
         post.setViewCount(0);
         Posts result = postsRepository.save(post);
-        if (result != null) return new OkPostDto();
+        if (result != null) return new ResultDto(true);
         else return new ErrorPostDto();
     }
 
     @SneakyThrows
-    public ResultPostDto update(String time, Integer active, String title, String text, String tags, Integer id) {
+    public ResultDto update(String time, Integer active, String title, String text, String tags, Integer id) {
         if (title.length() > 15 && text.length() > 15 ) {
             Posts post = postsRepository.findById(id).get();
             post.setTime(TIME_NEW_POST.parse(time));
@@ -151,7 +150,7 @@ public class PostsService<T> {
             post.setText(text);
             post.setTagList(generateTagList(tags));
             postsRepository.save(post);
-            return new OkPostDto();
+            return new ResultDto(true);
         } else {
             ParamError error = new ParamError(title.length() < 15 ? "Заголовок слишком короткий" : "",
                     text.length() < 15 ? "Текст публикации слишком короткий" : "");
@@ -306,7 +305,7 @@ public class PostsService<T> {
 
     @SneakyThrows
     private Integer getTime(SimpleDateFormat format, String date){
-        Date time = formatter.parse(date);
+        Date time = DATE_FORMAT.parse(date);
         return Integer.valueOf(format.format(time));
     }
 
@@ -333,10 +332,11 @@ public class PostsService<T> {
             dto.getYears().add(y);
 
             if (y.equals(year) ){
+                String time = DATE_FORMAT.format(p.getTime());
                 if (dto.getPosts().containsKey(y)){
-                    dto.getPosts().put(y,  dto.getPosts().get(y) + 1);
+                    dto.getPosts().put(time,  dto.getPosts().get(y) + 1);
                 } else
-                    dto.getPosts().put(y, 1);
+                    dto.getPosts().put(time, 1);
             }
         }
         return dto;

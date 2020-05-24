@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CaptchaCodesRepository extends CrudRepository<CaptchaCodes, Integer> {
+    CaptchaCodes findByCode(String captcha);
 }

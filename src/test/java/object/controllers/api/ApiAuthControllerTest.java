@@ -28,7 +28,7 @@ class ApiAuthControllerTest {
     @SneakyThrows
     void getCalendar() {
         mvc.perform(get("/api/calendar")
-                .param("year", "2020"))
+                .param("year", "2019"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.years[0]", is("2019")));
