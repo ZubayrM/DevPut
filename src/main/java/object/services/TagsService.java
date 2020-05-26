@@ -24,10 +24,10 @@ public class TagsService {
         TagsDto dto = new TagsDto();
         List<Tags> list;
 
-        if (query.isEmpty() || query != "") {
+        if (query != null) {
             list = tagsRepository.findAllByName(query);
         } else {
-            list = (List<Tags>) tagsRepository.findAll();
+            list = tagsRepository.findAll();
         }
         for (Tags tag : list) {
             dto.getTags().add(new ParamResultDto(tag.getName(), getWight(tag)));

@@ -11,10 +11,13 @@ import object.services.PostsService;
 import object.services.TagsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api")
@@ -95,7 +98,6 @@ public class ApiPostController {
                                   @RequestParam Date time,
                                   @RequestParam String title){
         //ResultDto dto = postsService.addPost(time, active, title, text, tags);
-        System.out.println("dd");
         return ResponseEntity.ok(null);
     }
 
@@ -128,7 +130,7 @@ public class ApiPostController {
     }
 
     @GetMapping("/tag")
-    public ResponseEntity getTags(@RequestParam String query){
+    public ResponseEntity getTags(@RequestParam @Nullable String query){
         TagsDto dto = tagsService.getTagByQuery(query);
         return ResponseEntity.ok(dto);
     }
