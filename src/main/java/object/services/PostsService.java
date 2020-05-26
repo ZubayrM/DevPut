@@ -125,14 +125,14 @@ public class PostsService<T> {
     }
 
     @SneakyThrows
-    public ResultDto addPost(String time, Integer active, String title, String text, String tags) {
+    public ResultDto addPost(String time, Integer active, String title, String text, Map tags) {
         Posts post = new Posts();
         post.setAuthor(usersRepository.findById(1).get()); // временно
         post.setTime(TIME_NEW_POST.parse(time));
         post.setIsActive(active);
         post.setTitle(title);
         post.setText(text);
-        post.setTagList(generateTagList(tags));
+        post.setTagList(generateTagList("tags"));
         post.setModerationStatus(ModerationStatus.NEW);
         post.setViewCount(0);
         Posts result = postsRepository.save(post);

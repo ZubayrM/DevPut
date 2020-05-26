@@ -70,7 +70,7 @@ public class UsersService {
 
     public ResultDto check(HttpServletRequest request) {
         String s = request.getHeader("Cookie");
-        Optional<Users> user = usersRepository.findById(2);
+        Optional<Users> user = usersRepository.findById(1);
         if (user.isPresent()) {
             return new AuthUserResponseDto(generatedUserAuth(user.get())); // пока так
         } else
@@ -161,6 +161,18 @@ public class UsersService {
         user.setRegTime(new Date());
         usersRepository.save(user);
         return new ResultDto(true);
+    }
+
+    public ResultDto profileMy(String photo, Integer removePhoto, String name, String email, String password, HttpServletRequest request) {
+        String userByEmail = request.getHeader("email");///
+
+        Optional<Users> user = usersRepository.findByEmail(userByEmail);
+        if ()
+        if (removePhoto > 0){
+           // user.get()
+        }
+
+        return  new ResultDto(true);
     }
 
 

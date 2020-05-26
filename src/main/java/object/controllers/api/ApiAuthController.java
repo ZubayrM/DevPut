@@ -10,6 +10,7 @@ import object.services.PostsService;
 import object.services.UsersService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -79,7 +80,12 @@ public class ApiAuthController {
     }
 
     @PostMapping("/api/profile/my")
-    public ResponseEntity upUser(String pathPhoto, int removePhoto, String name, String email, String password){
+    public ResponseEntity profileMy(@RequestParam @Nullable String photo,
+                                 @RequestParam Integer removePhoto,
+                                 @RequestParam String name,
+                                 @RequestParam String email,
+                                 @RequestParam String password, HttpServletRequest request){
+        ResultDto dto = usersService.profileMy(photo, removePhoto, name, email, password, request);
         return null;
     }
 

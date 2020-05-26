@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -95,10 +96,11 @@ public class ApiPostController {
     public ResponseEntity addPost(@RequestParam Integer active,
                                   @RequestParam Map<Integer, String> tags,
                                   @RequestParam String text,
-                                  @RequestParam Date time,
-                                  @RequestParam String title){
-        //ResultDto dto = postsService.addPost(time, active, title, text, tags);
-        return ResponseEntity.ok(null);
+                                  @RequestParam String time,
+                                  @RequestParam String title,
+                                  HttpServletRequest request){
+        ResultDto dto = postsService.addPost(time, active, title, text, tags);
+        return ResponseEntity.ok(dto);
     }
 
 

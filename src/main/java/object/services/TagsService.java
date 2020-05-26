@@ -31,7 +31,6 @@ public class TagsService {
         }
         for (Tags tag : list) {
             dto.getTags().add(new ParamResultDto(tag.getName(), getWight(tag)));
-
         }
 
         return dto;
