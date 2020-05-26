@@ -1,5 +1,6 @@
 package object.repositories;
 
+import object.model.Users;
 import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
 import object.model.Posts;
@@ -61,5 +62,11 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
 
     @Query(value = "SELECT p FROM Posts p WHERE p.isActive = 1 and p.moderationStatus = 'ACCEPTED'  and  year(p.time) = year(:year) and p.time <= current_date", nativeQuery = true)
     Set<Posts> getYears(Date year);
+
+    Integer countByAuthor(Users author);
+
+    Posts findByTimeIsStartingWith();
+
+
 
 }

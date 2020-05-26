@@ -2,10 +2,13 @@ package object.controllers.api;
 
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import object.dto.response.CaptchaDto;
+import object.dto.response.MyStatisticsDto;
 import object.dto.response.ResultDto;
 import object.dto.response.auth.AuthUserResponseDto;
 import object.dto.response.post.CalendarDto;
 import object.model.Users;
+import object.services.CaptchaCodesService;
 import object.services.PostsService;
 import object.services.UsersService;
 import org.springframework.http.HttpStatus;
@@ -29,6 +32,7 @@ public class ApiAuthController {
 
     private PostsService postsService;
     private UsersService usersService;
+    private CaptchaCodesService captchaCodesService;
 
 
     @GetMapping("/api/calendar")
@@ -86,17 +90,19 @@ public class ApiAuthController {
                                  @RequestParam String email,
                                  @RequestParam String password, HttpServletRequest request){
         ResultDto dto = usersService.profileMy(photo, removePhoto, name, email, password, request);
-        return null;
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/api/auth/captcha")
     public ResponseEntity captcha(){
-        return null;
+        CaptchaDto dto = captchaCodesService.captcha();
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/api/statistics/my")
-    public ResponseEntity myStatistics(Users user){
-        return null;
+    public ResponseEntity myStatistics(HttpServletRequest request){
+        MyStatisticsDto dto = postsService.myStatistics(request);
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/api/statistics/all")

@@ -144,13 +144,13 @@ public class UsersService {
                     if (byCode.getSecretCode().equals(captchaSecret)){
                         return generatedNewUser(name, email, password);
                     } else
-                        return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, null, null, "Код с картинки введён неверно"));
+                        return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, null, null, "Код с картинки введён неверно",null),false);
                 } else
-                    return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, null,  "Пароль короче 6-ти символов", null));
+                    return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, null,  "Пароль короче 6-ти символов", null,null),false);
             } else
-                return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, "Имя указано неверно", null, null));
+                return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, "Имя указано неверно", null, null,null),false);
         } else
-            return new ErrorsMessageDto<>(new ErrorsRegisterDto( "Этот e-mail уже зарегистрирован", null, null, null));
+            return new ErrorsMessageDto<>(new ErrorsRegisterDto( "Этот e-mail уже зарегистрирован", null, null, null,null),false);
     }
 
     private ResultDto generatedNewUser(String name, String email, String password) {
@@ -167,13 +167,38 @@ public class UsersService {
         String userByEmail = request.getHeader("email");///
 
         Optional<Users> user = usersRepository.findByEmail(userByEmail);
-        if ()
-        if (removePhoto > 0){
-           // user.get()
+        if (user.isPresent()) {
+            Users u = user.get();
+
+            if (photo != null && photo.length() > 5) {
+                u.setPhoto(photo);
+            } else return new ErrorsMessageDto<>( new ErrorsRegisterDto(null, null, null, null, "Фото слишком большое, нужно не более 5 Мб"), false);
+
+
+            if (name.split(" ").length > 1) {
+                u.setName(name);
+            } else return new ErrorsMessageDto<>( new ErrorsRegisterDto(null, "Имя указано неверно", null, null, null), false);
+
+
+            if (!usersRepository.findByEmail(email).isPresent()) {
+                u.setEmail(email);
+            } else return new ErrorsMessageDto<>( new ErrorsRegisterDto("Этот e-mail уже зарегистрирован", null, null, null, null), false);
+
+
+
+            if (password.length() > 6) {
+                u.setPassword(password);
+            } else return new ErrorsMessageDto<>( new ErrorsRegisterDto(null, null, "Пароль короче 6-ти символов", null, null), false);
+
+            return new ResultDto(true);
+
+
         }
 
         return  new ResultDto(true);
     }
+
+
 
 
 //    private String generateRandomCode(){

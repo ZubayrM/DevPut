@@ -1,6 +1,7 @@
 package object.services;
 
 import lombok.SneakyThrows;
+import object.dto.response.MyStatisticsDto;
 import object.dto.response.ResultDto;
 import object.dto.response.UserResponseDto;
 import object.dto.response.post.*;
@@ -12,17 +13,16 @@ import object.dto.response.resultPost.ParamError;
 import object.model.PostComments;
 import object.model.Posts;
 import object.model.Tags;
+import object.model.Users;
 import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
-import object.repositories.PostCommentsRepository;
-import object.repositories.PostsRepository;
-import object.repositories.TagsRepository;
-import object.repositories.UsersRepository;
+import object.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -42,7 +42,12 @@ public class PostsService<T> {
     @Autowired
     private UsersRepository usersRepository;
 
+    @Autowired
+    private PostVotesRepository postVotesRepository;
+
+
     private static final SimpleDateFormat TIME_NEW_POST = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    private static final SimpleDateFormat FIRST_PUBLICATION = new SimpleDateFormat("yyyy-MM-dd hh:mm");
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat YEAR = new SimpleDateFormat("yyyy");
     private static final SimpleDateFormat MONTH = new SimpleDateFormat("MM");
@@ -343,5 +348,15 @@ public class PostsService<T> {
     }
 
 
+    public MyStatisticsDto myStatistics(HttpServletRequest request) {
+        String userEmail = request.getHeader("абра кадабра");
 
+        Users u = usersRepository.findByEmail(userEmail).orElse(null);
+        Integer postCount = postsRepository.countByAuthor(u);
+        Integer likesCount = postVotesRepository.countByUserIdAndValue(u.getId(), 1);
+        Integer dislikesCount = postVotesRepository.countByUserIdAndValue(u.getId(), -1);
+        Integer viewsCount = 5;
+        String firstPublication = FIRST_PUBLICATION.format(postsRepository.findByTimeIsStartingWith().getTime());
+        return new MyStatisticsDto(postCount, likesCount, dislikesCount, viewsCount, firstPublication);
+    }
 }

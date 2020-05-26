@@ -18,4 +18,6 @@ public class ErrorsRegisterDto extends ResultDto {
 
     private String captcha;
 
+    private String photo;
+
 }

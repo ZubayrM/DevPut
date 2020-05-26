@@ -1,0 +1,16 @@
+package object.dto.response;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class MyStatisticsDto {
+    private Integer postsCount;
+    private Integer liceCount;
+    private Integer dislikesCount;
+    private Integer viewsCount;
+    private String firstPublication;
+}
