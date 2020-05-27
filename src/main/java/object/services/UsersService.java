@@ -198,7 +198,9 @@ public class UsersService {
         return  new ResultDto(true);
     }
 
-
+    public void logout(HttpServletRequest request) {
+        String userEmail = request.getHeader("абра кадабра");
+    }
 
 
 //    private String generateRandomCode(){

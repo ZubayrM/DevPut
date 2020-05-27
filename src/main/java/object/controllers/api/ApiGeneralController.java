@@ -1,16 +1,16 @@
 package object.controllers.api;
+
 import lombok.AllArgsConstructor;
 import object.dto.response.InitResponseDto;
-import object.model.Posts;
 import object.model.enums.ModerationStatus;
-import object.repositories.PostsRepository;
 import object.services.PostsService;
 import object.services.UsersService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.awt.*;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -42,12 +42,13 @@ public class ApiGeneralController {
     }
 
     @GetMapping("/settings")
-    public ResponseEntity getSettings(){
+    public ResponseEntity getSettings(HttpServletRequest request){
+         //Map<String, Boolean> settings =
         return null;
     }
 
     @PutMapping("/settings")
-    public ResponseEntity setSettings(){
+    public ResponseEntity setSettings(Map<String, Boolean> global_setting, HttpServletRequest request){
         return null;
     }
 

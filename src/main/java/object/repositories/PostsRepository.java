@@ -65,8 +65,11 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
 
     Integer countByAuthor(Users author);
 
-    Posts findByTimeIsStartingWith();
+    Posts findFirstByTimeAndAuthor(Users u);
 
+    Integer countAllByViewCount();
 
+    Posts findFirstByTime();
 
+    Integer countAllByViewCountByAuthor(Users u);
 }

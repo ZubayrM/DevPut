@@ -1,17 +1,13 @@
 package object.controllers.api;
 
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import object.dto.response.CaptchaDto;
-import object.dto.response.MyStatisticsDto;
 import object.dto.response.ResultDto;
-import object.dto.response.auth.AuthUserResponseDto;
+import object.dto.response.StatisticsDto;
 import object.dto.response.post.CalendarDto;
-import object.model.Users;
 import object.services.CaptchaCodesService;
 import object.services.PostsService;
 import object.services.UsersService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,11 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Map;
 
 @RestController
@@ -101,18 +93,20 @@ public class ApiAuthController {
 
     @GetMapping("/api/statistics/my")
     public ResponseEntity myStatistics(HttpServletRequest request){
-        MyStatisticsDto dto = postsService.myStatistics(request);
+        StatisticsDto dto = postsService.myStatistics(request);
         return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/api/statistics/all")
     public ResponseEntity allStatistics(){
-        return null;
+        StatisticsDto dto = postsService.allStatistic();
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/api/auth/logout")
-    public ResponseEntity logout(){
-        return ResponseEntity.status(HttpStatus.OK).body(true);
+    public ResponseEntity logout(HttpServletRequest request){
+        usersService.logout(request);
+        return ResponseEntity.ok(true);
     }
 
 

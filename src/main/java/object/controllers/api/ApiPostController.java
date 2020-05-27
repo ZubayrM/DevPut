@@ -1,4 +1,5 @@
 package object.controllers.api;
+
 import object.dto.response.ResultDto;
 import object.dto.response.post.ListPostResponseDto;
 import object.dto.response.post.PostAllCommentsAndAllTagsDto;
@@ -15,10 +16,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api")
@@ -138,13 +136,15 @@ public class ApiPostController {
     }
 
     @PostMapping("/post/like")
-    public ResponseEntity like(int postId){
-        return null;
+    public ResponseEntity like(@RequestParam("post_id") Integer postId, HttpServletRequest request){
+        ResultDto dto = postVotesService.like(postId, request);
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/post/dislike")
-    public ResponseEntity dislike(int postId){
-        return null;
+    public ResponseEntity dislike(@RequestParam("post_id") Integer postId, HttpServletRequest request){
+        ResultDto dto = postVotesService.disLike(postId, request);
+        return ResponseEntity.ok(dto);
     }
 
 

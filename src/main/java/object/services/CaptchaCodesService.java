@@ -6,7 +6,6 @@ import object.repositories.CaptchaCodesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
 import java.util.Date;
 import java.util.UUID;
 

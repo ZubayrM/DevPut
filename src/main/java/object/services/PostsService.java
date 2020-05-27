@@ -1,7 +1,7 @@
 package object.services;
 
 import lombok.SneakyThrows;
-import object.dto.response.MyStatisticsDto;
+import object.dto.response.StatisticsDto;
 import object.dto.response.ResultDto;
 import object.dto.response.UserResponseDto;
 import object.dto.response.post.*;
@@ -348,15 +348,24 @@ public class PostsService<T> {
     }
 
 
-    public MyStatisticsDto myStatistics(HttpServletRequest request) {
+    public StatisticsDto myStatistics(HttpServletRequest request) {
         String userEmail = request.getHeader("абра кадабра");
 
         Users u = usersRepository.findByEmail(userEmail).orElse(null);
         Integer postCount = postsRepository.countByAuthor(u);
         Integer likesCount = postVotesRepository.countByUserIdAndValue(u.getId(), 1);
         Integer dislikesCount = postVotesRepository.countByUserIdAndValue(u.getId(), -1);
-        Integer viewsCount = 5;
-        String firstPublication = FIRST_PUBLICATION.format(postsRepository.findByTimeIsStartingWith().getTime());
-        return new MyStatisticsDto(postCount, likesCount, dislikesCount, viewsCount, firstPublication);
+        Integer viewsCount = postsRepository.countAllByViewCountByAuthor(u);
+        String firstPublication = FIRST_PUBLICATION.format(postsRepository.findFirstByTimeAndAuthor(u).getTime());
+        return new StatisticsDto(postCount, likesCount, dislikesCount, viewsCount, firstPublication);
+    }
+
+    public StatisticsDto allStatistic() {
+        Integer postCount = (int) postsRepository.count();
+        Integer likesCount = postVotesRepository.countByValue(1);
+        Integer dislikesCount = postVotesRepository.countByValue(-1);
+        Integer viewsCount = postsRepository.countAllByViewCount();
+        String firstPublication = FIRST_PUBLICATION.format(postsRepository.findFirstByTime().getTime());
+        return new StatisticsDto(postCount, likesCount, dislikesCount, viewsCount, firstPublication);
     }
 }
