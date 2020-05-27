@@ -5,7 +5,7 @@ databaseChangeLog:
       author: Zubayr
       changes:
         - updateTable:
-            tableName: postComments
+            tableName: users
             columns:
               - column:
                   name: id
@@ -15,17 +15,221 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: parentId
+                  name: is_moderator
                   type: int(50)
+                  nulable: false
               - column:
-                  name: postId
-                  type: int(512)
+                  name: reg_time
+                  type: date(50)
+                  nulable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  nulable: false
+              - column:
+                  name: email
+                  type: varchar(255)
+              - column:
+                  name: password
+                  type: varchar(255)
+              - column:
+                  name: code
+                  type: varchar(255)
+
+  - changeSet:
+      id: 2
+      author: Zubayr
+      changes:
+        - updateTable:
+            tableName: posts
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: is_active
+                  type: int(50)
+                  nulable: false
+              - column:
+                  name: moderation_status
+                  type: enum("NEW", "ACCEPTED", "DECLINED")
+                  nulable: false
+              - column:
+                  name: moderation_id
+                  type: int(10)
+                  nulable: false
+              - column:
+                  name: user_id
+                  type: int(10)
               - column:
                   name: time
                   type: date(50)
               - column:
-                  name: userId
-                  type: int(50)
+                  name: title
+                  type: varchar(255)
               - column:
                   name: text
-                  type: varchar(300)
+                  type: varchar(255)
+              - column:
+                  name: view_count
+                  type: varchar(255)
+  - changeSet:
+      id: 3
+      author: Zubayr
+      changes:
+        - updateTable:
+            tableName: post_votes
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: int(10)
+                  nulable: false
+              - column:
+                  name: post_id
+                  type: int(10)
+                  nulable: false
+              - column:
+                  name: time
+                  type: int(10)
+                  nulable: false
+              - column:
+                  name: value
+                  type: int(1)
+                  nulable: false
+  - changeSet:
+      id: 4
+      author: Zubayr
+      changes:
+        - updateTable:
+            tableName: tags
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  nulable: false
+  - changeSet:
+      id: 5
+      author: Zubayr
+      changes:
+        - updateTable:
+            tableName: tags2post
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: post_id
+                  type: int(10)
+                  nulable: false
+              - column:
+                   name: tag_id
+                   type: int(10)
+                   nulable: false
+  - changeSet:
+      id: 6
+      author: Zubayr
+      changes:
+        - updateTable:
+            tableName: post_comments
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: parent_id
+                  type: int(50)
+              - column:
+                  name: post_id
+                  type: int(512)
+                  nullable: false
+              - column:
+                  name: user_id
+                  type: int(50)
+                  nullable: false
+              - column:
+                  name: time
+                  type: date(50)
+                  nullable: false
+              - column:
+                  name: text
+                  type: varchar(255)
+                  nullable: false
+  - changeSet:
+      id: 7
+      author: Zubayr
+      changes:
+        - updateTable:
+            tableName: captcha_codes
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: time
+                  type: date(50)
+                  nullable: false
+              - column:
+                  name: code
+                  type: text(50)
+              - column:
+                  name: secret_code
+                  type: text(50)
+                  nullable: false
+  - changeSet:
+      id: 8
+      author: Zubayr
+      changes:
+        - updateTable:
+            tableName: global_settings
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: code
+                  type: varchar(255)
+                  nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  nullable: false
+              - column:
+                  name: value
+                  type: varchar(255)
+                  nullable: false
+
+

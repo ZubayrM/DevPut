@@ -355,17 +355,23 @@ public class PostsService<T> {
         Integer postCount = postsRepository.countByAuthor(u);
         Integer likesCount = postVotesRepository.countByUserIdAndValue(u.getId(), 1);
         Integer dislikesCount = postVotesRepository.countByUserIdAndValue(u.getId(), -1);
-        Integer viewsCount = postsRepository.countAllByViewCountByAuthor(u);
-        String firstPublication = FIRST_PUBLICATION.format(postsRepository.findFirstByTimeAndAuthor(u).getTime());
+        Integer viewsCount = generateViewsCount(postsRepository.findByAuthor(u));
+        String firstPublication = FIRST_PUBLICATION.format(postsRepository.findFirstByTimeAndAuthor(new Date(),u).getTime());
         return new StatisticsDto(postCount, likesCount, dislikesCount, viewsCount, firstPublication);
+    }
+
+    private Integer generateViewsCount(Optional<List<Posts>> byAuthor) {
+        List<Posts> l = byAuthor.get();
+        //Integer count = l.stream().s
+        return null;
     }
 
     public StatisticsDto allStatistic() {
         Integer postCount = (int) postsRepository.count();
         Integer likesCount = postVotesRepository.countByValue(1);
         Integer dislikesCount = postVotesRepository.countByValue(-1);
-        Integer viewsCount = postsRepository.countAllByViewCount();
-        String firstPublication = FIRST_PUBLICATION.format(postsRepository.findFirstByTime().getTime());
+        Integer viewsCount = postsRepository.countByViewCount(new Date());
+        String firstPublication = FIRST_PUBLICATION.format(postsRepository.findFirstByTime(new Date()).getTime());
         return new StatisticsDto(postCount, likesCount, dislikesCount, viewsCount, firstPublication);
     }
 }
