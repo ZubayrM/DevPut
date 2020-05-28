@@ -1,10 +1,10 @@
 databaseChangeLog:
-  - logicalFilePath: db/changelog/db.changelog-lesson1.yaml
+  - logicalFilePath: db/changelog/db.changelog-master.yaml
   - changeSet:
       id: 1
       author: Zubayr
       changes:
-        - updateTable:
+        - createTable:
             tableName: users
             columns:
               - column:
@@ -40,7 +40,7 @@ databaseChangeLog:
       id: 2
       author: Zubayr
       changes:
-        - updateTable:
+        - createTable:
             tableName: posts
             columns:
               - column:
@@ -81,7 +81,7 @@ databaseChangeLog:
       id: 3
       author: Zubayr
       changes:
-        - updateTable:
+        - createTable:
             tableName: post_votes
             columns:
               - column:
@@ -111,7 +111,7 @@ databaseChangeLog:
       id: 4
       author: Zubayr
       changes:
-        - updateTable:
+        - createTable:
             tableName: tags
             columns:
               - column:
@@ -129,7 +129,7 @@ databaseChangeLog:
       id: 5
       author: Zubayr
       changes:
-        - updateTable:
+        - createTable:
             tableName: tags2post
             columns:
               - column:
@@ -151,7 +151,7 @@ databaseChangeLog:
       id: 6
       author: Zubayr
       changes:
-        - updateTable:
+        - createTable:
             tableName: post_comments
             columns:
               - column:
@@ -184,7 +184,7 @@ databaseChangeLog:
       id: 7
       author: Zubayr
       changes:
-        - updateTable:
+        - createTable:
             tableName: captcha_codes
             columns:
               - column:
@@ -209,7 +209,7 @@ databaseChangeLog:
       id: 8
       author: Zubayr
       changes:
-        - updateTable:
+        - createTable:
             tableName: global_settings
             columns:
               - column:
