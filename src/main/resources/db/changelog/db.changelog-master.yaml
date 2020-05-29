@@ -1,10 +1,10 @@
 databaseChangeLog:
   - logicalFilePath: db/changelog/db.changelog-master.yaml
   - changeSet:
-      id: 1
+      id: 9
       author: Zubayr
       changes:
-        - createTable:
+        - updateTable:
             tableName: users
             columns:
               - column:
@@ -16,31 +16,31 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: is_moderator
-                  type: int(50)
+                  type: int(11)
                   nulable: false
               - column:
                   name: reg_time
-                  type: date(50)
+                  type: DATETIME(6)
                   nulable: false
               - column:
                   name: name
-                  type: varchar(255)
+                  type: varchar(50)
                   nulable: false
               - column:
                   name: email
-                  type: varchar(255)
+                  type: varchar(50)
               - column:
                   name: password
-                  type: varchar(255)
+                  type: varchar(50)
               - column:
                   name: code
-                  type: varchar(255)
+                  type: varchar(50)
 
   - changeSet:
       id: 2
       author: Zubayr
       changes:
-        - createTable:
+        - updateTable:
             tableName: posts
             columns:
               - column:
@@ -81,7 +81,7 @@ databaseChangeLog:
       id: 3
       author: Zubayr
       changes:
-        - createTable:
+        - updateTable:
             tableName: post_votes
             columns:
               - column:
@@ -111,7 +111,7 @@ databaseChangeLog:
       id: 4
       author: Zubayr
       changes:
-        - createTable:
+        - updateTable:
             tableName: tags
             columns:
               - column:
@@ -129,7 +129,7 @@ databaseChangeLog:
       id: 5
       author: Zubayr
       changes:
-        - createTable:
+        - updateTable:
             tableName: tags2post
             columns:
               - column:
@@ -151,7 +151,7 @@ databaseChangeLog:
       id: 6
       author: Zubayr
       changes:
-        - createTable:
+        - updateTable:
             tableName: post_comments
             columns:
               - column:
@@ -184,7 +184,7 @@ databaseChangeLog:
       id: 7
       author: Zubayr
       changes:
-        - createTable:
+        - updateTable:
             tableName: captcha_codes
             columns:
               - column:
@@ -209,7 +209,7 @@ databaseChangeLog:
       id: 8
       author: Zubayr
       changes:
-        - createTable:
+        - updateTable:
             tableName: global_settings
             columns:
               - column:
