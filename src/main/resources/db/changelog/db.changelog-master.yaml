@@ -1,7 +1,7 @@
 databaseChangeLog:
   - logicalFilePath: db/changelog/db.changelog-master.yaml
   - changeSet:
-      id: 9
+      id: 1
       author: Zubayr
       changes:
         - updateTable:
@@ -25,7 +25,7 @@ databaseChangeLog:
               - column:
                   name: name
                   type: varchar(50)
-                  nulable: false
+                  nulable: false2020-05-30 20:06:25
               - column:
                   name: email
                   type: varchar(50)
@@ -231,5 +231,226 @@ databaseChangeLog:
                   name: value
                   type: varchar(255)
                   nullable: false
-
-
+  - changeSet:
+      id: 9
+      author: Zubayr
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  value: "1"
+              - column:
+                  name: is_moderator
+                  value: "1"
+              - column:
+                  name: reg_time
+                  value: "2020-05-30 20:06:25"
+              - column:
+                  name: name
+                  value: "Moderator Name"
+              - column:
+                  name: email
+                  value: "mod@mail.ru"
+              - column:
+                  name: password
+                  value: "111222"
+  - changeSet:
+      id: 10
+      author: Zubayr
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  value: "2"
+              - column:
+                  name: is_moderator
+                  value: "0"
+              - column:
+                  name: reg_time
+                  value: "2019-05-30 20:06:25"
+              - column:
+                  name: name
+                  value: "User Name"
+              - column:
+                  name: email
+                  value: "user@mail.ru"
+              - column:
+                  name: password
+                  value: "111333"
+  - changeSet:
+      id: 11
+      author: Zubayr
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  value: "3"
+              - column:
+                  name: is_moderator
+                  value: "0"
+              - column:
+                  name: reg_time
+                  value: "2020-05-30 20:06:25"
+              - column:
+                  name: name
+                  value: "User2 Name"
+              - column:
+                  name: email
+                  value: "user2@mail.ru"
+              - column:
+                  name: password
+                  value: "111444"
+  - changeSet:
+      id: 12
+      author: Zubayr
+      changes:
+        - insert:
+            tableName: posts
+            columns:
+              - column:
+                  name: id
+                  value: "1"
+              - column:
+                  name: is_active
+                  value: "1"
+              - column:
+                  name: moderation_status
+                  value: "ACCEPTED"
+              - column:
+                  name: moderation_id
+                  value: "1"
+              - column:
+                  name: user_id
+                  value: "3"
+              - column:
+                  name: time
+                  value: "2020-05-30 20:06:25"
+              - column:
+                  name: title
+                  value: "test post test post"
+              - column:
+                  name: text
+                  value: "new post, new post, new post, new post, new post, new post"
+              - column:
+                  name: view_count
+                  value: "0"
+  - changeSet:
+      id: 13
+      author: Zubayr
+      changes:
+        - insert:
+            tableName: posts
+            columns:
+              - column:
+                  name: id
+                  value: "2"
+              - column:
+                  name: is_active
+                  value: "1"
+              - column:
+                  name: moderation_status
+                  value: "NEW"
+              - column:
+                  name: moderation_id
+                  value: null
+              - column:
+                  name: user_id
+                  value: "3"
+              - column:
+                  name: time
+                  value: "2019-05-30 20:06:25"
+              - column:
+                  name: title
+                  value: "new post new post"
+              - column:
+                  name: text
+                  value: "Once upon a time, a very long time ago now, about last Friday, Winnie-the-Pooh lived in a forest all by himself under the name of Sanders."
+              - column:
+                  name: view_count
+                  value: "0"
+  - changeSet:
+      id: 14
+      author: Zubayr
+      changes:
+        - insert:
+            tableName: post_votes
+            columns:
+              - column:
+                  name: id
+                  value: "1"
+              - column:
+                  name: user_id
+                  value: "2"
+              - column:
+                  name: post_id
+                  value: "1"
+              - column:
+                  name: time
+                  value: "2020-05-30 20:06:25"
+              - column:
+                  name: value
+                  value: "1"
+  - changeSet:
+      id: 15
+      author: Zubayr
+      changes:
+        - insert:
+            tableName: tags
+            columns:
+              - column:
+                  name: id
+                  value: "1"
+              - column:
+                  name: name
+                  value: "new"
+  - changeSet:
+      id: 16
+      author: Zubayr
+      changes:
+        - insert:
+            tableName: tags
+            columns:
+              - column:
+                  name: id
+                  value: "2"
+              - column:
+                  name: name
+                  value: "test"
+  - changeSet:
+      id: 17
+      author: Zubayr
+      changes:
+        - insert:
+            tableName: tags2post
+            columns:
+              - column:
+                  name: id
+                  value: "1"
+              - column:
+                  name: post_id
+                  value: "1"
+              - column:
+                  name: tag_id
+                  value: "1"
+  - changeSet:
+      id: 18
+      author: Zubayr
+      changes:
+        - insert:
+            tableName: tags2post
+            columns:
+              - column:
+                  name: id
+                  value: "2"
+              - column:
+                  name: post_id
+                  value: "2"
+              - column:
+                  name: tag_id
+                  value: "2"
