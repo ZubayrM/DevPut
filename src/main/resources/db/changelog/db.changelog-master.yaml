@@ -427,7 +427,7 @@ databaseChangeLog:
       author: Zubayr
       changes:
         - insert:
-            tableName: tags2post
+            tableName: tag2post
             columns:
               - column:
                   name: id
@@ -443,7 +443,7 @@ databaseChangeLog:
       author: Zubayr
       changes:
         - insert:
-            tableName: tags2post
+            tableName: tag2post
             columns:
               - column:
                   name: id
