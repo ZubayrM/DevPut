@@ -67,9 +67,11 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
 
     Posts findFirstByTimeAndAuthor(Date time, Users u);
 
-    Integer countByViewCount(Date time);
+    @Query(value = "SELECT sum(p.view_count) FROM Posts p", nativeQuery = true)
+    Integer countByViewCount();
 
-    Posts findFirstByTime(Date time);
+    @Query(value = "SELECT * FROM Posts p ORDER BY p.time LIMIT 1", nativeQuery = true)
+    Posts findFirstByTime();
 
     Optional<List<Posts>> findByAuthor(Users u);
 }

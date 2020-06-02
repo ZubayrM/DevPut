@@ -367,11 +367,12 @@ public class PostsService<T> {
     }
 
     public StatisticsDto allStatistic() {
-        Integer postCount = (int) postsRepository.count();
+        Integer postCount = postsRepository.getAllPosts().size();
         Integer likesCount = postVotesRepository.countByValue(1);
         Integer dislikesCount = postVotesRepository.countByValue(-1);
-        Integer viewsCount = postsRepository.countByViewCount(new Date());
-        String firstPublication = FIRST_PUBLICATION.format(postsRepository.findFirstByTime(new Date()).getTime());
+        Integer viewsCount = postsRepository.countByViewCount();
+        Posts p = postsRepository.findFirstByTime();
+        String firstPublication = FIRST_PUBLICATION.format(p.getTime());
         return new StatisticsDto(postCount, likesCount, dislikesCount, viewsCount, firstPublication);
     }
 }

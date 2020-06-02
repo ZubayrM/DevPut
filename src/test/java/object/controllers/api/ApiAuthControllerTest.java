@@ -33,4 +33,13 @@ class ApiAuthControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.years[0]", is("2019")));
     }
+
+    @Test
+    @SneakyThrows
+    void allStatistics() {
+        mvc.perform(get("/api/statistics/all"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.liceCount", is(1)));
+    }
 }
