@@ -31,7 +31,7 @@ class ApiAuthControllerTest {
                 .param("year", "2019"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.years[0]", is("2019")));
+                .andExpect(jsonPath("$.years[0]", is("2020")));
     }
 
     @Test

@@ -28,14 +28,15 @@ public class ApiAuthController {
 
 
     @GetMapping("/api/calendar")
-    public ResponseEntity getCalendar(@RequestParam String year ){
+    public ResponseEntity getCalendar(@RequestParam @Nullable String year ){
         CalendarDto dto = postsService.getCalendar(year);
         return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/api/auth/login")
-    public ResponseEntity login(@RequestParam Map<String, Integer> id){
-        System.out.println(id);
+    public ResponseEntity login(@RequestParam String email,
+                                @RequestParam String password){
+        usersService.login(email, password);
         return ResponseEntity.ok(null);
     }
 //    public ResponseEntity login (@RequestParam String email,
