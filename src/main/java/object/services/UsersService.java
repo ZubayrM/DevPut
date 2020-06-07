@@ -9,6 +9,7 @@ import object.dto.response.auth.UserAuthDto;
 import object.dto.response.errors.ErrorsRegisterDto;
 import object.model.CaptchaCodes;
 import object.model.Users;
+import object.model.enums.ModerationStatus;
 import object.repositories.CaptchaCodesRepository;
 import object.repositories.PostsRepository;
 import object.repositories.UsersRepository;
@@ -70,9 +71,12 @@ public class UsersService {
 
     public ResultDto check(HttpServletRequest request) {
         String s = request.getHeader("Cookie");
-        Optional<Users> user = usersRepository.findById(1);
-        if (user.isPresent()) {
-            return new AuthUserResponseDto(generatedUserAuth(user.get())); // пока так
+        if (!s.contains("JSESSIONID")) {
+            Optional<Users> user = usersRepository.findById(1);
+            if (user.isPresent()) {
+                return new AuthUserResponseDto(generatedUserAuth(user.get())); // пока так
+            }
+            return new ResultDto(false);
         } else
             return new ResultDto(false);
     }
@@ -97,7 +101,7 @@ public class UsersService {
                 .photo(user.getPhoto())
                 .email(user.getEmail())
                 .moderation(user.getIsModerator() > 0)
-                .moderationCount(5)///////////////////////////
+                .moderationCount(postsRepository.findByModerationStatus(ModerationStatus.NEW).get().size())///////////////////////////
                 .settings(user.getIsModerator() > 0)
                 .build();
     }

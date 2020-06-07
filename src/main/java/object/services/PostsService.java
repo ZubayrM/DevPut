@@ -198,7 +198,10 @@ public class PostsService<T> {
 
     @SneakyThrows
     public CalendarDto getCalendar(String year) {
-        return generateCalendarDto(postsRepository.getAllPosts(), year);
+        if (year.isEmpty()){
+            return generateCalendarDto(postsRepository.getAllPosts(), year);
+        }
+        else return generateCalendarDto(postsRepository.getAllPosts());
     }
 
 
@@ -347,6 +350,24 @@ public class PostsService<T> {
         return dto;
     }
 
+    private CalendarDto generateCalendarDto(List<Posts> list) {
+        CalendarDto dto = new CalendarDto();
+        for (Posts p : list){
+            String y = YEAR.format(p.getTime()).trim();
+
+            dto.getYears().add(y);
+
+
+            String time = DATE_FORMAT.format(p.getTime());
+            if (dto.getPosts().containsKey(y)){
+                dto.getPosts().put(time,  dto.getPosts().get(y) + 1);
+            } else
+                dto.getPosts().put(time, 1);
+        }
+        return dto;
+    }
+
+
 
     public StatisticsDto myStatistics(HttpServletRequest request) {
         String userEmail = request.getHeader("абра кадабра");
@@ -367,11 +388,12 @@ public class PostsService<T> {
     }
 
     public StatisticsDto allStatistic() {
-        Integer postCount = (int) postsRepository.count();
+        Integer postCount = postsRepository.getAllPosts().size();
         Integer likesCount = postVotesRepository.countByValue(1);
         Integer dislikesCount = postVotesRepository.countByValue(-1);
-        Integer viewsCount = postsRepository.countByViewCount(new Date());
-        String firstPublication = FIRST_PUBLICATION.format(postsRepository.findFirstByTime(new Date()).getTime());
+        Integer viewsCount = postsRepository.countByViewCount();
+        Posts p = postsRepository.findFirstByTime();
+        String firstPublication = FIRST_PUBLICATION.format(p.getTime());
         return new StatisticsDto(postCount, likesCount, dislikesCount, viewsCount, firstPublication);
     }
 }
