@@ -25,7 +25,7 @@ databaseChangeLog:
               - column:
                   name: name
                   type: varchar(50)
-                  nulable: false2020-05-30 20:06:25
+                  nulable: false
               - column:
                   name: email
                   type: varchar(50)
@@ -76,7 +76,7 @@ databaseChangeLog:
                   type: varchar(255)
               - column:
                   name: view_count
-                  type: varchar(255)
+                  type: int(10)
   - changeSet:
       id: 3
       author: Zubayr
@@ -271,13 +271,13 @@ databaseChangeLog:
                   value: "0"
               - column:
                   name: reg_time
-                  value: "2019-05-30 20:06:25"
+                  value: "2020-06-30 20:06:25"
               - column:
                   name: name
-                  value: "User Name"
+                  value: "User1 Name"
               - column:
                   name: email
-                  value: "user@mail.ru"
+                  value: "us@mail.ru"
               - column:
                   name: password
                   value: "111333"
@@ -379,6 +379,143 @@ databaseChangeLog:
       author: Zubayr
       changes:
         - insert:
+            tableName: posts
+            columns:
+              - column:
+                  name: id
+                  value: "3"
+              - column:
+                  name: is_active
+                  value: "1"
+              - column:
+                  name: moderation_status
+                  value: "ACCEPTED"
+              - column:
+                  name: moderation_id
+                  value: "1"
+              - column:
+                  name: user_id
+                  value: "3"
+              - column:
+                  name: time
+                  value: "2019-05-30 20:06:25"
+              - column:
+                  name: title
+                  value: "oracle oracle oracle"
+              - column:
+                  name: text
+                  value: "Oracle Cloud helps National Pharmacies put members first"
+              - column:
+                  name: view_count
+                  value: "0"
+  - changeSet:
+      id: 15
+      author: Zubayr
+      changes:
+        - insert:
+            tableName: posts
+            columns:
+              - column:
+                  name: id
+                  value: "4"
+              - column:
+                  name: is_active
+                  value: "1"
+              - column:
+                  name: moderation_status
+                  value: "ACCEPTED"
+              - column:
+                  name: moderation_id
+                  value: "1"
+              - column:
+                  name: user_id
+                  value: "3"
+              - column:
+                  name: time
+                  value: "2020-05-30 20:06:25"
+              - column:
+                  name: title
+                  value: "google google google"
+              - column:
+                  name: text
+                  value: "Once upon a time, a very long time ago now, about last Friday, Winnie-the-Pooh lived in a forest all by himself under the name of Sanders."
+              - column:
+                  name: view_count
+                  value: "0"
+  - changeSet:
+      id: 16
+      author: Zubayr
+      changes:
+        - insert:
+            tableName: posts
+            columns:
+              - column:
+                  name: id
+                  value: "5"
+              - column:
+                  name: is_active
+                  value: "1"
+              - column:
+                  name: moderation_status
+                  value: "ACCEPTED"
+              - column:
+                  name: moderation_id
+                  value: "1"
+              - column:
+                  name: user_id
+                  value: "3"
+              - column:
+                  name: time
+                  value: "2017-05-30 20:06:25"
+              - column:
+                  name: title
+                  value: "post post post"
+              - column:
+                  name: text
+                  value: "Once upon a time, a very long time ago now, about last Friday, Winnie-the-Pooh lived in a forest all by himself under the name of Sanders."
+              - column:
+                  name: view_count
+                  value: "0"
+  - changeSet:
+      id: 17
+      author: Zubayr
+      changes:
+        - insert:
+            tableName: posts
+            columns:
+              - column:
+                  name: id
+                  value: "6"
+              - column:
+                  name: is_active
+                  value: "1"
+              - column:
+                  name: moderation_status
+                  value: "ACCEPTED"
+              - column:
+                  name: moderation_id
+                  value: "1"
+              - column:
+                  name: user_id
+                  value: "3"
+              - column:
+                  name: time
+                  value: "2019-06-30 20:06:25"
+              - column:
+                  name: title
+                  value: "text text text"
+              - column:
+                  name: text
+                  value: "Once upon a time, a very long time ago now, about last Friday, Winnie-the-Pooh lived in a forest all by himself under the name of Sanders."
+              - column:
+                  name: view_count
+                  value: "0"
+
+  - changeSet:
+      id: 21
+      author: Zubayr
+      changes:
+        - insert:
             tableName: post_votes
             columns:
               - column:
@@ -386,7 +523,7 @@ databaseChangeLog:
                   value: "1"
               - column:
                   name: user_id
-                  value: "2"
+                  value: "1"
               - column:
                   name: post_id
                   value: "1"
@@ -397,7 +534,7 @@ databaseChangeLog:
                   name: value
                   value: "1"
   - changeSet:
-      id: 15
+      id: 22
       author: Zubayr
       changes:
         - insert:
@@ -406,24 +543,37 @@ databaseChangeLog:
               - column:
                   name: id
                   value: "1"
+              - column:
+                  name: name
+                  value: "google"
+  - changeSet:
+      id: 23
+      author: Zubayr
+      changes:
+        - insert:
+            tableName: tags
+            columns:
+              - column:
+                  name: id
+                  value: "2"
+              - column:
+                  name: name
+                  value: "oracle"
+  - changeSet:
+      id: 24
+      author: Zubayr
+      changes:
+        - insert:
+            tableName: tags
+            columns:
+              - column:
+                  name: id
+                  value: "3"
               - column:
                   name: name
                   value: "new"
   - changeSet:
-      id: 16
-      author: Zubayr
-      changes:
-        - insert:
-            tableName: tags
-            columns:
-              - column:
-                  name: id
-                  value: "2"
-              - column:
-                  name: name
-                  value: "test"
-  - changeSet:
-      id: 17
+      id: 25
       author: Zubayr
       changes:
         - insert:
@@ -439,7 +589,7 @@ databaseChangeLog:
                   name: tag_id
                   value: "1"
   - changeSet:
-      id: 18
+      id: 26
       author: Zubayr
       changes:
         - insert:
@@ -454,3 +604,67 @@ databaseChangeLog:
               - column:
                   name: tag_id
                   value: "2"
+  - changeSet:
+      id: 27
+      author: Zubayr
+      changes:
+        - insert:
+            tableName: tags2post
+            columns:
+              - column:
+                  name: id
+                  value: "3"
+              - column:
+                  name: post_id
+                  value: "2"
+              - column:
+                  name: tag_id
+                  value: "3"
+  - changeSet:
+      id: 28
+      author: Zubayr
+      changes:
+        - insert:
+            tableName: tags2post
+            columns:
+              - column:
+                  name: id
+                  value: "4"
+              - column:
+                  name: post_id
+                  value: "3"
+              - column:
+                  name: tag_id
+                  value: "4"
+  - changeSet:
+      id: 29
+      author: Zubayr
+      changes:
+        - insert:
+            tableName: tags2post
+            columns:
+              - column:
+                  name: id
+                  value: "5"
+              - column:
+                  name: post_id
+                  value: "3"
+              - column:
+                  name: tag_id
+                  value: "5"
+  - changeSet:
+      id: 30
+      author: Zubayr
+      changes:
+        - insert:
+            tableName: tags2post
+            columns:
+              - column:
+                  name: id
+                  value: "6"
+              - column:
+                  name: post_id
+                  value: "3"
+              - column:
+                  name: tag_id
+                  value: "6"
