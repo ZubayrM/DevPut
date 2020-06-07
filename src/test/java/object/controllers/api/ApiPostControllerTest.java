@@ -18,8 +18,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Sql(value = {"/delete.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = {"/insert.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+//@Sql(value = {"/delete.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+//@Sql(value = {"/insert.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 //@Sql(value = {"/delete.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @AutoConfigureMockMvc
 @RunWith(SpringRunner.class)
@@ -49,7 +49,7 @@ class ApiPostControllerTest {
                 .param("query", "NEW"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.posts[0].id",is(2)));
+                .andExpect(jsonPath("$.posts[0].id",is(1)));
     }
 
     @Test
@@ -78,7 +78,7 @@ class ApiPostControllerTest {
         mvc.perform(get("/api/post/byTag")
                 .param("offset", "0")
                 .param("limit", "10")
-                .param("tag", "testTag"))
+                .param("tag", "google"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
