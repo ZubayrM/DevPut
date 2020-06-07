@@ -271,13 +271,13 @@ databaseChangeLog:
                   value: "0"
               - column:
                   name: reg_time
-                  value: "2020-06-30 20:06:25"
+                  value: "2020-05-30 20:06:25"
               - column:
                   name: name
                   value: "User1 Name"
               - column:
                   name: email
-                  value: "us@mail.ru"
+                  value: "user1@mail.ru"
               - column:
                   name: password
                   value: "111333"
@@ -600,7 +600,7 @@ databaseChangeLog:
                   value: "2"
               - column:
                   name: post_id
-                  value: "2"
+                  value: "1"
               - column:
                   name: tag_id
                   value: "2"
@@ -609,7 +609,7 @@ databaseChangeLog:
       author: Zubayr
       changes:
         - insert:
-            tableName: tags2post
+            tableName: tag2post
             columns:
               - column:
                   name: id
@@ -619,13 +619,13 @@ databaseChangeLog:
                   value: "2"
               - column:
                   name: tag_id
-                  value: "3"
+                  value: "2"
   - changeSet:
       id: 28
       author: Zubayr
       changes:
         - insert:
-            tableName: tags2post
+            tableName: tag2post
             columns:
               - column:
                   name: id
@@ -635,13 +635,13 @@ databaseChangeLog:
                   value: "3"
               - column:
                   name: tag_id
-                  value: "4"
+                  value: "1"
   - changeSet:
       id: 29
       author: Zubayr
       changes:
         - insert:
-            tableName: tags2post
+            tableName: tag2post
             columns:
               - column:
                   name: id
@@ -651,13 +651,13 @@ databaseChangeLog:
                   value: "3"
               - column:
                   name: tag_id
-                  value: "5"
+                  value: "2"
   - changeSet:
       id: 30
       author: Zubayr
       changes:
         - insert:
-            tableName: tags2post
+            tableName: tag2post
             columns:
               - column:
                   name: id
@@ -667,4 +667,4 @@ databaseChangeLog:
                   value: "3"
               - column:
                   name: tag_id
-                  value: "6"
+                  value: "3"
