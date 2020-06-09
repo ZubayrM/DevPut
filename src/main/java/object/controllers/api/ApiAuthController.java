@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -36,14 +35,9 @@ public class ApiAuthController {
     @PostMapping("/api/auth/login")
     public ResponseEntity login(@RequestParam String email,
                                 @RequestParam String password){
-        usersService.login(email, password);
-        return ResponseEntity.ok(null);
+        ResultDto dto = usersService.login(email, password);
+        return ResponseEntity.ok(dto);
     }
-//    public ResponseEntity login (@RequestParam String email,
-//                                 @RequestParam String password){
-//        ResultDto dto = usersService.login(email, password);
-//        return ResponseEntity.ok(dto);
-//    }
 
     @GetMapping("/api/auth/check")
     public ResponseEntity check(HttpServletRequest request){

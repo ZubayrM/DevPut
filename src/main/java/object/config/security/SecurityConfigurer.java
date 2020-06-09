@@ -62,6 +62,6 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                     .antMatchers("/","/**").permitAll()
                     .and()
                 .formLogin()
-                    .loginPage("/login").permitAll();
+                    .loginPage("/api/auth/login").permitAll();
     }
 }
