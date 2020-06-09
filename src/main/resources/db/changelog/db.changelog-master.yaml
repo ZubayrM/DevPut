@@ -370,7 +370,7 @@ databaseChangeLog:
                   value: "new post new post"
               - column:
                   name: text
-                  value: "Once upon a time, a very long time ago now, about last Friday, Winnie-the-Pooh lived in a forest all by himself under the name of Sanders."
+                  value: "Пост который не должны увидеть"
               - column:
                   name: view_count
                   value: "0"
@@ -616,7 +616,7 @@ databaseChangeLog:
                   value: "3"
               - column:
                   name: post_id
-                  value: "2"
+                  value: "3"
               - column:
                   name: tag_id
                   value: "2"
@@ -632,10 +632,10 @@ databaseChangeLog:
                   value: "4"
               - column:
                   name: post_id
-                  value: "3"
+                  value: "1"
               - column:
                   name: tag_id
-                  value: "1"
+                  value: "3"
   - changeSet:
       id: 29
       author: Zubayr
@@ -648,10 +648,10 @@ databaseChangeLog:
                   value: "5"
               - column:
                   name: post_id
-                  value: "3"
+                  value: "2"
               - column:
                   name: tag_id
-                  value: "2"
+                  value: "3"
   - changeSet:
       id: 30
       author: Zubayr
@@ -665,6 +665,22 @@ databaseChangeLog:
               - column:
                   name: post_id
                   value: "3"
+              - column:
+                  name: tag_id
+                  value: "3"
+  - changeSet:
+      id: 31
+      author: Zubayr
+      changes:
+        - insert:
+            tableName: tag2post
+            columns:
+              - column:
+                  name: id
+                  value: "7"
+              - column:
+                  name: post_id
+                  value: "4"
               - column:
                   name: tag_id
                   value: "3"
