@@ -33,7 +33,7 @@ public class ApiAuthController {
     }
 
     @PostMapping("/api/auth/login")
-    public ResponseEntity login(@RequestParam String email,
+    public ResponseEntity login(@RequestParam("e_mail") String email,
                                 @RequestParam String password){
         ResultDto dto = usersService.login(email, password);
         return ResponseEntity.ok(dto);
