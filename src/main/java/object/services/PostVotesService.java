@@ -11,9 +11,13 @@ import object.repositories.PostVotesRepository;
 import object.repositories.PostsRepository;
 import object.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.stereotype.Service;
 
+
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Base64;
 import java.util.Optional;
 
 @Service
@@ -53,7 +57,12 @@ public class PostVotesService {
 
     private ResultDto getResultVotes(Integer postId, HttpServletRequest request, Integer value) {
         Optional<Posts> post = postsRepository.findById(postId);
-        String userEmail = request.getHeader("авада кедавра");
+        Cookie[] cookies = request.getCookies();
+        String userEmail = null;
+        for (Cookie c: cookies) {
+            userEmail = Base64.getDecoder().decode(c.getName()).toString();
+        }
+
         Optional<Users> user = usersRepository.findByEmail(userEmail);
         if (post.isPresent() && user.isPresent()){
             Optional<PostVotes> postVotes = postVotesRepository.findByPostAndUserId(post.get(), user.get().getId());

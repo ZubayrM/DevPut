@@ -1,5 +1,6 @@
 package object.controllers.api;
 
+import object.dto.request.VotesDto;
 import object.dto.response.ResultDto;
 import object.dto.response.post.ListPostResponseDto;
 import object.dto.response.post.PostAllCommentsAndAllTagsDto;
@@ -136,14 +137,14 @@ public class ApiPostController {
     }
 
     @PostMapping("/post/like")
-    public ResponseEntity like(@RequestParam("post_id") Integer postId, HttpServletRequest request){
-        ResultDto dto = postVotesService.like(postId, request);
+    public ResponseEntity like(@RequestBody VotesDto votesDto, HttpServletRequest request){
+        ResultDto dto = postVotesService.like(votesDto.getPost_id(), request);
         return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/post/dislike")
-    public ResponseEntity dislike(@RequestParam("post_id") Integer postId, HttpServletRequest request){
-        ResultDto dto = postVotesService.disLike(postId, request);
+    public ResponseEntity dislike(@RequestBody VotesDto votesDto, HttpServletRequest request){
+        ResultDto dto = postVotesService.disLike(votesDto.getPost_id(), request);
         return ResponseEntity.ok(dto);
     }
 

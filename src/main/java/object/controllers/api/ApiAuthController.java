@@ -1,6 +1,7 @@
 package object.controllers.api;
 
 import lombok.AllArgsConstructor;
+import object.dto.request.LoginDto;
 import object.dto.response.CaptchaDto;
 import object.dto.response.ResultDto;
 import object.dto.response.StatisticsDto;
@@ -10,12 +11,11 @@ import object.services.PostsService;
 import object.services.UsersService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @AllArgsConstructor
@@ -33,9 +33,8 @@ public class ApiAuthController {
     }
 
     @PostMapping("/api/auth/login")
-    public ResponseEntity login(@RequestParam("e_mail") String email,
-                                @RequestParam String password){
-        ResultDto dto = usersService.login(email, password);
+    public ResponseEntity login(@RequestBody LoginDto loginDto){
+        ResultDto dto = usersService.login(loginDto.getE_mail(), loginDto.getPassword());
         return ResponseEntity.ok(dto);
     }
 
