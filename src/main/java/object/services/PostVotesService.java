@@ -1,5 +1,6 @@
 package object.services;
 
+import object.config.security.MyUserDetails;
 import object.dto.response.ResultDto;
 import object.dto.response.post.PostAllCommentsAndAllTagsDto;
 import object.dto.response.post.ListPostResponseDto;
@@ -12,6 +13,8 @@ import object.repositories.PostsRepository;
 import object.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.server.Session;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 
@@ -57,11 +60,10 @@ public class PostVotesService {
 
     private ResultDto getResultVotes(Integer postId, HttpServletRequest request, Integer value) {
         Optional<Posts> post = postsRepository.findById(postId);
-        Cookie[] cookies = request.getCookies();
-        String userEmail = null;
-        for (Cookie c: cookies) {
-            userEmail = Base64.getDecoder().decode(c.getName()).toString();
-        }
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userEmail = ((UserDetails) principal).getUsername();
+
 
         Optional<Users> user = usersRepository.findByEmail(userEmail);
         if (post.isPresent() && user.isPresent()){

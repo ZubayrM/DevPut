@@ -14,6 +14,8 @@ import object.repositories.CaptchaCodesRepository;
 import object.repositories.PostsRepository;
 import object.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -70,9 +72,11 @@ public class UsersService {
 
 
     public ResultDto check(HttpServletRequest request) {
-        String s = request.getHeader("Cookie");
-        if (!s.contains("JSESSIONID")) {
-            Optional<Users> user = usersRepository.findById(1);
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails){
+            String userEmail = ((UserDetails) principal).getUsername();
+
+            Optional<Users> user = usersRepository.findByEmail(userEmail);
             if (user.isPresent()) {
                 return new AuthUserResponseDto(generatedUserAuth(user.get())); // пока так
             }
