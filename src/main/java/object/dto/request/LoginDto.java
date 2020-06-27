@@ -1,10 +1,13 @@
 package object.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
+import javax.persistence.JoinColumn;
 
 @Data
 @NoArgsConstructor
@@ -12,7 +15,8 @@ import javax.persistence.Column;
 public class LoginDto {
 
 
-    private String e_mail;
+    @JsonProperty("e_mail")
+    private String eMail;
 
     private String password;
 }

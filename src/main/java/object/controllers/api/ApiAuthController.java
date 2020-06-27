@@ -1,6 +1,7 @@
 package object.controllers.api;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import object.dto.request.LoginDto;
 import object.dto.response.CaptchaDto;
 import object.dto.response.ResultDto;
@@ -11,15 +12,17 @@ import object.services.PostsService;
 import object.services.UsersService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
+@Log4j2
 public class ApiAuthController {
 
     private PostsService postsService;
@@ -34,8 +37,14 @@ public class ApiAuthController {
     }
 
     @PostMapping("/api/auth/login")
-    public ResponseEntity login(@RequestBody LoginDto loginDto){
-        ResultDto dto = usersService.login(loginDto.getE_mail(), loginDto.getPassword());
+    public ResponseEntity login(@RequestBody LoginDto loginDto,HttpServletResponse response, Model model){
+        //response.addHeader("Authentication", loginDto.getEMail());
+
+        Map<String, String> map = new HashMap<>();
+        map.put("Authentication", loginDto.getEMail());
+        model.addAllAttributes(new HashMap<>(map));
+
+        ResultDto dto = usersService.login(loginDto.getEMail(), loginDto.getPassword());
         return ResponseEntity.ok(dto);
     }
 

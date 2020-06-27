@@ -1,9 +1,9 @@
 package object.services;
 
-import object.config.security.MyUserDetails;
+import lombok.extern.log4j.Log4j2;
 import object.dto.response.ResultDto;
-import object.dto.response.post.PostAllCommentsAndAllTagsDto;
 import object.dto.response.post.ListPostResponseDto;
+import object.dto.response.post.PostAllCommentsAndAllTagsDto;
 import object.dto.response.post.PostLDCVDto;
 import object.model.PostVotes;
 import object.model.Posts;
@@ -12,18 +12,13 @@ import object.repositories.PostVotesRepository;
 import object.repositories.PostsRepository;
 import object.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.server.Session;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Base64;
 import java.util.Optional;
 
 @Service
+@Log4j2
 public class PostVotesService {
     @Autowired
     private PostVotesRepository postVotesRepository;
@@ -59,10 +54,18 @@ public class PostVotesService {
     }
 
     private ResultDto getResultVotes(Integer postId, HttpServletRequest request, Integer value) {
+
+        log.info(request.getHeader("Authentication") + "----------------- ");
+
         Optional<Posts> post = postsRepository.findById(postId);
 
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userEmail = ((UserDetails) principal).getUsername();
+//        String authentication = request.getHeader("authentication");
+//
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        String userEmail = ((UserDetails) principal).getUsername();
+
+
+        String userEmail = null;
 
 
         Optional<Users> user = usersRepository.findByEmail(userEmail);

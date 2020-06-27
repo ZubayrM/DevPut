@@ -26,7 +26,8 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.asList(new SimpleGrantedAuthority("1"));
+        if (isModeration > 0)  return Arrays.asList(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        else return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override

@@ -1,11 +1,13 @@
 package object.services;
 
 import lombok.SneakyThrows;
-import object.dto.response.errors.ErrorsAuthDto;
-import object.dto.response.errors.ErrorsMessageDto;
+import lombok.extern.log4j.Log4j2;
+import object.config.security.MyUserDetails;
 import object.dto.response.ResultDto;
 import object.dto.response.auth.AuthUserResponseDto;
 import object.dto.response.auth.UserAuthDto;
+import object.dto.response.errors.ErrorsAuthDto;
+import object.dto.response.errors.ErrorsMessageDto;
 import object.dto.response.errors.ErrorsRegisterDto;
 import object.model.CaptchaCodes;
 import object.model.Users;
@@ -14,6 +16,9 @@ import object.repositories.CaptchaCodesRepository;
 import object.repositories.PostsRepository;
 import object.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -30,8 +35,11 @@ import java.util.UUID;
 
 
 @Service
+@Log4j2
 public class UsersService {
 
+    @Autowired
+    AuthenticationManager authenticationManager;
 
     private final String PATH_TO_IMAGE = "upload/";
 
@@ -57,11 +65,15 @@ public class UsersService {
 
 
     public ResultDto login(String email, String password) {
-
         Optional<Users> user = usersRepository.findByEmail(email);
 
         if (user.isPresent()){
             if (user.get().getPassword().equals(password)) {
+
+                UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(email, password);
+                Authentication authentication = authenticationManager.authenticate(authRequest);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
                 return new AuthUserResponseDto(generatedUserAuth(user.get()));
             } else
                 return new ResultDto(false);
@@ -72,16 +84,19 @@ public class UsersService {
 
 
     public ResultDto check(HttpServletRequest request) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof UserDetails){
-            String userEmail = ((UserDetails) principal).getUsername();
+//        String s = request.getHeader("Authentication");
+//        log.info(s + "------------------------------------------------------------");
+//        UserDetails o =(UserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
+//        log.info( o.getUsername()+ "-------------555-------------");
 
-            Optional<Users> user = usersRepository.findByEmail(userEmail);
-            if (user.isPresent()) {
-                return new AuthUserResponseDto(generatedUserAuth(user.get())); // пока так
-            }
-            return new ResultDto(false);
-        } else
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        if (principal instanceof UserDetails){
+//            String userEmail = ((MyUserDetails) principal).getEmail();
+//            log.info(userEmail + "мои молитвы услышанны");
+//            Optional<Users> user = usersRepository.findByEmail(userEmail);
+            if (getUser()!= null) {
+                return new AuthUserResponseDto(generatedUserAuth(getUser())); // пока так
+            } else
             return new ResultDto(false);
     }
 
@@ -221,4 +236,15 @@ public class UsersService {
 //        }
 //        return result;
 //    }
+
+    public Users getUser(){
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            String userEmail = ((MyUserDetails) principal).getEmail();
+            log.info(userEmail + " мои молитвы услышанны");
+            Optional<Users> user = usersRepository.findByEmail(userEmail);
+            return user.orElse(null);
+        }
+        else return null;
+    }
 }

@@ -4,6 +4,7 @@ import object.model.Users;
 import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
 import object.model.Posts;
+import object.services.MailSenderService;
 import org.apache.coyote.Response;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -74,4 +75,7 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
     Posts findFirstByTime();
 
     Optional<List<Posts>> findByAuthor(Users u);
+
+//    @Query(value = "SELECT p FROM Posts p WHERE  p.isActive = :active and p.moderationStatus = :status")
+//    Optional<List<Posts>> getMyPosts( Integer active, ModerationStatus status, Pageable pageable);
 }

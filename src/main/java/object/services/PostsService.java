@@ -1,15 +1,16 @@
 package object.services;
 
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import object.dto.response.StatisticsDto;
 import object.dto.response.ResultDto;
+import object.dto.response.StatisticsDto;
 import object.dto.response.UserResponseDto;
 import object.dto.response.post.*;
+import object.dto.response.resultPost.ErrorPostDto;
+import object.dto.response.resultPost.ParamError;
 import object.dto.response.resultPostComment.ErrorCommentDto;
 import object.dto.response.resultPostComment.OkCommentDto;
 import object.dto.response.resultPostComment.ResultPostCommentDto;
-import object.dto.response.resultPost.ErrorPostDto;
-import object.dto.response.resultPost.ParamError;
 import object.model.PostComments;
 import object.model.Posts;
 import object.model.Tags;
@@ -17,7 +18,6 @@ import object.model.Users;
 import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
 import object.repositories.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -28,22 +28,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class PostsService<T> {
 
-    @Autowired
     private PostCommentsRepository postCommentsRepository;
-
-    @Autowired
     private PostsRepository postsRepository;
-
-    @Autowired
     private TagsRepository tagsRepository;
-
-    @Autowired
     private UsersRepository usersRepository;
-
-    @Autowired
     private PostVotesRepository postVotesRepository;
+    private UsersService usersService;
 
 
     private static final SimpleDateFormat TIME_NEW_POST = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -123,9 +116,15 @@ public class PostsService<T> {
             default: //published
                 active = 1; moderationStatus = ModerationStatus.ACCEPTED;
         }
-        Optional<List<Posts>> postsList = postsRepository
-                .findAllMyPosts(active, moderationStatus, PageRequest.of(offset, limit, Sort.by(Sort.Direction.DESC, "time")));
-        return postsList.map(this::createListPostResponseDto).get();
+
+        Users user = usersService.getUser();
+
+//        Optional<List<Posts>> postsList = postsRepository
+//                .getMyPosts( active, moderationStatus, PageRequest.of(offset,limit));
+        List<Posts> allPosts = postsRepository.getAllPosts();
+        List<Posts> postsList = allPosts.stream().filter(o-> o.getIsActive() == active).filter(o ->  o.getModerationStatus() == moderationStatus).collect(Collectors.toList());
+        return createListPostDto(postsList);
+//        return postsList.map(this::createListPostResponseDto).get();
 
     }
 
