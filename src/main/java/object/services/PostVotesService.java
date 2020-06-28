@@ -1,5 +1,6 @@
 package object.services;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import object.dto.response.ResultDto;
 import object.dto.response.post.ListPostResponseDto;
@@ -11,23 +12,24 @@ import object.model.Users;
 import object.repositories.PostVotesRepository;
 import object.repositories.PostsRepository;
 import object.repositories.UsersRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.awt.print.Pageable;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @Log4j2
+@AllArgsConstructor
 public class PostVotesService {
-    @Autowired
+
     private PostVotesRepository postVotesRepository;
-
-    @Autowired
     private PostsRepository postsRepository;
-
-    @Autowired
     private UsersRepository usersRepository;
+    private UsersService usersService;
 
     public ListPostResponseDto getCountVotes(ListPostResponseDto<PostLDCVDto> dto) {
         dto.getPosts().stream().forEach(responseDto -> {
@@ -55,38 +57,35 @@ public class PostVotesService {
 
     private ResultDto getResultVotes(Integer postId, HttpServletRequest request, Integer value) {
 
-        log.info(request.getHeader("Authentication") + "----------------- ");
-
         Optional<Posts> post = postsRepository.findById(postId);
 
-//        String authentication = request.getHeader("authentication");
-//
-//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        String userEmail = ((UserDetails) principal).getUsername();
+        Users user = usersService.getUser();
 
+        if (post.isPresent()) {
+            Optional<List<PostVotes>> listPostVotes = postVotesRepository.getByPostIdAndUserId(post.get(), user.getId());
+            if (!listPostVotes.isPresent()) {
+                return createPostVotes(value, post.get(), user);
+            } else {
+                PostVotes postVotes = listPostVotes.get().get(0);
+                if (!postVotes.getValue().equals(0) && !postVotes.getValue().equals(value)) return new ResultDto(false);
+                else if (postVotes.getValue().equals(value)) postVotes.setValue(0);
+                else postVotes.setValue(value);
 
-        String userEmail = null;
-
-
-        Optional<Users> user = usersRepository.findByEmail(userEmail);
-        if (post.isPresent() && user.isPresent()){
-            Optional<PostVotes> postVotes = postVotesRepository.findByPostAndUserId(post.get(), user.get().getId());
-            if (!postVotes.isPresent()){
-                PostVotes pVotes = new PostVotes();
-                pVotes.setPost(post.get());
-                pVotes.setUserId(user.get().getId());
-                pVotes.setValue(value);
-                postVotesRepository.save(pVotes);
+                postVotesRepository.save(postVotes);
                 return new ResultDto(true);
-            } else if (!postVotes.get().getValue().equals(0) && !postVotes.get().getValue().equals(value)) return new ResultDto(false);
-            else if (postVotes.get().getValue().equals(value)){
-                postVotes.get().setValue(0);
             }
-            else postVotes.get().setValue(value);
-            postVotesRepository.save(postVotes.get());
-            return new ResultDto(false);
         }
         return new ResultDto(false);
+    }
+
+    private ResultDto createPostVotes(Integer value, Posts post, Users user) {
+        PostVotes pVotes = new PostVotes();
+        pVotes.setPost(post);
+        pVotes.setUserId(user.getId());
+        pVotes.setTime(new Date());
+        pVotes.setValue(value);
+        postVotesRepository.save(pVotes);
+        return new ResultDto(true);
     }
 
 

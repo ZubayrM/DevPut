@@ -1,15 +1,30 @@
 package object.controllers.api;
 
 import lombok.SneakyThrows;
+import object.services.UsersService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.web.servlet.SecurityMarker;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+
+import javax.servlet.http.HttpSessionAttributeListener;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -28,6 +43,26 @@ class ApiPostControllerTest {
 
     @Autowired
     private MockMvc mvc;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private UsersService usersService;
+
+
+
+
+    @BeforeEach
+    void setUp() {
+
+        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken("user1@mail.ru", "111333");
+        Authentication authentication = authenticationManager.authenticate(authRequest);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+
+
+    }
 
     @Test
     @SneakyThrows
@@ -100,7 +135,7 @@ class ApiPostControllerTest {
         mvc.perform(get("/api/post/my")
                 .param("offset", "0")
                 .param("limit", "10")
-                .param("status", "published"))
+                .param("status", "published").principal(SecurityContextHolder.getContext().getAuthentication()))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

@@ -463,7 +463,7 @@ databaseChangeLog:
                   value: "1"
               - column:
                   name: user_id
-                  value: "3"
+                  value: "2"
               - column:
                   name: time
                   value: "2017-05-30 20:06:25"
@@ -497,7 +497,7 @@ databaseChangeLog:
                   value: "1"
               - column:
                   name: user_id
-                  value: "3"
+                  value: "2"
               - column:
                   name: time
                   value: "2019-06-30 20:06:25"

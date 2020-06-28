@@ -122,7 +122,11 @@ public class PostsService<T> {
 //        Optional<List<Posts>> postsList = postsRepository
 //                .getMyPosts( active, moderationStatus, PageRequest.of(offset,limit));
         List<Posts> allPosts = postsRepository.getAllPosts();
-        List<Posts> postsList = allPosts.stream().filter(o-> o.getIsActive() == active).filter(o ->  o.getModerationStatus() == moderationStatus).collect(Collectors.toList());
+        List<Posts> postsList = allPosts.stream()
+                .filter(o -> o.getAuthor().getId().compareTo(user.getId()) == 0)
+                .filter(o -> o.getIsActive().compareTo(active) == 0)
+                .filter(o -> o.getModerationStatus().compareTo(moderationStatus) == 0)
+                .collect(Collectors.toList());
         return createListPostDto(postsList);
 //        return postsList.map(this::createListPostResponseDto).get();
 
