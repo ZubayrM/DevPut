@@ -200,7 +200,7 @@ databaseChangeLog:
                   nullable: false
               - column:
                   name: code
-                  type: text(50)
+                  type: text(1000)
               - column:
                   name: secret_code
                   type: text(50)

@@ -32,7 +32,8 @@ public class ApiGeneralController {
     //временная версия - пока не могу проверить
     @PostMapping("/image")
     public ResponseEntity addImage(Image image){
-        return  ResponseEntity.ok(userService.addImage(image));
+        String imagePath = userService.addImage(image);
+        return  ResponseEntity.ok(imagePath);
     }
 
     @PostMapping("/moderation")

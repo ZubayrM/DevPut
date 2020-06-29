@@ -1,4 +1,4 @@
-package object.dto.request;
+package object.dto.request.post;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

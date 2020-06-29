@@ -224,8 +224,10 @@ public class UsersService {
         return  new ResultDto(true);
     }
 
+    @SneakyThrows
     public void logout(HttpServletRequest request) {
-        String userEmail = request.getHeader("абра кадабра");
+        request.logout();
+        request.getSession(false);
     }
 
 

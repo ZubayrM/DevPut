@@ -1,9 +1,9 @@
-package object.dto.request;
+package object.dto.request.post;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-//пока не использу
+
 @Data
 @NoArgsConstructor
 public class NewPostDto {
@@ -16,5 +16,5 @@ public class NewPostDto {
 
     private String text;
 
-    private String tags;
+    private String[] tags;
 }

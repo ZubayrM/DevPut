@@ -11,10 +11,7 @@ import object.dto.response.resultPost.ParamError;
 import object.dto.response.resultPostComment.ErrorCommentDto;
 import object.dto.response.resultPostComment.OkCommentDto;
 import object.dto.response.resultPostComment.ResultPostCommentDto;
-import object.model.PostComments;
-import object.model.Posts;
-import object.model.Tags;
-import object.model.Users;
+import object.model.*;
 import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
 import object.repositories.*;
@@ -23,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,9 +35,10 @@ public class PostsService<T> {
     private UsersRepository usersRepository;
     private PostVotesRepository postVotesRepository;
     private UsersService usersService;
+    private Tag2PostRepository tag2PostRepository;
 
 
-    private static final SimpleDateFormat TIME_NEW_POST = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    private static final SimpleDateFormat TIME_NEW_POST = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm");
     private static final SimpleDateFormat FIRST_PUBLICATION = new SimpleDateFormat("yyyy-MM-dd hh:mm");
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat YEAR = new SimpleDateFormat("yyyy");
@@ -132,11 +131,12 @@ public class PostsService<T> {
 
     }
 
+
     @SneakyThrows
-    public ResultDto addPost(String time, Integer active, String title, String text, Map tags) {
+    public ResultDto addPost(String time, Integer active, String title, String text, String[] tags) {
         Posts post = new Posts();
-        post.setAuthor(usersRepository.findById(1).get()); // временно
-        post.setTime(TIME_NEW_POST.parse(time));
+        post.setAuthor(usersService.getUser());
+        post.setTime(validDate(TIME_NEW_POST.parse(time)));
         post.setIsActive(active);
         post.setTitle(title);
         post.setText(text);
@@ -144,8 +144,36 @@ public class PostsService<T> {
         post.setModerationStatus(ModerationStatus.NEW);
         post.setViewCount(0);
         Posts result = postsRepository.save(post);
-        if (result != null) return new ResultDto(true);
+
+        if (result != null) {
+            saveTag(tags);
+            saveTag2Post(tags, result);
+            return new ResultDto(true);
+        }
         else return new ErrorPostDto();
+    }
+
+    private void saveTag2Post(String[] tags, Posts posts) {
+        for (String tag: tags) {
+            Tag2Post t2p = new Tag2Post();
+            t2p.setTagId(tagsRepository.findByName(tag).get().getId());
+            t2p.setPostId(posts.getId());
+            tag2PostRepository.save(t2p);
+        }
+    }
+
+    private void saveTag(String[] tags) {
+        for (String tag: tags) {
+            Tags t = new Tags();
+            t.setName(tag);
+            tagsRepository.save(t);
+        }
+    }
+
+    private Date validDate(Date date) {
+        Date today = new Date();
+        if (date.after(today)) return date;
+        else return today;
     }
 
     @SneakyThrows

@@ -1,6 +1,7 @@
 package object.controllers.api;
 
-import object.dto.request.VotesDto;
+import object.dto.request.post.NewPostDto;
+import object.dto.request.post.VotesDto;
 import object.dto.response.ResultDto;
 import object.dto.response.post.ListPostResponseDto;
 import object.dto.response.post.PostAllCommentsAndAllTagsDto;
@@ -17,7 +18,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
+import java.text.ParseException;
 
 @RestController
 @RequestMapping("/api")
@@ -92,13 +93,8 @@ public class ApiPostController {
 
     //NO
     @PostMapping("/post")
-    public ResponseEntity addPost(@RequestParam Integer active,
-                                  @RequestParam Map<Integer, String> tags,
-                                  @RequestParam String text,
-                                  @RequestParam String time,
-                                  @RequestParam String title,
-                                  HttpServletRequest request){
-        ResultDto dto = postsService.addPost(time, active, title, text, tags);
+    public ResponseEntity addPost(@RequestBody NewPostDto request){
+        ResultDto dto = postsService.addPost(request.getTime(), request.getActive(), request.getTitle(), request.getText(), request.getTags());
         return ResponseEntity.ok(dto);
     }
 
