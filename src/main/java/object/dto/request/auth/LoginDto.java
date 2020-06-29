@@ -1,4 +1,4 @@
-package object.dto.request;
+package object.dto.request.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;

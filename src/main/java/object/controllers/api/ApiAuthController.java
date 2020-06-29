@@ -2,7 +2,8 @@ package object.controllers.api;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import object.dto.request.LoginDto;
+import object.dto.request.auth.LoginDto;
+import object.dto.request.auth.RegisterDto;
 import object.dto.response.CaptchaDto;
 import object.dto.response.ResultDto;
 import object.dto.response.StatisticsDto;
@@ -17,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -70,12 +69,8 @@ public class ApiAuthController {
     }
 
     @PostMapping("/api/auth/register")
-    public ResponseEntity register(@RequestParam("e_mail") String email,
-                                   @RequestParam String name,
-                                   @RequestParam String password,
-                                   @RequestParam String captcha,
-                                   @RequestParam("captcha_secret") String captchaSecret){
-        ResultDto dto = usersService.register(email,name,password,captcha,captchaSecret);
+    public ResponseEntity register(@RequestBody RegisterDto request){
+        ResultDto dto = usersService.register(request.getEMail(), request.getPassword(), request.getCaptcha(), request.getCaptchaSecret());
         return ResponseEntity.ok(dto);
     }
 

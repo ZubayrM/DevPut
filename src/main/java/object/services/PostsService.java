@@ -63,7 +63,7 @@ public class PostsService<T> {
 
     public PostAllCommentsAndAllTagsDto getPostAllCommentsAndAllTagsDto(Integer id) {
         Posts post = postsRepository.findById(id).get();
-        return createPostAllCommentsAndAllTagsDto(post);
+        return createPostAllCommentsAndAllTagsDto(new PostAllCommentsAndAllTagsDto(), post);
     }
 
 
@@ -210,59 +210,72 @@ public class PostsService<T> {
 
     ////////////////////////// private methods //////////////////////////////////////////////////
 
-    private PostDto createPostDto(Posts post) {
-        PostDto dto = new PostDto();
-        dto.setId(post.getId());
-        dto.setTime(createTime(post.getTime()));
-        dto.setUser(new UserResponseDto(post.getAuthor().getId(), post.getAuthor().getName()));
-        dto.setTitle(post.getTitle());
-        dto.setAnnounce(post.getText().substring(0, 15));
+//    private PostDto createPostDto(Posts post) {
+//        PostDto dto = new PostDto();
+//        dto.setId(post.getId());
+//        dto.setTime(createTime(post.getTime()));
+//        dto.setUser(new UserResponseDto(post.getAuthor().getId(), post.getAuthor().getName()));
+//        dto.setTitle(post.getTitle());
+//        dto.setAnnounce(post.getText().substring(0, 15));
+//        return dto;
+//    }
+
+    private<T extends PostDto> T createPostDto(T dto, Posts p){
+        dto.setId(p.getId());
+        dto.setTime(createTime(p.getTime()));
+        dto.setUser(new UserResponseDto(p.getAuthor().getId(), p.getAuthor().getName()));
+        dto.setTitle(p.getTitle());
+        dto.setAnnounce(p.getText().substring(0, 15));
         return dto;
     }
 
     private ListPostResponseDto<PostDto> createListPostDto(List<Posts> posts) {
         List<PostDto> postsList = new ArrayList<>();
         for (Posts post: posts) {
-            postsList.add(createPostDto(post));
+            postsList.add(createPostDto(new PostDto(), post));
         }
         return new ListPostResponseDto<>(postsRepository.getAllPosts().size(), postsList);
     }
 
-    private PostLDCVDto createPostLDCVDto(Posts post){
-        PostLDCVDto dto = new PostLDCVDto();
-        dto.setId(post.getId());
-        dto.setTime(createTime(post.getTime()));
-        dto.setUser(new UserResponseDto(post.getAuthor().getId(), post.getAuthor().getName()));
-        dto.setTitle(post.getTitle());
-        dto.setAnnounce(post.getText().substring(0, 15));
-        dto.setViewCount(post.getViewCount());
-        dto.setLikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() > 0).count());
-        dto.setDislikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() < 0).count());
-        dto.setCommentCount(post.getPostCommentsList().size());
+    private<T extends PostLDCVDto> T createPostLDCVDto(T dto, Posts post){
+//        PostLDCVDto dto = new PostLDCVDto();
+//        dto.setId(post.getId());
+//        dto.setTime(createTime(post.getTime()));
+//        dto.setUser(new UserResponseDto(post.getAuthor().getId(), post.getAuthor().getName()));
+//        dto.setTitle(post.getTitle());
+//        dto.setAnnounce(post.getText().substring(0, 15));
+        T newDto = createPostDto(dto, post);
+
+        newDto.setViewCount(post.getViewCount());
+        newDto.setLikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() > 0).count());
+        newDto.setDislikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() < 0).count());
+        newDto.setCommentCount(post.getPostCommentsList().size());
         return dto;
     }
 
-    private PostAllCommentsAndAllTagsDto createPostAllCommentsAndAllTagsDto(Posts post){
-        PostAllCommentsAndAllTagsDto dto = new PostAllCommentsAndAllTagsDto();
-        dto.setId(post.getId());
-        dto.setTime(createTime(post.getTime()));
-        dto.setUser(new UserResponseDto(post.getAuthor().getId(), post.getAuthor().getName()));
-        dto.setTitle(post.getTitle());
-        dto.setAnnounce(post.getText().substring(0, 15));
-        dto.setViewCount(post.getViewCount());
-        dto.setLikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() > 0).count());
-        dto.setDislikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() < 0).count());
-        dto.setCommentCount(post.getPostCommentsList().size());
-        dto.setComments(post.getPostCommentsList());
-        dto.setTags(post.getTagList().stream().map(Tags::getName).collect(Collectors.toList()));
-        return dto;
+    private <T extends PostAllCommentsAndAllTagsDto> T createPostAllCommentsAndAllTagsDto(T dto, Posts post){
+//        PostAllCommentsAndAllTagsDto dto = new PostAllCommentsAndAllTagsDto();
+//        dto.setId(post.getId());
+//        dto.setTime(createTime(post.getTime()));
+//        dto.setUser(new UserResponseDto(post.getAuthor().getId(), post.getAuthor().getName()));
+//        dto.setTitle(post.getTitle());
+//        dto.setAnnounce(post.getText().substring(0, 15));
+//        dto.setViewCount(post.getViewCount());
+//        dto.setLikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() > 0).count());
+//        dto.setDislikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() < 0).count());
+//        dto.setCommentCount(post.getPostCommentsList().size());
+        T newDto = createPostLDCVDto(dto, post);
+
+        newDto.setComments(post.getPostCommentsList());
+        newDto.setTags(post.getTagList().stream().map(Tags::getName).collect(Collectors.toList()));
+        return newDto;
     }
 
     private ListPostResponseDto<PostLDCVDto> createListPostResponseDto (List<Posts> posts){
 
         List<PostLDCVDto> listResponseDto = new ArrayList<>();
         for (Posts post : posts){
-            listResponseDto.add(createPostLDCVDto(post));
+            listResponseDto.add(createPostLDCVDto(new PostLDCVDto(),post));
         }
         return new ListPostResponseDto<>(postsRepository.getAllPosts().size(), listResponseDto);
     }

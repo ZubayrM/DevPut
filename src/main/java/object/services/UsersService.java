@@ -157,31 +157,34 @@ public class UsersService {
 
     }
 
-    public ResultDto register(String email, String name, String password, String captcha, String captchaSecret) {
+    public ResultDto register(String email, String password, String captcha, String captchaSecret) {
         Optional<Users> user = usersRepository.findByEmail(email);
 
         if (!user.isPresent()){
-            if (name.split(" ").length == 2){
+           // if (name.split(" ").length == 2){
                 if (password.length() > 6){
                     CaptchaCodes byCode = captchaCodesRepository.findByCode(captcha);
-                    if (byCode.getSecretCode().equals(captchaSecret)){
-                        return generatedNewUser(name, email, password);
-                    } else
-                        return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, null, null, "Код с картинки введён неверно",null),false);
+                  //  if (byCode.getSecretCode().equals(captchaSecret)){
+
+                        return generatedNewUser(email, password);
+
+//                    } else
+//                        return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, null, null, "Код с картинки введён неверно",null),false);
                 } else
                     return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, null,  "Пароль короче 6-ти символов", null,null),false);
-            } else
-                return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, "Имя указано неверно", null, null,null),false);
+//            } else
+//                return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, "Имя указано неверно", null, null,null),false);
         } else
             return new ErrorsMessageDto<>(new ErrorsRegisterDto( "Этот e-mail уже зарегистрирован", null, null, null,null),false);
     }
 
-    private ResultDto generatedNewUser(String name, String email, String password) {
+    private ResultDto generatedNewUser( String email, String password) {
         Users user = new Users();
-        user.setName(name);
+        user.setName("user lol");
         user.setEmail(email);
         user.setPassword(password);
         user.setRegTime(new Date());
+        user.setIsModerator(0);
         usersRepository.save(user);
         return new ResultDto(true);
     }
