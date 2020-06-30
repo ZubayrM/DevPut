@@ -163,8 +163,8 @@ public class UsersService {
         if (!user.isPresent()){
            // if (name.split(" ").length == 2){
                 if (password.length() >= 6){
-                    CaptchaCodes byCode = captchaCodesRepository.findByCode(captcha);
-                    if (byCode.getSecretCode().equals(captchaSecret)){
+                    //CaptchaCodes byCode = captchaCodesRepository.findByCode(captcha);
+                    if (captcha.equals(captchaSecret)){
 
                         return generatedNewUser(email, password);
 
