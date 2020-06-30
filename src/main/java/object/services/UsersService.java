@@ -162,14 +162,14 @@ public class UsersService {
 
         if (!user.isPresent()){
            // if (name.split(" ").length == 2){
-                if (password.length() > 6){
+                if (password.length() >= 6){
                     CaptchaCodes byCode = captchaCodesRepository.findByCode(captcha);
-                  //  if (byCode.getSecretCode().equals(captchaSecret)){
+                    if (byCode.getSecretCode().equals(captchaSecret)){
 
                         return generatedNewUser(email, password);
 
-//                    } else
-//                        return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, null, null, "Код с картинки введён неверно",null),false);
+                    } else
+                        return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, null, null, "Код с картинки введён неверно",null),false);
                 } else
                     return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, null,  "Пароль короче 6-ти символов", null,null),false);
 //            } else
