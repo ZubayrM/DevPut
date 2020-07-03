@@ -91,7 +91,7 @@ public class ApiPostController {
         return ResponseEntity.ok(dto);
     }
 
-    //NO
+
     @PostMapping("/post")
     public ResponseEntity addPost(@RequestBody NewPostDto request){
         ResultDto dto = postsService.addPost(request.getTime(), request.getActive(), request.getTitle(), request.getText(), request.getTags());
@@ -107,13 +107,9 @@ public class ApiPostController {
 
     //NO
     @PutMapping("/post/{id}")
-    public ResponseEntity update(@RequestParam String time,
-                                 @RequestParam Integer active,
-                                 @RequestParam String title,
-                                 @RequestParam String text,
-                                 @RequestParam String tags,
+    public ResponseEntity update(@RequestBody NewPostDto request,
                                  @PathVariable Integer id){
-        ResultDto dto = postsService.update(time, active, title, text, tags, id);
+        ResultDto dto = postsService.update(request.getTime(), request.getActive(), request.getTitle(), request.getText(), request.getTags(), id);
         return ResponseEntity.ok(dto);
     }
 

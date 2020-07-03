@@ -2,6 +2,7 @@ package object.model;
 
 
 import lombok.Data;
+import lombok.With;
 import object.model.enums.ModerationStatus;
 
 import javax.persistence.*;
@@ -12,7 +13,7 @@ import java.util.*;
 public class Posts {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     @Column(name = "is_active", nullable = false)

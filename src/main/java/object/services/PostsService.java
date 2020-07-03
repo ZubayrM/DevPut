@@ -140,7 +140,8 @@ public class PostsService<T> {
         post.setIsActive(active);
         post.setTitle(title);
         post.setText(text);
-        post.setTagList(generateTagList("tags"));
+        //post.setTagList(saveTag(tags));
+        saveTag(tags);
         post.setModerationStatus(ModerationStatus.NEW);
         post.setViewCount(0);
         Posts result = postsRepository.save(post);
@@ -162,12 +163,24 @@ public class PostsService<T> {
         }
     }
 
-    private void saveTag(String[] tags) {
+
+    private Tags saveTag(String tag) {
+        Optional<Tags> t = tagsRepository.findByName(tag);
+        if (t.isPresent()) return t.get();
+        Tags newTag = new Tags();
+        newTag.setName(tag);
+        return tagsRepository.save(newTag);
+    }
+
+
+    private Set<Tags> saveTag(String[] tags) {
+        Set<Tags> tagsSet = new HashSet<>();
+        Tags newTag = null;
         for (String tag: tags) {
-            Tags t = new Tags();
-            t.setName(tag);
-            tagsRepository.save(t);
+            newTag = saveTag(tag);
+            tagsSet.add(newTag);
         }
+        return tagsSet;
     }
 
     private Date validDate(Date date) {
@@ -177,14 +190,17 @@ public class PostsService<T> {
     }
 
     @SneakyThrows
-    public ResultDto update(String time, Integer active, String title, String text, String tags, Integer id) {
+    public ResultDto update(String time, Integer active, String title, String text, String[] tags, Integer id) {
         if (title.length() > 15 && text.length() > 15 ) {
             Posts post = postsRepository.findById(id).get();
             post.setTime(TIME_NEW_POST.parse(time));
             post.setIsActive(active);
             post.setTitle(title);
             post.setText(text);
-            post.setTagList(generateTagList(tags));
+
+            for (String tag: tags)
+            post.setTagList(generateTagList(tag));
+
             postsRepository.save(post);
             return new ResultDto(true);
         } else {
@@ -361,6 +377,7 @@ public class PostsService<T> {
         return Integer.valueOf(format.format(time));
     }
 
+    @Deprecated
     private Set<Tags> generateTagList(String tags) {
         Set<Tags> tagsSet = new HashSet<>();
         String[] result = tags.split(", ");

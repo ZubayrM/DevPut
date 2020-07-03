@@ -9,12 +9,11 @@ import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.event.PaintEvent;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.DataBufferByte;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.net.URL;
+import java.io.IOException;
 import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
@@ -30,28 +29,13 @@ public class CaptchaCodesService {
 
         String code = UUID.randomUUID().toString().substring(0, 4);
 
-        BufferedImage image = getBufferedImage(code);
+        BufferedImage image = createBufferedImage(code);
 
+        CaptchaCodes captcha = createCaptcha(code, image);
 
-        File file = new File("D:\\Диплом\\DevPut\\src\\main\\resources/static/img/photo.png");
-        ImageIO.write(image, "png", file);
+        File file = saveImage(captcha);
 
-        int index = file.getAbsolutePath().indexOf("img");
-        String url = file.getAbsolutePath().substring(index-1);
-
-
-
-//        byte[] bytes = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-
-//        String imgBase64 = Base64.getEncoder().encodeToString(bytes);
-
-
-//        CaptchaCodes captchaCodes = new CaptchaCodes();
-//        captchaCodes.setTime(new Date());
-//        captchaCodes.setCode(imgBase64);
-//        captchaCodes.setSecretCode(code);
-
-        //CaptchaCodes captcha = captchaCodesRepository.save(captchaCodes);
+        String url = createPathToImage(file);
 
         return CaptchaDto.builder()
                 .image(url)
@@ -59,7 +43,42 @@ public class CaptchaCodesService {
                 .build();
     }
 
-    private BufferedImage getBufferedImage(String code) {
+    private String createPathToImage(File file) {
+        int index = file.getAbsolutePath().indexOf("img");
+        return file.getAbsolutePath().substring(index-1);
+    }
+
+    private File saveImage(CaptchaCodes captcha) throws IOException {
+        File file = new File("D:\\Диплом\\DevPut\\src\\main\\resources/static/img/photo.png");
+        byte[] img = Base64.getDecoder().decode(captcha.getCode());
+        BufferedImage bi =  ImageIO.read(new ByteArrayInputStream(img));
+        ImageIO.write(bi, "png", file);
+
+        return file;
+    }
+
+    @SneakyThrows
+    private CaptchaCodes createCaptcha(String code, BufferedImage image) {
+
+        String imgBase64 = getImgBase64(image);
+
+        CaptchaCodes captchaCodes = new CaptchaCodes();
+        captchaCodes.setTime(new Date());
+        captchaCodes.setCode(imgBase64);
+        captchaCodes.setSecretCode(code);
+        return captchaCodesRepository.save(captchaCodes);
+    }
+
+    private String getImgBase64(BufferedImage image) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", byteArrayOutputStream);
+        byteArrayOutputStream.flush();
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        byteArrayOutputStream.close();
+        return Base64.getEncoder().encodeToString(bytes);
+    }
+
+    private BufferedImage createBufferedImage(String code) {
         BufferedImage image = new BufferedImage(100, 40, BufferedImage.TYPE_3BYTE_BGR);
         Graphics2D graphics2D = (Graphics2D) image.getGraphics();
 
