@@ -27,14 +27,16 @@ public class CaptchaCodesService {
     public CaptchaDto captcha() {
 
         String code = UUID.randomUUID().toString().substring(0, 4);
+        String secretCode = UUID.randomUUID().toString().substring(0, 4);
 
-        BufferedImage image = createBufferedImage(code);
+        BufferedImage image = createBufferedImage(secretCode);
 
         String path = saveImage(image);
         log.info(path);
 
         Thread.sleep(1000);
-        CaptchaCodes captcha = createCaptcha(code, path);
+        CaptchaCodes captcha = createCaptcha(code, secretCode);
+        captchaCodesRepository.save(captcha);
 
 
         return CaptchaDto.builder()
@@ -50,10 +52,10 @@ public class CaptchaCodesService {
 
 
     private String saveImage(BufferedImage img) throws IOException {
-        String path = UUID.randomUUID().toString();
+       // String path = UUID.randomUUID().toString();
         File dir = new File("D:\\Диплом\\DevPut\\src\\main\\resources/static/img/captcha/");
         dir.mkdir();
-        File file = new File("D:\\Диплом\\DevPut\\src\\main\\resources/static/img/captcha/" + path  +".png");
+        File file = new File(dir.getAbsolutePath() + "/captcha.png");
         ImageIO.write(img, "png", file);
         return getPathToImage(file);
     }
@@ -81,11 +83,11 @@ public class CaptchaCodesService {
 //        return captchaCodesRepository.save(captchaCodes);
 //    }
 
-    private CaptchaCodes createCaptcha(String code, String file) {
+    private CaptchaCodes createCaptcha(String code, String secretCode) {
         CaptchaCodes captchaCodes = new CaptchaCodes();
         captchaCodes.setTime(new Date());
-        captchaCodes.setCode(file);
-        captchaCodes.setSecretCode(code);
+        captchaCodes.setCode(code);
+        captchaCodes.setSecretCode(secretCode);
         return captchaCodesRepository.save(captchaCodes);
     }
 

@@ -163,12 +163,13 @@ public class UsersService {
         if (!user.isPresent()){
            // if (name.split(" ").length == 2){
                 if (password.length() >= 6){
-                    //CaptchaCodes byCode = captchaCodesRepository.findByCode(captcha);
-                    if (captcha.equals(captchaSecret)){
-
+                    CaptchaCodes byCode = captchaCodesRepository.findByCode(captchaSecret);
+                    if (byCode != null){
+                    if (byCode.getSecretCode().equals(captcha)){
                         return generatedNewUser(email, password);
-
                     } else
+                        return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, null, null, "Код с картинки введён неверно",null),false);
+                    }else
                         return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, null, null, "Код с картинки введён неверно",null),false);
                 } else
                     return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, null,  "Пароль короче 6-ти символов", null,null),false);
@@ -180,7 +181,8 @@ public class UsersService {
 
     private ResultDto generatedNewUser( String email, String password) {
         Users user = new Users();
-        user.setName("user lol");
+        int index = email.indexOf("@");
+        user.setName(email.substring(0,index));
         user.setEmail(email);
         user.setPassword(password);
         user.setRegTime(new Date());
