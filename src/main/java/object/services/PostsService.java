@@ -2,6 +2,7 @@ package object.services;
 
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 import object.dto.response.ResultDto;
 import object.dto.response.StatisticsDto;
 import object.dto.response.UserResponseDto;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Log4j2
 public class PostsService<T> {
 
     private PostCommentsRepository postCommentsRepository;
@@ -62,6 +64,7 @@ public class PostsService<T> {
 
     public PostAllCommentsAndAllTagsDto getPostAllCommentsAndAllTagsDto(Integer id) {
         Posts post = postsRepository.findById(id).get();
+        log.info(post.toString() + " получен");
         return createPostAllCommentsAndAllTagsDto(new PostAllCommentsAndAllTagsDto(), post);
     }
 
@@ -294,6 +297,10 @@ public class PostsService<T> {
         newDto.setLikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() > 0).count());
         newDto.setDislikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() < 0).count());
         newDto.setCommentCount(post.getPostCommentsList().size());
+        log.info("\n view count " + newDto.getViewCount() +
+                "\n like count " + newDto.getLikeCount() +
+                "\n dislike count " + newDto.getDislikeCount() +
+                "\n comment count " + newDto.getCommentCount());
         return dto;
     }
 
@@ -310,8 +317,13 @@ public class PostsService<T> {
 //        dto.setCommentCount(post.getPostCommentsList().size());
         T newDto = createPostLDCVDto(dto, post);
 
-        newDto.setComments(post.getPostCommentsList());
-        newDto.setTags(post.getTagList().stream().map(Tags::getName).collect(Collectors.toList()));
+        List<PostComments> postCommentsList = post.getPostCommentsList();
+        newDto.setComments(postCommentsList == null ? new ArrayList<PostComments>() : postCommentsList);
+
+        List<String> tagsList = (post.getTagList().stream().map(Tags::getName).collect(Collectors.toList()));
+        newDto.setTags(tagsList == null ? new ArrayList<String>() : tagsList);
+
+        log.info("\ncomments:" + newDto.getComments().size() + ", \t tags: " + newDto.getTags().size());
         return newDto;
     }
 

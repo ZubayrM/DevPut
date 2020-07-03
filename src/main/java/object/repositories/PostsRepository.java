@@ -1,16 +1,11 @@
 package object.repositories;
 
-import object.model.Users;
-import object.model.enums.Mode;
-import object.model.enums.ModerationStatus;
 import object.model.Posts;
-import object.services.MailSenderService;
-import org.apache.coyote.Response;
-import org.springframework.data.domain.PageRequest;
+import object.model.Users;
+import object.model.enums.ModerationStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -30,6 +25,9 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
 
     @Query(value = "FROM Posts WHERE year(time) = :year and month(time) = :month and day(time) = :day")
     List<Posts> findByDate(Integer year, Integer month, Integer day, Pageable pageable);
+
+    @Query(value = "FROM Posts WHERE id = :id")
+    Optional<Posts> findById(Integer id);
 
     ///////////////////////////////////////проблема//////////////////////////////////////////////////////
 //    @Query(value = "FROM Posts p " +
