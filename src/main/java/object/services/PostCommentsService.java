@@ -3,7 +3,7 @@ package object.services;
 import lombok.AllArgsConstructor;
 import object.dto.response.post.ListPostResponseDto;
 import object.dto.response.post.PostAllCommentsAndAllTagsDto;
-import object.dto.response.post.PostLDCVDto;
+import object.dto.response.post.PostFullDto;
 import object.repositories.PostCommentsRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ public class PostCommentsService {
 
     private PostCommentsRepository postCommentsRepository;
 
-    public ListPostResponseDto getCountComment(ListPostResponseDto<PostLDCVDto> dto){
+    public ListPostResponseDto getCountComment(ListPostResponseDto<PostFullDto> dto){
         dto.getPosts().forEach(post-> {
             post.setCommentCount(postCommentsRepository.countByPostId(post.getId()));
         });

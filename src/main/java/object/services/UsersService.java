@@ -4,6 +4,7 @@ import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import object.config.security.MyUserDetails;
 import object.dto.response.ResultDto;
+import object.dto.response.UserResponseDto;
 import object.dto.response.auth.AuthUserResponseDto;
 import object.dto.response.auth.UserAuthDto;
 import object.dto.response.errors.ErrorsAuthDto;
@@ -30,7 +31,6 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.util.Date;
 import java.util.Optional;
-import java.util.Random;
 import java.util.UUID;
 
 
@@ -126,17 +126,15 @@ public class UsersService {
     }
 
     private String generatePathImage() {
-        Random r = new Random();
-        char[] c = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
-        int length = c.length;
-        String result = PATH_TO_IMAGE;
-        for (int i = 0; i < 4; i++) {
-            if (i == 3)
-                result += "/";
-            else
-                result += c[r.nextInt(length)];
-        }
-        return result + "/img.png";
+        String dir1 = getRandomPath();
+        String dir2 = getRandomPath();
+        String dir3 = getRandomPath();
+        String image = UUID.randomUUID().toString().substring(0,3).concat("/");
+        return "/img/unload" + dir1 + dir2 + dir3 + image + ".png";
+    }
+
+    private String getRandomPath() {
+        return UUID.randomUUID().toString().substring(0,2).concat("/");
     }
 
     public ResultDto password(String code, String password, String captcha, String captchaSecret) {
@@ -253,5 +251,10 @@ public class UsersService {
             return user.orElse(null);
         }
         else return null;
+    }
+
+    public UserResponseDto getUserDto(){
+        Users s = getUser();
+        return new UserResponseDto(s.getId(), s.getName());
     }
 }

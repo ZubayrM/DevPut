@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class MyPostDto extends PostLDCVDto {
+public class PostMinimalDto {
     private Integer id;
 
     private String time;

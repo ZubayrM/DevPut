@@ -1,5 +1,6 @@
 package object.repositories;
 
+import object.dto.response.UserResponseDto;
 import object.model.Posts;
 import object.model.Users;
 import object.model.enums.ModerationStatus;
@@ -55,9 +56,11 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
     @Query(value = "FROM Posts WHERE isActive = :active and moderationStatus = :status")
     Optional<List<Posts>> findAllMyPosts(Integer active, ModerationStatus status, Pageable pageable);
 
-    //todo ПО ДРУГОМУ ПОКА НЕ ПОЛУЧАЕТСЯ...  SELECT COUNT(Posts)- не работает
     @Query(value = "FROM Posts WHERE isActive = 1 and moderationStatus = 'ACCEPTED' and time <= current_date")
     List<Posts> getAllPosts();
+
+    @Query(value = "FROM Posts WHERE isActive = :active and moderationStatus = :moderationStatus and author = :user and time <= current_date")
+    List<Posts> getAllPosts(Integer active, ModerationStatus moderationStatus, Users user, Pageable pageable);
 
     @Query(value = "SELECT p FROM Posts p WHERE p.isActive = 1 and p.moderationStatus = 'ACCEPTED'  and  year(p.time) = year(:year) and p.time <= current_date", nativeQuery = true)
     Set<Posts> getYears(Date year);

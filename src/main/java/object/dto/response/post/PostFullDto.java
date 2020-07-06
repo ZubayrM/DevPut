@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostLDCVDto extends PostDto {
+public class PostFullDto extends PostAndAuthorDto {
 
     private Integer likeCount;
 

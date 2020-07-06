@@ -99,11 +99,7 @@ public class ApiPostController {
     }
 
 
-//    @PostMapping("/post")
-//    public ResponseEntity addPost(@RequestBody NewPostDto newPostDto){
-//        //ResultPostDto dto = postsService.addPost(newPostDto);
-//        return ResponseEntity.ok(null);
-//    }
+
 
     //NO
     @PutMapping("/post/{id}")

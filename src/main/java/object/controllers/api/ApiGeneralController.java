@@ -28,8 +28,6 @@ public class ApiGeneralController {
         return ResponseEntity.ok(initResponseDto);
     }
 
-    //todo ДОЛГИЙ ЯЩИК
-    //временная версия - пока не могу проверить
     @PostMapping("/image")
     public ResponseEntity addImage(Image image){
         String imagePath = userService.addImage(image);

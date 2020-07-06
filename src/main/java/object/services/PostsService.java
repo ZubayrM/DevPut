@@ -21,7 +21,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -47,7 +46,7 @@ public class PostsService<T> {
     private static final SimpleDateFormat MONTH = new SimpleDateFormat("MM");
     private static final SimpleDateFormat DAY = new SimpleDateFormat("dd");
 
-    public ListPostResponseDto<PostLDCVDto> getListPostResponseDtoByMode(Integer offset, Integer limit, Mode mode){
+    public ListPostResponseDto<PostFullDto> getListPostResponseDtoByMode(Integer offset, Integer limit, Mode mode){
         return createListPostResponseDto(getPostsByMode(offset,limit,mode));
     }
 
@@ -56,7 +55,6 @@ public class PostsService<T> {
                 query,
                 PageRequest.of(offset, limit, Sort.by(Sort.Direction.DESC, "time"))
         );
-
         return optionalPostsList
                 .map(this::createListPostResponseDto)
                 .orElseGet(() -> createListPostResponseDto(getPostsByMode(offset, limit, Mode.EARLY)));
@@ -64,12 +62,11 @@ public class PostsService<T> {
 
     public PostAllCommentsAndAllTagsDto getPostAllCommentsAndAllTagsDto(Integer id) {
         Posts post = postsRepository.findById(id).get();
-        log.info(post.toString() + " получен");
         return createPostAllCommentsAndAllTagsDto(new PostAllCommentsAndAllTagsDto(), post);
     }
 
 
-    public ListPostResponseDto<PostLDCVDto> getListPostResponseDtoByDate(Integer offset, Integer limit, String date) {
+    public ListPostResponseDto<PostFullDto> getListPostResponseDtoByDate(Integer offset, Integer limit, String date) {
         return createListPostResponseDto(postsRepository.findByDate(
                 getTime(YEAR, date),
                 getTime(MONTH, date),
@@ -89,13 +86,9 @@ public class PostsService<T> {
                 .stream()
                 .filter(o-> o.getTagList().contains(tagsRepository.findByName(tag).get()))
                 .collect(Collectors.toList()));
-//        return createListPostResponseDto(optionalTags.get().stream().filter(posts -> posts.getTagList().forEach(tags -> tags.getName().equals(tag))).collect(Collectors.toList()));//не пошло(
-//        return optionalTags
-//                .map(this::createListPostResponseDto)
-//                .orElseGet(() -> createListPostResponseDto(getPostsByMode(offset, limit, Mode.EARLY)));
     }
 
-    public ListPostResponseDto<PostDto> getPostDtoModeration(Integer offset, Integer limit, ModerationStatus status) {
+    public ListPostResponseDto<PostAndAuthorDto> getPostDtoModeration(Integer offset, Integer limit, ModerationStatus status) {
         Optional<List<Posts>> listPostModeration = postsRepository
                 .findByModerationStatus(
                         status,
@@ -121,16 +114,15 @@ public class PostsService<T> {
 
         Users user = usersService.getUser();
 
-//        Optional<List<Posts>> postsList = postsRepository
-//                .getMyPosts( active, moderationStatus, PageRequest.of(offset,limit));
-        List<Posts> allPosts = postsRepository.getAllPosts();
-        List<Posts> postsList = allPosts.stream()
-                .filter(o -> o.getAuthor().getId().compareTo(user.getId()) == 0)
-                .filter(o -> o.getIsActive().compareTo(active) == 0)
-                .filter(o -> o.getModerationStatus().compareTo(moderationStatus) == 0)
-                .collect(Collectors.toList());
-        return createListPostDto(postsList);
-//        return postsList.map(this::createListPostResponseDto).get();
+//        List<Posts> allPosts = postsRepository.getAllPosts();
+//        List<Posts> postsList = allPosts.stream()
+//                .filter(o -> o.getAuthor().getId().compareTo(user.getId()) == 0)
+//                .filter(o -> o.getIsActive().compareTo(active) == 0)
+//                .filter(o -> o.getModerationStatus().compareTo(moderationStatus) == 0)
+//                .collect(Collectors.toList());
+        List<Posts> allPosts = postsRepository.getAllPosts(active, moderationStatus, user, PageRequest.of(offset, limit));
+
+        return createListPostDto(allPosts);
 
     }
 
@@ -143,7 +135,6 @@ public class PostsService<T> {
         post.setIsActive(active);
         post.setTitle(title);
         post.setText(text);
-        //post.setTagList(saveTag(tags));
         saveTag(tags);
         post.setModerationStatus(ModerationStatus.NEW);
         post.setViewCount(0);
@@ -255,19 +246,8 @@ public class PostsService<T> {
     }
 
 
-    ////////////////////////// private methods //////////////////////////////////////////////////
 
-//    private PostDto createPostDto(Posts post) {
-//        PostDto dto = new PostDto();
-//        dto.setId(post.getId());
-//        dto.setTime(createTime(post.getTime()));
-//        dto.setUser(new UserResponseDto(post.getAuthor().getId(), post.getAuthor().getName()));
-//        dto.setTitle(post.getTitle());
-//        dto.setAnnounce(post.getText().substring(0, 15));
-//        return dto;
-//    }
-
-    private<T extends PostDto> T createPostDto(T dto, Posts p){
+    private<T extends PostAndAuthorDto> T createPostDto(T dto, Posts p){
         dto.setId(p.getId());
         dto.setTime(createTime(p.getTime()));
         dto.setUser(new UserResponseDto(p.getAuthor().getId(), p.getAuthor().getName()));
@@ -276,62 +256,40 @@ public class PostsService<T> {
         return dto;
     }
 
-    private ListPostResponseDto<PostDto> createListPostDto(List<Posts> posts) {
-        List<PostDto> postsList = new ArrayList<>();
+    private ListPostResponseDto<PostAndAuthorDto> createListPostDto(List<Posts> posts) {
+        List<PostAndAuthorDto> postsList = new ArrayList<>();
         for (Posts post: posts) {
-            postsList.add(createPostDto(new PostDto(), post));
+            postsList.add(createPostDto(new PostAndAuthorDto(), post));
         }
         return new ListPostResponseDto<>(postsRepository.getAllPosts().size(), postsList);
     }
 
-    private<T extends PostLDCVDto> T createPostLDCVDto(T dto, Posts post){
-//        PostLDCVDto dto = new PostLDCVDto();
-//        dto.setId(post.getId());
-//        dto.setTime(createTime(post.getTime()));
-//        dto.setUser(new UserResponseDto(post.getAuthor().getId(), post.getAuthor().getName()));
-//        dto.setTitle(post.getTitle());
-//        dto.setAnnounce(post.getText().substring(0, 15));
+    private<T extends PostFullDto> T createPostFullDto(T dto, Posts post){
         T newDto = createPostDto(dto, post);
 
         newDto.setViewCount(post.getViewCount());
         newDto.setLikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() > 0).count());
         newDto.setDislikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() < 0).count());
         newDto.setCommentCount(post.getPostCommentsList().size());
-        log.info("\n view count " + newDto.getViewCount() +
-                "\n like count " + newDto.getLikeCount() +
-                "\n dislike count " + newDto.getDislikeCount() +
-                "\n comment count " + newDto.getCommentCount());
         return dto;
     }
 
     private <T extends PostAllCommentsAndAllTagsDto> T createPostAllCommentsAndAllTagsDto(T dto, Posts post){
-//        PostAllCommentsAndAllTagsDto dto = new PostAllCommentsAndAllTagsDto();
-//        dto.setId(post.getId());
-//        dto.setTime(createTime(post.getTime()));
-//        dto.setUser(new UserResponseDto(post.getAuthor().getId(), post.getAuthor().getName()));
-//        dto.setTitle(post.getTitle());
-//        dto.setAnnounce(post.getText().substring(0, 15));
-//        dto.setViewCount(post.getViewCount());
-//        dto.setLikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() > 0).count());
-//        dto.setDislikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() < 0).count());
-//        dto.setCommentCount(post.getPostCommentsList().size());
-        T newDto = createPostLDCVDto(dto, post);
+        T newDto = createPostFullDto(dto, post);
 
         List<PostComments> postCommentsList = post.getPostCommentsList();
         newDto.setComments(postCommentsList == null ? new ArrayList<PostComments>() : postCommentsList);
 
         List<String> tagsList = (post.getTagList().stream().map(Tags::getName).collect(Collectors.toList()));
         newDto.setTags(tagsList == null ? new ArrayList<String>() : tagsList);
-
-        log.info("\ncomments:" + newDto.getComments().size() + ", \t tags: " + newDto.getTags().size());
         return newDto;
     }
 
-    private ListPostResponseDto<PostLDCVDto> createListPostResponseDto (List<Posts> posts){
+    private ListPostResponseDto<PostFullDto> createListPostResponseDto (List<Posts> posts){
 
-        List<PostLDCVDto> listResponseDto = new ArrayList<>();
+        List<PostFullDto> listResponseDto = new ArrayList<>();
         for (Posts post : posts){
-            listResponseDto.add(createPostLDCVDto(new PostLDCVDto(),post));
+            listResponseDto.add(createPostFullDto(new PostFullDto(),post));
         }
         return new ListPostResponseDto<>(postsRepository.getAllPosts().size(), listResponseDto);
     }
@@ -372,13 +330,10 @@ public class PostsService<T> {
 
         if (calendar.get(Calendar.DAY_OF_YEAR) == todayCalendar.get(Calendar.DAY_OF_YEAR) )
             format = new SimpleDateFormat("HH:mm");
-
         else if (calendar.get(Calendar.MONTH) == todayCalendar.get(Calendar.MONTH))
             format = new SimpleDateFormat("EEEE HH:mm");
-
         else
             format = new SimpleDateFormat("dd.MM.yyyy");
-
         return format.format(time);
 
     }

@@ -5,18 +5,16 @@ import lombok.extern.log4j.Log4j2;
 import object.dto.response.ResultDto;
 import object.dto.response.post.ListPostResponseDto;
 import object.dto.response.post.PostAllCommentsAndAllTagsDto;
-import object.dto.response.post.PostLDCVDto;
+import object.dto.response.post.PostFullDto;
 import object.model.PostVotes;
 import object.model.Posts;
 import object.model.Users;
 import object.repositories.PostVotesRepository;
 import object.repositories.PostsRepository;
 import object.repositories.UsersRepository;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.awt.print.Pageable;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +29,7 @@ public class PostVotesService {
     private UsersRepository usersRepository;
     private UsersService usersService;
 
-    public ListPostResponseDto getCountVotes(ListPostResponseDto<PostLDCVDto> dto) {
+    public ListPostResponseDto getCountVotes(ListPostResponseDto<PostFullDto> dto) {
         dto.getPosts().stream().forEach(responseDto -> {
             responseDto.setLikeCount(postVotesRepository.countByPostIdAndValue(responseDto.getId(), 1));
             responseDto.setDislikeCount(postVotesRepository.countByPostIdAndValue(responseDto.getId(), -1));
