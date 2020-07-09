@@ -1,15 +1,19 @@
 package object.controllers.api;
 
 import lombok.AllArgsConstructor;
+import object.dto.request.post.ModerationPostDto;
 import object.dto.response.InitResponseDto;
 import object.model.enums.ModerationStatus;
 import object.services.PostsService;
 import object.services.UsersService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.awt.*;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -35,9 +39,11 @@ public class ApiGeneralController {
     }
 
     @PostMapping("/moderation")
-    public void moderation(@RequestParam("post_id") Integer postId,
-                           @RequestParam String decision){
-        postsService.moderationPost(postId, ModerationStatus.valueOf(decision.toUpperCase()), 1);
+    public ResponseEntity moderation(@RequestBody ModerationPostDto request){
+        postsService.moderationPost(request.getPostId(),request.getDecision());
+        Map<String, String> m = new HashMap<>();
+        m.put("data", new Date().toString());
+        return ResponseEntity.ok(m);
     }
 
     @GetMapping("/settings")

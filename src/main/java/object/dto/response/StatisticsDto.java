@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class StatisticsDto {
     private Integer postsCount;
-    private Integer liceCount;
+    private Integer likesCount;
     private Integer dislikesCount;
     private Integer viewsCount;
     private String firstPublication;

@@ -1,6 +1,7 @@
 package object.model;
 
 import lombok.Data;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -14,6 +15,7 @@ public class PostComments {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @Nullable
     @Column(name = "parent_id")
     private Integer parentId;
 

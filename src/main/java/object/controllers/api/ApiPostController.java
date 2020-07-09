@@ -1,10 +1,12 @@
 package object.controllers.api;
 
+import object.dto.request.post.CommentDto;
 import object.dto.request.post.NewPostDto;
 import object.dto.request.post.VotesDto;
 import object.dto.response.ResultDto;
 import object.dto.response.post.ListPostResponseDto;
 import object.dto.response.post.PostAllCommentsAndAllTagsDto;
+import object.dto.response.resultPostComment.ResultPostCommentDto;
 import object.dto.response.tag.TagsDto;
 import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
@@ -18,7 +20,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.ParseException;
 
 @RestController
 @RequestMapping("/api")
@@ -100,8 +101,6 @@ public class ApiPostController {
 
 
 
-
-    //NO
     @PutMapping("/post/{id}")
     public ResponseEntity update(@RequestBody NewPostDto request,
                                  @PathVariable Integer id){
@@ -109,13 +108,11 @@ public class ApiPostController {
         return ResponseEntity.ok(dto);
     }
 
-    //NO
+
     @PostMapping("/comment")
-    public ResponseEntity addComment(@RequestParam("parent_id") Integer parentId,
-                                     @RequestParam("post_id") Integer postId,
-                                     @RequestParam String text ){
-        //ResultPostCommentDto dto = postsService.addComment(parentId, postId, text);
-        return ResponseEntity.ok(null);
+    public ResponseEntity addComment(@RequestBody CommentDto commentDto){
+        ResultPostCommentDto dto = postsService.addComment(commentDto.getParentId(), commentDto.getPostId(), commentDto.getText());
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/tag")

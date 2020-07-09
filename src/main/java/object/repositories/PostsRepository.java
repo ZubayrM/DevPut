@@ -24,7 +24,7 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
     @Query(value = "FROM Posts WHERE isActive = 1 and moderationStatus = 'ACCEPTED' and time <= current_date and text LIKE CONCAT('%', :query, '%')")
     Optional<List<Posts>> findBySearch(String query, Pageable pageable);
 
-    @Query(value = "FROM Posts WHERE year(time) = :year and month(time) = :month and day(time) = :day")
+    @Query(value = "FROM Posts WHERE year(time) = :year and month(time) = :month and day(time) = :day and isActive = 1 and moderationStatus = 'ACCEPTED' and time <= current_date")
     List<Posts> findByDate(Integer year, Integer month, Integer day, Pageable pageable);
 
     @Query(value = "FROM Posts WHERE id = :id")

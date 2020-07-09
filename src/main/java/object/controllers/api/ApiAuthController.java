@@ -36,13 +36,7 @@ public class ApiAuthController {
     }
 
     @PostMapping("/api/auth/login")
-    public ResponseEntity login(@RequestBody LoginDto loginDto,HttpServletResponse response, Model model){
-        //response.addHeader("Authentication", loginDto.getEMail());
-
-//        Map<String, String> map = new HashMap<>();
-//        map.put("Authentication", loginDto.getEMail());
-//        model.addAllAttributes(new HashMap<>(map));
-
+    public ResponseEntity login(@RequestBody LoginDto loginDto){
         ResultDto dto = usersService.login(loginDto.getEMail(), loginDto.getPassword());
         return ResponseEntity.ok(dto);
     }

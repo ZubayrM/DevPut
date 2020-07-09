@@ -62,7 +62,7 @@ public class PostsService<T> {
 
     public PostAllCommentsAndAllTagsDto getPostAllCommentsAndAllTagsDto(Integer id) {
         Posts post = postsRepository.findById(id).get();
-        return createPostAllCommentsAndAllTagsDto(new PostAllCommentsAndAllTagsDto(), post);
+        return createPostAllCommentsAndAllTagsDto(new PostAllCommentsAndAllTagsDto(), post, TIME_NEW_POST);
     }
 
 
@@ -113,13 +113,6 @@ public class PostsService<T> {
         }
 
         Users user = usersService.getUser();
-
-//        List<Posts> allPosts = postsRepository.getAllPosts();
-//        List<Posts> postsList = allPosts.stream()
-//                .filter(o -> o.getAuthor().getId().compareTo(user.getId()) == 0)
-//                .filter(o -> o.getIsActive().compareTo(active) == 0)
-//                .filter(o -> o.getModerationStatus().compareTo(moderationStatus) == 0)
-//                .collect(Collectors.toList());
         List<Posts> allPosts = postsRepository.getAllPosts(active, moderationStatus, user, PageRequest.of(offset, limit));
 
         return createListPostDto(allPosts);
@@ -208,31 +201,45 @@ public class PostsService<T> {
     }
 
     public ResultPostCommentDto addComment(Integer parentId, Integer postId, String text) {
-        if (parentId != null && postId != null && text.length() < 1){
-            PostComments p = new PostComments();
-            p.setParentId(parentId);
-            p.setPost(postsRepository.findById(parentId).get());
-            p.setText(text);
-            p.setTime(new Date());
 
-            PostComments res = postCommentsRepository.save(p);
-            return new OkCommentDto(res.getId());
-        } else if (parentId == null && postId != null && text.length() < 1){
-            PostComments p = new PostComments();
-            p.setPost(postsRepository.findById(parentId).get());
-            p.setText(text);
-            p.setTime(new Date());
+        PostComments pC = new PostComments();
+        pC.setUserId(usersService.getUser().getId());
+        pC.setPost(postsRepository.findById(postId).get());
+        if (text.length() > 0) pC.setText(text);
+        else return new  ErrorCommentDto();
+        pC.setTime(new Date());
+        pC.setParentId(parentId);
+        PostComments result = postCommentsRepository.save(pC);
+        return new OkCommentDto(result.getId());
 
-            PostComments res =postCommentsRepository.save(p);
-            return new OkCommentDto(res.getId());
-        } else return new  ErrorCommentDto();
+
+
+//        if (parentId != null && postId != null && text.length() > 1){
+//            PostComments p = new PostComments();
+//            p.setParentId(parentId);
+//            p.setPost(postsRepository.findById(parentId).get());
+//            p.setText(text);
+//            p.setTime(new Date());
+//
+//            PostComments res = postCommentsRepository.save(p);
+//            return new OkCommentDto(res.getId());
+//
+//        } else if (parentId == null && postId != null && text.length() > 1){
+//            PostComments p = new PostComments();
+//            p.setPost(postsRepository.findById(parentId).get());
+//            p.setText(text);
+//            p.setTime(new Date());
+//
+//            PostComments res =postCommentsRepository.save(p);
+//            return new OkCommentDto(res.getId());
+//        } else return new  ErrorCommentDto();
 
     }
 
-    public void moderationPost(Integer postId, ModerationStatus status, Integer moderatorId) {
+    public void moderationPost(Integer postId, String status) {
         Posts post = postsRepository.findById(postId).get();
-        post.setModerationId(moderatorId);
-        post.setModerationStatus(status);
+        post.setModerationId(usersService.getUser().getId());
+        post.setModerationStatus(status.equalsIgnoreCase("ACCEPT") ? ModerationStatus.ACCEPTED : ModerationStatus.DECLINED);
         postsRepository.save(post);
     }
 
@@ -247,9 +254,9 @@ public class PostsService<T> {
 
 
 
-    private<T extends PostAndAuthorDto> T createPostDto(T dto, Posts p){
+    private<T extends PostAndAuthorDto> T createPostDto(T dto, Posts p, SimpleDateFormat format){
         dto.setId(p.getId());
-        dto.setTime(createTime(p.getTime()));
+        dto.setTime(createTime(p.getTime(), format));
         dto.setUser(new UserResponseDto(p.getAuthor().getId(), p.getAuthor().getName()));
         dto.setTitle(p.getTitle());
         dto.setAnnounce(p.getText().substring(0, 15));
@@ -259,13 +266,13 @@ public class PostsService<T> {
     private ListPostResponseDto<PostAndAuthorDto> createListPostDto(List<Posts> posts) {
         List<PostAndAuthorDto> postsList = new ArrayList<>();
         for (Posts post: posts) {
-            postsList.add(createPostDto(new PostAndAuthorDto(), post));
+            postsList.add(createPostDto(new PostAndAuthorDto(), post, null));
         }
         return new ListPostResponseDto<>(postsRepository.getAllPosts().size(), postsList);
     }
 
     private<T extends PostFullDto> T createPostFullDto(T dto, Posts post){
-        T newDto = createPostDto(dto, post);
+        T newDto = createPostDto(dto, post, null);
 
         newDto.setViewCount(post.getViewCount());
         newDto.setLikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() > 0).count());
@@ -274,14 +281,17 @@ public class PostsService<T> {
         return dto;
     }
 
-    private <T extends PostAllCommentsAndAllTagsDto> T createPostAllCommentsAndAllTagsDto(T dto, Posts post){
+    private <T extends PostAllCommentsAndAllTagsDto> T createPostAllCommentsAndAllTagsDto(T dto, Posts post, SimpleDateFormat format){
         T newDto = createPostFullDto(dto, post);
 
         List<PostComments> postCommentsList = post.getPostCommentsList();
-        newDto.setComments(postCommentsList == null ? new ArrayList<PostComments>() : postCommentsList);
+        newDto.setComments(postCommentsList == null ? new ArrayList<>() : postCommentsList);
 
         List<String> tagsList = (post.getTagList().stream().map(Tags::getName).collect(Collectors.toList()));
-        newDto.setTags(tagsList == null ? new ArrayList<String>() : tagsList);
+        newDto.setTags(tagsList == null ? new ArrayList<>() : tagsList);
+
+        newDto.setText(post.getText());
+        newDto.setTime(createTime(post.getTime(), format));
         return newDto;
     }
 
@@ -317,7 +327,7 @@ public class PostsService<T> {
         return posts;
     }
 
-    private String createTime(Date time) {
+    private String createTime(Date time, SimpleDateFormat timeFormat) {
         Date today = new Date();
 
         Calendar calendar = new GregorianCalendar();
@@ -326,16 +336,18 @@ public class PostsService<T> {
         Calendar todayCalendar = new GregorianCalendar();
         todayCalendar.setTime(today);
 
-        SimpleDateFormat format;
+        if (timeFormat == null) {
+            String format;
+            if (calendar.get(Calendar.DAY_OF_YEAR) == todayCalendar.get(Calendar.DAY_OF_YEAR))
+                format = "HH:mm";
+            else if (calendar.get(Calendar.MONTH) == todayCalendar.get(Calendar.MONTH))
+                format = "EEEE HH:mm";
+            else
+                format = "dd.MM.yyyy";
+            timeFormat = new SimpleDateFormat(format);
 
-        if (calendar.get(Calendar.DAY_OF_YEAR) == todayCalendar.get(Calendar.DAY_OF_YEAR) )
-            format = new SimpleDateFormat("HH:mm");
-        else if (calendar.get(Calendar.MONTH) == todayCalendar.get(Calendar.MONTH))
-            format = new SimpleDateFormat("EEEE HH:mm");
-        else
-            format = new SimpleDateFormat("dd.MM.yyyy");
-        return format.format(time);
-
+        }
+        return timeFormat.format(time);
     }
 
     @SneakyThrows
@@ -369,8 +381,8 @@ public class PostsService<T> {
 
             if (y.equals(year) ){
                 String time = DATE_FORMAT.format(p.getTime());
-                if (dto.getPosts().containsKey(y)){
-                    dto.getPosts().put(time,  dto.getPosts().get(y) + 1);
+                if (dto.getPosts().containsKey(time)){
+                    dto.getPosts().put(time,  dto.getPosts().get(time) + 1);
                 } else
                     dto.getPosts().put(time, 1);
             }
@@ -387,8 +399,8 @@ public class PostsService<T> {
 
 
             String time = DATE_FORMAT.format(p.getTime());
-            if (dto.getPosts().containsKey(y)){
-                dto.getPosts().put(time,  dto.getPosts().get(y) + 1);
+            if (dto.getPosts().containsKey(time)){
+                dto.getPosts().put(time,  dto.getPosts().get(time) + 1);
             } else
                 dto.getPosts().put(time, 1);
         }
@@ -411,7 +423,6 @@ public class PostsService<T> {
 
     private Integer generateViewsCount(Optional<List<Posts>> byAuthor) {
         List<Posts> l = byAuthor.get();
-        //Integer count = l.stream().s
         return null;
     }
 

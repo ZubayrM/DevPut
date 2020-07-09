@@ -17,4 +17,6 @@ public class PostAllCommentsAndAllTagsDto extends PostFullDto {
 
     private List<String> tags;
 
+    private String text;
+
 }
