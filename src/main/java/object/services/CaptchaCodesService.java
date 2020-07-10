@@ -61,27 +61,6 @@ public class CaptchaCodesService {
     }
 
 
-//    @Deprecated
-//    private File saveImage(CaptchaCodes captcha) throws IOException {
-//        File file = new File("D:\\Диплом\\DevPut\\src\\main\\resources/static/img/captcha.png");
-//        byte[] img = Base64.getDecoder().decode(captcha.getCode());
-//        BufferedImage bi =  ImageIO.read(new ByteArrayInputStream(img));
-//        ImageIO.write(bi, "png", file);
-//        return file;
-//    }
-
-//    @Deprecated
-//    @SneakyThrows
-//    private CaptchaCodes createCaptcha(String code, BufferedImage image) {
-//
-//        String imgBase64 = getImgBase64(image);
-//
-//        CaptchaCodes captchaCodes = new CaptchaCodes();
-//        captchaCodes.setTime(new Date());
-//        captchaCodes.setCode(imgBase64);
-//        captchaCodes.setSecretCode(code);
-//        return captchaCodesRepository.save(captchaCodes);
-//    }
 
     private CaptchaCodes createCaptcha(String code, String secretCode) {
         CaptchaCodes captchaCodes = new CaptchaCodes();
@@ -90,15 +69,6 @@ public class CaptchaCodesService {
         captchaCodes.setSecretCode(secretCode);
         return captchaCodesRepository.save(captchaCodes);
     }
-
-//    private String getImgBase64(BufferedImage image) throws IOException {
-//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//        ImageIO.write(image, "png", byteArrayOutputStream);
-//        byteArrayOutputStream.flush();
-//        byte[] bytes = byteArrayOutputStream.toByteArray();
-//        byteArrayOutputStream.close();
-//        return Base64.getEncoder().encodeToString(bytes);
-//    }
 
     private BufferedImage createBufferedImage(String code) {
         BufferedImage image = new BufferedImage(100, 40, BufferedImage.TYPE_3BYTE_BGR);

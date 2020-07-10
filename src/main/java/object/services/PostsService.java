@@ -201,7 +201,6 @@ public class PostsService<T> {
     }
 
     public ResultPostCommentDto addComment(Integer parentId, Integer postId, String text) {
-
         PostComments pC = new PostComments();
         pC.setUserId(usersService.getUser().getId());
         pC.setPost(postsRepository.findById(postId).get());
@@ -211,29 +210,6 @@ public class PostsService<T> {
         pC.setParentId(parentId);
         PostComments result = postCommentsRepository.save(pC);
         return new OkCommentDto(result.getId());
-
-
-
-//        if (parentId != null && postId != null && text.length() > 1){
-//            PostComments p = new PostComments();
-//            p.setParentId(parentId);
-//            p.setPost(postsRepository.findById(parentId).get());
-//            p.setText(text);
-//            p.setTime(new Date());
-//
-//            PostComments res = postCommentsRepository.save(p);
-//            return new OkCommentDto(res.getId());
-//
-//        } else if (parentId == null && postId != null && text.length() > 1){
-//            PostComments p = new PostComments();
-//            p.setPost(postsRepository.findById(parentId).get());
-//            p.setText(text);
-//            p.setTime(new Date());
-//
-//            PostComments res =postCommentsRepository.save(p);
-//            return new OkCommentDto(res.getId());
-//        } else return new  ErrorCommentDto();
-
     }
 
     public void moderationPost(Integer postId, String status) {

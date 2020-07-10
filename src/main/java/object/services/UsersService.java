@@ -81,21 +81,9 @@ public class UsersService {
             return new ResultDto(false);
     }
 
-
-
-    public ResultDto check(HttpServletRequest request) {
-//        String s = request.getHeader("Authentication");
-//        log.info(s + "------------------------------------------------------------");
-//        UserDetails o =(UserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
-//        log.info( o.getUsername()+ "-------------555-------------");
-
-//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        if (principal instanceof UserDetails){
-//            String userEmail = ((MyUserDetails) principal).getEmail();
-//            log.info(userEmail + "мои молитвы услышанны");
-//            Optional<Users> user = usersRepository.findByEmail(userEmail);
+    public ResultDto check() {
             if (getUser()!= null) {
-                return new AuthUserResponseDto(generatedUserAuth(getUser())); // пока так
+                return new AuthUserResponseDto(generatedUserAuth(getUser()));
             } else
             return new ResultDto(false);
     }

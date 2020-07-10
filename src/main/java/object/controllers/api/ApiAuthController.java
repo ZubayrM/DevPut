@@ -42,8 +42,8 @@ public class ApiAuthController {
     }
 
     @GetMapping("/api/auth/check")
-    public ResponseEntity check(HttpServletRequest request){
-        ResultDto dto = usersService.check(request);
+    public ResponseEntity check(){
+        ResultDto dto = usersService.check();
         return ResponseEntity.ok(dto);
     }
 
