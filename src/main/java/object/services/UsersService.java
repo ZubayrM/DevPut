@@ -108,7 +108,7 @@ public class UsersService {
                 .photo(user.getPhoto())
                 .email(user.getEmail())
                 .moderation(user.getIsModerator() > 0)
-                .moderationCount(postsRepository.findByModerationStatus(ModerationStatus.NEW).get().size())///////////////////////////
+                .moderationCount(user.getIsModerator() > 0 ? postsRepository.findByModerationStatus(ModerationStatus.NEW).get().size() : 0)
                 .settings(user.getIsModerator() > 0)
                 .build();
     }

@@ -3,6 +3,7 @@ package object.config.security;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +18,7 @@ import java.util.Collections;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Log4j2
 public class MyUserDetails implements UserDetails {
 
     private String email;
@@ -26,8 +28,11 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (isModeration > 0)  return Arrays.asList(new SimpleGrantedAuthority("ROLE_ADMIN"));
-        else return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
+        if (isModeration > 0)  {
+            log.info("мод зашел");
+            return Arrays.asList(new SimpleGrantedAuthority("ADMIN"));
+        }
+        else return Arrays.asList(new SimpleGrantedAuthority("USER"));
     }
 
     @Override

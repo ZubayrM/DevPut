@@ -1,9 +1,12 @@
 package object.controllers.api;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import object.dto.request.post.ModerationPostDto;
 import object.dto.response.InitResponseDto;
+import object.model.Users;
 import object.model.enums.ModerationStatus;
+import object.services.GlobalSettingsService;
 import object.services.PostsService;
 import object.services.UsersService;
 import org.springframework.http.HttpStatus;
@@ -19,6 +22,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 @AllArgsConstructor
+@Log4j2
 public class ApiGeneralController {
 
     private InitResponseDto initResponseDto;
@@ -26,6 +30,7 @@ public class ApiGeneralController {
     private PostsService postsService;
 
     private UsersService userService;
+    private GlobalSettingsService globalSettingsService;
 
     @GetMapping("/init")
     public ResponseEntity getInfo(){
@@ -46,14 +51,16 @@ public class ApiGeneralController {
         return ResponseEntity.ok(m);
     }
 
+
     @GetMapping("/settings")
-    public ResponseEntity getSettings(HttpServletRequest request){
-         //Map<String, Boolean> settings =
-        return null;
+    public ResponseEntity getSettings(){
+        log.info("почемуууууууууууууууууууу");
+        return ResponseEntity.ok(globalSettingsService.getSetting());
     }
 
     @PutMapping("/settings")
-    public ResponseEntity setSettings(Map<String, Boolean> global_setting, HttpServletRequest request){
+    public ResponseEntity setSettings(Map<String, Boolean> global_setting){
+        log.info(global_setting.keySet());
         return null;
     }
 
