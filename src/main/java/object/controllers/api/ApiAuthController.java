@@ -7,6 +7,7 @@ import object.dto.request.auth.RegisterDto;
 import object.dto.response.CaptchaDto;
 import object.dto.response.ResultDto;
 import object.dto.response.StatisticsDto;
+import object.dto.response.auth.AuthUserResponseDto;
 import object.dto.response.post.CalendarDto;
 import object.services.CaptchaCodesService;
 import object.services.PostsService;
@@ -43,7 +44,9 @@ public class ApiAuthController {
 
     @GetMapping("/api/auth/check")
     public ResponseEntity check(){
-        ResultDto dto = usersService.check();
+        AuthUserResponseDto dto = usersService.check();
+        if (dto.getUser() != null)
+            log.info(dto.getUser().getEmail());
         return ResponseEntity.ok(dto);
     }
 

@@ -54,14 +54,15 @@ public class ApiGeneralController {
 
     @GetMapping("/settings")
     public ResponseEntity getSettings(){
-        log.info("почемуууууууууууууууууууу");
+        log.info("settings");
         return ResponseEntity.ok(globalSettingsService.getSetting());
     }
 
     @PutMapping("/settings")
-    public ResponseEntity setSettings(Map<String, Boolean> global_setting){
-        log.info(global_setting.keySet());
-        return null;
+    public ResponseEntity setSettings(@RequestBody Map<String, Boolean> global_setting){
+        log.info(global_setting.keySet() + " " + global_setting.values());
+
+        return ResponseEntity.ok(HttpStatus.ACCEPTED);
     }
 
 

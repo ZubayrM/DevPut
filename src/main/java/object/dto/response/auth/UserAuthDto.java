@@ -14,7 +14,7 @@ public class UserAuthDto {
     private String name;
     private String photo;
     private String email;
-    private Boolean moderation;
+    private boolean moderation;
     private Integer moderationCount;
-    private Boolean settings;
+    private boolean settings;
 }

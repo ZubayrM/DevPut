@@ -81,11 +81,13 @@ public class UsersService {
             return new ResultDto(false);
     }
 
-    public ResultDto check() {
-            if (getUser()!= null) {
+    public AuthUserResponseDto check() {
+
+            if (getUser()!= null)
                 return new AuthUserResponseDto(generatedUserAuth(getUser()));
-            } else
-            return new ResultDto(false);
+            else
+                return new AuthUserResponseDto(false);
+
     }
 
     public ResultDto restore(String email) {
@@ -199,7 +201,6 @@ public class UsersService {
             } else return new ErrorsMessageDto<>( new ErrorsRegisterDto("Этот e-mail уже зарегистрирован", null, null, null, null), false);
 
 
-
             if (password.length() > 6) {
                 u.setPassword(password);
             } else return new ErrorsMessageDto<>( new ErrorsRegisterDto(null, null, "Пароль короче 6-ти символов", null, null), false);
@@ -217,18 +218,6 @@ public class UsersService {
         request.logout();
         request.getSession(false);
     }
-
-
-//    private String generateRandomCode(){
-//        Random r = new Random();
-//        char[] c = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
-//        int length = c.length;
-//        String result = "";
-//        for (int i = 0; i < 40; i++) {
-//            result += c[r.nextInt(length)];
-//        }
-//        return result;
-//    }
 
     public Users getUser(){
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

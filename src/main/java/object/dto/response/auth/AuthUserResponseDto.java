@@ -16,4 +16,8 @@ public class AuthUserResponseDto extends ResultDto {
         super(true);
         this.user = user;
     }
+
+    public AuthUserResponseDto(boolean result){
+        super(result);
+    }
 }
