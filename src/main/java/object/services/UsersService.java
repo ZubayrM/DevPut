@@ -184,8 +184,8 @@ public class UsersService {
         Users u = getUser();
 
         if (dto.getPhoto() != null) {
-            if (dto.getPhoto().getSize() < 5000)
-                u.setPhoto(Arrays.toString(Base64.getEncoder().encode(dto.getPhoto().getBytes())));
+            if (dto.getPhoto().getSize() < 50_000)
+                u.setPhoto(Base64.getEncoder().encodeToString(dto.getPhoto().getBytes()));
             else
                 return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, null, null, null, "Фото слишком большое, нужно не более 5 Мб"), false);
         }
@@ -199,7 +199,7 @@ public class UsersService {
         }
 
         if (dto.getEmail() != null) {
-            if (!usersRepository.findByEmail(dto.getEmail()).isPresent()) {
+            if (!usersRepository.findByEmail(dto.getEmail()).isPresent() || dto.getEmail().equals(getUser().getEmail())) {
                 u.setEmail(dto.getEmail());
             } else
                 return new ErrorsMessageDto<>(new ErrorsRegisterDto("Этот e-mail уже зарегистрирован", null, null, null, null), false);
@@ -211,8 +211,10 @@ public class UsersService {
             } else
                 return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, null, "Пароль короче 6-ти символов", null, null), false);
         }
-            return new ResultDto(true);
 
+        usersRepository.save(u);
+
+        return new ResultDto(true);
 
     }
 

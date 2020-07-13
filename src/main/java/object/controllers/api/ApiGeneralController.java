@@ -61,7 +61,6 @@ public class ApiGeneralController {
     @PutMapping("/settings")
     public ResponseEntity setSettings(@RequestBody Map<String, Boolean> global_setting){
         log.info(global_setting.keySet() + " " + global_setting.values());
-
         return ResponseEntity.ok(HttpStatus.ACCEPTED);
     }
 

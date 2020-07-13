@@ -35,6 +35,9 @@ databaseChangeLog:
               - column:
                   name: code
                   type: varchar(50)
+              - column:
+                  name: photo
+                  type: clob
 
   - changeSet:
       id: 2

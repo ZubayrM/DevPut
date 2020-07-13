@@ -65,6 +65,7 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
     @Query(value = "SELECT p FROM Posts p WHERE p.isActive = 1 and p.moderationStatus = 'ACCEPTED'  and  year(p.time) = year(:year) and p.time <= current_date", nativeQuery = true)
     Set<Posts> getYears(Date year);
 
+    @Query(value = "SELECT COUNT(p) FROM Posts p where p.author = :author")////////////////
     Integer countByAuthor(Users author);
 
     Posts findFirstByTimeAndAuthor(Date time, Users u);

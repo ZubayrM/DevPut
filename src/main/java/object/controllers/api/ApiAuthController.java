@@ -71,7 +71,7 @@ public class ApiAuthController {
     }
 
     @PostMapping("/api/profile/my")
-    public ResponseEntity profileMy(@RequestBody MyProfileDto request){
+    public ResponseEntity profileMy(@ModelAttribute MyProfileDto request){
         ResultDto dto = usersService.updateProfile(request);
         return ResponseEntity.ok(dto);
     }
