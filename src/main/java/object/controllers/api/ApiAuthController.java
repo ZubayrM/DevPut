@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import object.dto.request.auth.LoginDto;
 import object.dto.request.auth.RegisterDto;
+import object.dto.request.user.MyProfileDto;
 import object.dto.response.CaptchaDto;
 import object.dto.response.ResultDto;
 import object.dto.response.StatisticsDto;
@@ -14,11 +15,9 @@ import object.services.PostsService;
 import object.services.UsersService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @AllArgsConstructor
@@ -67,17 +66,13 @@ public class ApiAuthController {
 
     @PostMapping("/api/auth/register")
     public ResponseEntity register(@RequestBody RegisterDto request){
-        ResultDto dto = usersService.register(request.getEMail(), request.getPassword(), request.getCaptcha(), request.getCaptchaSecret());
+        ResultDto dto = usersService.register(request.getEMail(), request.getPassword(), request.getCaptcha(), request.getCaptchaSecret(), request.getName());
         return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/api/profile/my")
-    public ResponseEntity profileMy(@RequestParam @Nullable String photo,
-                                 @RequestParam Integer removePhoto,
-                                 @RequestParam String name,
-                                 @RequestParam String email,
-                                 @RequestParam String password, HttpServletRequest request){
-        ResultDto dto = usersService.profileMy(photo, removePhoto, name, email, password, request);
+    public ResponseEntity profileMy(@RequestBody MyProfileDto request){
+        ResultDto dto = usersService.updateProfile(request);
         return ResponseEntity.ok(dto);
     }
 

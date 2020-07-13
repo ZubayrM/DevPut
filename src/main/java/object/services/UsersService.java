@@ -3,6 +3,7 @@ package object.services;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import object.config.security.MyUserDetails;
+import object.dto.request.user.MyProfileDto;
 import object.dto.response.ResultDto;
 import object.dto.response.UserResponseDto;
 import object.dto.response.auth.AuthUserResponseDto;
@@ -29,9 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.awt.*;
 import java.awt.image.RenderedImage;
 import java.io.File;
-import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -145,7 +144,7 @@ public class UsersService {
 
     }
 
-    public ResultDto register(String email, String password, String captcha, String captchaSecret) {
+    public ResultDto register(String email, String password, String captcha, String captchaSecret, String name) {
         Optional<Users> user = usersRepository.findByEmail(email);
 
         if (!user.isPresent()){
@@ -154,7 +153,7 @@ public class UsersService {
                     CaptchaCodes byCode = captchaCodesRepository.findByCode(captchaSecret);
                     if (byCode != null){
                     if (byCode.getSecretCode().equals(captcha)){
-                        return generatedNewUser(email, password);
+                        return generatedNewUser(email, password, name);
                     } else
                         return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, null, null, "Код с картинки введён неверно",null),false);
                     }else
@@ -167,10 +166,11 @@ public class UsersService {
             return new ErrorsMessageDto<>(new ErrorsRegisterDto( "Этот e-mail уже зарегистрирован", null, null, null,null),false);
     }
 
-    private ResultDto generatedNewUser( String email, String password) {
+    private ResultDto generatedNewUser( String email, String password, String name) {
         Users user = new Users();
-        int index = email.indexOf("@");
-        user.setName(email.substring(0,index));
+//        int index = email.indexOf("@");
+//        user.setName(email.substring(0,index));
+        user.setName(name);
         user.setEmail(email);
         user.setPassword(password);
         user.setRegTime(new Date());
@@ -179,38 +179,41 @@ public class UsersService {
         return new ResultDto(true);
     }
 
-    public ResultDto profileMy(String photo, Integer removePhoto, String name, String email, String password, HttpServletRequest request) {
-        String userByEmail = request.getHeader("email");///
+    @SneakyThrows
+    public ResultDto updateProfile(MyProfileDto dto) {
+        Users u = getUser();
 
-        Optional<Users> user = usersRepository.findByEmail(userByEmail);
-        if (user.isPresent()) {
-            Users u = user.get();
-
-            if (photo != null && photo.length() > 5) {
-                u.setPhoto(photo);
-            } else return new ErrorsMessageDto<>( new ErrorsRegisterDto(null, null, null, null, "Фото слишком большое, нужно не более 5 Мб"), false);
-
-
-            if (name.split(" ").length > 1) {
-                u.setName(name);
-            } else return new ErrorsMessageDto<>( new ErrorsRegisterDto(null, "Имя указано неверно", null, null, null), false);
+        if (dto.getPhoto() != null) {
+            if (dto.getPhoto().getSize() < 5000)
+                u.setPhoto(Arrays.toString(Base64.getEncoder().encode(dto.getPhoto().getBytes())));
+            else
+                return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, null, null, null, "Фото слишком большое, нужно не более 5 Мб"), false);
+        }
 
 
-            if (!usersRepository.findByEmail(email).isPresent()) {
-                u.setEmail(email);
-            } else return new ErrorsMessageDto<>( new ErrorsRegisterDto("Этот e-mail уже зарегистрирован", null, null, null, null), false);
+        if (dto.getName() != null) {
+            if (dto.getName().split(" ").length > 1) {
+                u.setName(dto.getName());
+            } else
+                return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, "Имя указано неверно", null, null, null), false);
+        }
 
+        if (dto.getEmail() != null) {
+            if (!usersRepository.findByEmail(dto.getEmail()).isPresent()) {
+                u.setEmail(dto.getEmail());
+            } else
+                return new ErrorsMessageDto<>(new ErrorsRegisterDto("Этот e-mail уже зарегистрирован", null, null, null, null), false);
+        }
 
-            if (password.length() > 6) {
-                u.setPassword(password);
-            } else return new ErrorsMessageDto<>( new ErrorsRegisterDto(null, null, "Пароль короче 6-ти символов", null, null), false);
-
+        if (dto.getPassword() != null) {
+            if (dto.getPassword().length() > 6) {
+                u.setPassword(dto.getPassword());
+            } else
+                return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, null, "Пароль короче 6-ти символов", null, null), false);
+        }
             return new ResultDto(true);
 
 
-        }
-
-        return  new ResultDto(true);
     }
 
     @SneakyThrows

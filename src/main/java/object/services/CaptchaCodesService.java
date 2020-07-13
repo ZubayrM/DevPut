@@ -53,14 +53,13 @@ public class CaptchaCodesService {
 
     private String saveImage(BufferedImage img) throws IOException {
        // String path = UUID.randomUUID().toString();
+
         File dir = new File("D:\\Диплом\\DevPut\\src\\main\\resources/static/img/captcha/");
         dir.mkdir();
         File file = new File(dir.getAbsolutePath() + "/captcha.png");
         ImageIO.write(img, "png", file);
         return getPathToImage(file);
     }
-
-
 
     private CaptchaCodes createCaptcha(String code, String secretCode) {
         CaptchaCodes captchaCodes = new CaptchaCodes();

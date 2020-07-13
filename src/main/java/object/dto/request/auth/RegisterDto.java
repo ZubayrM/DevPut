@@ -8,9 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RegisterDto extends LoginDto {
 
+    private String name;
+
     private String captcha;
 
     @JsonProperty("captcha_secret")
     private String captchaSecret;
-
 }
