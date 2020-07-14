@@ -8,8 +8,6 @@ import object.dto.response.InitResponseDto;
 import object.dto.response.ResultDto;
 import object.dto.response.StatisticsDto;
 import object.dto.response.post.CalendarDto;
-import object.model.Users;
-import object.model.enums.ModerationStatus;
 import object.services.GlobalSettingsService;
 import object.services.PostsService;
 import object.services.UsersService;
@@ -18,8 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.awt.*;
+import java.io.BufferedReader;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,7 +52,7 @@ public class ApiGeneralController {
     }
 
     @GetMapping("/statistics/my")
-    public ResponseEntity myStatistics(HttpServletRequest request){
+    public ResponseEntity myStatistics(){
         StatisticsDto dto = postsService.myStatistics();
         return ResponseEntity.ok(dto);
     }
@@ -69,6 +68,13 @@ public class ApiGeneralController {
         String imagePath = userService.addImage(image);
         return  ResponseEntity.ok(imagePath);
     }
+
+    @GetMapping("/image")
+    public ResponseEntity getImage(){
+        Image image;
+         Base64.getDecoder().decode(userService.getUser().getPhoto());
+    }
+
 
     @PostMapping("/moderation")
     public ResponseEntity moderation(@RequestBody ModerationPostDto request){
