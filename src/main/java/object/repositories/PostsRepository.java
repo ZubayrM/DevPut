@@ -65,9 +65,11 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
     @Query(value = "SELECT p FROM Posts p WHERE p.isActive = 1 and p.moderationStatus = 'ACCEPTED'  and  year(p.time) = year(:year) and p.time <= current_date", nativeQuery = true)
     Set<Posts> getYears(Date year);
 
-    Integer countByAuthor(Users author);
+    @Query(value = "SELECT count(*) from Posts where user_id = ?1", nativeQuery = true)
+    Integer countByAuthor(Integer authorId);
 
-    Posts findFirstByTimeAndAuthor(Date time, Users u);
+    @Query(value = "SELECT * FROM Posts WHERE user_id = ?1 ORDER BY time ASC LIMIT 1", nativeQuery = true)
+    Posts findFirstByTimeAndAuthor(Integer userId);
 
     @Query(value = "SELECT sum(p.view_count) FROM Posts p", nativeQuery = true)
     Integer countByViewCount();
@@ -75,7 +77,8 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
     @Query(value = "SELECT * FROM Posts p ORDER BY p.time LIMIT 1", nativeQuery = true)
     Posts findFirstByTime();
 
-    Optional<List<Posts>> findByAuthor(Users u);
+    @Query(value = "SELECT * FROM Posts where user_id = ?1", nativeQuery = true)
+    Optional<List<Posts>> findByAuthor(Integer userId);
 
 //    @Query(value = "SELECT p FROM Posts p WHERE  p.isActive = :active and p.moderationStatus = :status")
 //    Optional<List<Posts>> getMyPosts( Integer active, ModerationStatus status, Pageable pageable);

@@ -76,7 +76,7 @@ public class ApiPostController {
         return ResponseEntity.ok(dto);
     }
 
-    @GetMapping("post/moderation")
+    @GetMapping("/post/moderation")
     public ResponseEntity getPostsModeration(@RequestParam Integer offset,
                                              @RequestParam Integer limit,
                                              @RequestParam String status){

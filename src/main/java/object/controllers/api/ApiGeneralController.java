@@ -3,7 +3,11 @@ package object.controllers.api;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import object.dto.request.post.ModerationPostDto;
+import object.dto.request.user.MyProfileDto;
 import object.dto.response.InitResponseDto;
+import object.dto.response.ResultDto;
+import object.dto.response.StatisticsDto;
+import object.dto.response.post.CalendarDto;
 import object.model.Users;
 import object.model.enums.ModerationStatus;
 import object.services.GlobalSettingsService;
@@ -11,6 +15,7 @@ import object.services.PostsService;
 import object.services.UsersService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,15 +31,37 @@ import java.util.Map;
 public class ApiGeneralController {
 
     private InitResponseDto initResponseDto;
-
     private PostsService postsService;
-
     private UsersService userService;
     private GlobalSettingsService globalSettingsService;
 
     @GetMapping("/init")
     public ResponseEntity getInfo(){
         return ResponseEntity.ok(initResponseDto);
+    }
+
+    @GetMapping("/calendar")
+    public ResponseEntity getCalendar(@RequestParam @Nullable String year ){
+        CalendarDto dto = postsService.getCalendar(year);
+        return ResponseEntity.ok(dto);
+    }
+
+    @PostMapping("/profile/my")
+    public ResponseEntity profileMy(@RequestBody MyProfileDto request){
+        ResultDto dto = userService.updateProfile(request);
+        return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/statistics/my")
+    public ResponseEntity myStatistics(HttpServletRequest request){
+        StatisticsDto dto = postsService.myStatistics();
+        return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/statistics/all")
+    public ResponseEntity allStatistics(){
+        StatisticsDto dto = postsService.allStatistic();
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/image")

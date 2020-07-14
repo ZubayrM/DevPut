@@ -385,15 +385,14 @@ public class PostsService<T> {
 
 
 
-    public StatisticsDto myStatistics(HttpServletRequest request) {
-        String userEmail = request.getHeader("абра кадабра");
+    public StatisticsDto myStatistics() {
 
-        Users u = usersRepository.findByEmail(userEmail).orElse(null);
-        Integer postCount = postsRepository.countByAuthor(u);
+        Users u = usersService.getUser();
+        Integer postCount = postsRepository.countByAuthor(u.getId());
         Integer likesCount = postVotesRepository.countByUserIdAndValue(u.getId(), 1);
         Integer dislikesCount = postVotesRepository.countByUserIdAndValue(u.getId(), -1);
-        Integer viewsCount = generateViewsCount(postsRepository.findByAuthor(u));
-        String firstPublication = FIRST_PUBLICATION.format(postsRepository.findFirstByTimeAndAuthor(new Date(),u).getTime());
+        Integer viewsCount = generateViewsCount(postsRepository.findByAuthor(u.getId()));
+        String firstPublication = FIRST_PUBLICATION.format(postsRepository.findFirstByTimeAndAuthor(u.getId()).getTime());
         return new StatisticsDto(postCount, likesCount, dislikesCount, viewsCount, firstPublication);
     }
 
