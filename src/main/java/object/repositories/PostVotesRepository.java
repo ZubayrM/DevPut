@@ -17,6 +17,7 @@ public interface PostVotesRepository extends CrudRepository<PostVotes,Integer> {
 
     Integer countByPostIdAndValue(Integer postId, Integer value);
 
+    @Query(value = "SELECT COUNT(*) FROM Post_Votes pv WHERE pv.user_id = ?1 and pv.value = ?2", nativeQuery = true)
     Integer countByUserIdAndValue(Integer userId, Integer value);
 
     @Query(value = "SELECT COUNT(pv.id) FROM Post_votes pv WHERE pv.value = ?1 ", nativeQuery = true)

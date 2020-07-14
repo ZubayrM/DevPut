@@ -67,19 +67,12 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-//    public RestTokenAuthenticationFilter restTokenAuthenticationFilter() {
-//        RestTokenAuthenticationFilter restTokenAuthenticationFilter = new RestTokenAuthenticationFilter();
-//        tokenAuthenticationManager.setUserDetailsService(userDetailsService);
-//        restTokenAuthenticationFilter.setAuthenticationManager(tokenAuthenticationManager);
-//        return restTokenAuthenticationFilter;
-//    }
-
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/settings").hasAuthority("ADMIN")
+                //.antMatchers("/api/settings").hasAuthority("ADMIN")
                 .antMatchers( "/**", "/api/post/**", "/api/auth/login").permitAll()
                 .anyRequest()
                 .authenticated();
