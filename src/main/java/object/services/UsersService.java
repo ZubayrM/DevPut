@@ -1,11 +1,12 @@
 package object.services;
 
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import object.component.ImagePath;
 import object.config.security.MyUserDetails;
 import object.dto.request.user.MyProfileDto;
 import object.dto.response.ResultDto;
-import object.dto.response.UserResponseDto;
 import object.dto.response.auth.AuthUserResponseDto;
 import object.dto.response.auth.UserAuthDto;
 import object.dto.response.errors.ErrorsAuthDto;
@@ -17,7 +18,6 @@ import object.model.enums.ModerationStatus;
 import object.repositories.CaptchaCodesRepository;
 import object.repositories.PostsRepository;
 import object.repositories.UsersRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,29 +30,27 @@ import javax.servlet.http.HttpServletRequest;
 import java.awt.*;
 import java.awt.image.RenderedImage;
 import java.io.File;
-import java.util.*;
+import java.util.Base64;
+import java.util.Date;
+import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
 @Log4j2
+@AllArgsConstructor
 public class UsersService {
 
-    @Autowired
-    AuthenticationManager authenticationManager;
+
+    private AuthenticationManager authenticationManager;
 
     private final String PATH_TO_IMAGE = "upload/";
 
-    @Autowired
     private UsersRepository usersRepository;
-
-    @Autowired
     private PostsRepository postsRepository;
-
-    @Autowired
     private MailSenderService mailSenderService;
-
-    @Autowired
     private CaptchaCodesRepository captchaCodesRepository;
+    private ImagePath imagePath;
 
     @SneakyThrows
     public String addImage(Image image) {
@@ -106,7 +104,7 @@ public class UsersService {
         return UserAuthDto.builder()
                 .id(user.getId())
                 .name(user.getName())
-                .photo(user.getPhoto())
+                .photo(imagePath.getImage() + "?email=" + user.getEmail())
                 .email(user.getEmail())
                 .moderation(user.getIsModerator() > 0)
                 .moderationCount(user.getIsModerator() > 0 ? postsRepository.findByModerationStatus(ModerationStatus.NEW).get().size() : 0)
@@ -235,8 +233,7 @@ public class UsersService {
         else return null;
     }
 
-    public UserResponseDto getUserDto(){
-        Users s = getUser();
-        return new UserResponseDto(s.getId(), s.getName());
+    public Users getUser(String email){
+        return usersRepository.findByEmail(email).orElse(null);
     }
 }

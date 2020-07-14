@@ -7,14 +7,10 @@ import object.dto.request.auth.RegisterDto;
 import object.dto.request.user.MyProfileDto;
 import object.dto.response.CaptchaDto;
 import object.dto.response.ResultDto;
-import object.dto.response.StatisticsDto;
 import object.dto.response.auth.AuthUserResponseDto;
-import object.dto.response.post.CalendarDto;
 import object.services.CaptchaCodesService;
-import object.services.PostsService;
 import object.services.UsersService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -64,13 +60,9 @@ public class ApiAuthController {
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping("/api/profile/my")
-    public ResponseEntity profileMy(@ModelAttribute MyProfileDto request){
-        ResultDto dto = usersService.updateProfile(request);
-        return ResponseEntity.ok(dto);
-    }
 
-    @GetMapping("/api/auth/captcha")
+
+
     @GetMapping("/captcha")
     public ResponseEntity captcha(){
         CaptchaDto dto = captchaCodesService.captcha();

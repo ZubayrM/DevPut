@@ -53,8 +53,6 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
 
     @Query(value = "SELECT count(*) from Posts where user_id = ?1", nativeQuery = true)
     Integer countByAuthor(Integer authorId);
-    @Query(value = "SELECT COUNT(p) FROM Posts p where p.author = :author")////////////////
-    Integer countByAuthor(Users author);
 
     @Query(value = "SELECT * FROM Posts WHERE user_id = ?1 ORDER BY time ASC LIMIT 1", nativeQuery = true)
     Posts findFirstByTimeAndAuthor(Integer userId);
@@ -67,5 +65,7 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
 
     @Query(value = "SELECT * FROM Posts where user_id = ?1", nativeQuery = true)
     Optional<List<Posts>> findByAuthor(Integer userId);
+
+    Integer countViews(Integer authorId);
 
 }

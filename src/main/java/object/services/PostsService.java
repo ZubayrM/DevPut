@@ -20,9 +20,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -398,6 +398,8 @@ public class PostsService<T> {
 
     private Integer generateViewsCount(Optional<List<Posts>> byAuthor) {
         List<Posts> l = byAuthor.get();
+        AtomicInteger i = new AtomicInteger();
+
         return null;
     }
 

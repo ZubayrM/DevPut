@@ -6,6 +6,8 @@ import object.dto.response.CaptchaDto;
 import object.model.CaptchaCodes;
 import object.repositories.CaptchaCodesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -54,7 +56,8 @@ public class CaptchaCodesService {
     private String saveImage(BufferedImage img) throws IOException {
        // String path = UUID.randomUUID().toString();
 
-        File dir = new File("D:\\Диплом\\DevPut\\src\\main\\resources/static/img/captcha/");
+        Resource res = new ClassPathResource("static/img/captcha/");
+        File dir = res.getFile();
         dir.mkdir();
         File file = new File(dir.getAbsolutePath() + "/captcha.png");
         ImageIO.write(img, "png", file);
