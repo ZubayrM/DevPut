@@ -124,7 +124,7 @@ public class PostsService<T> {
     public ResultDto addPost(String time, Integer active, String title, String text, String[] tags) {
         Posts post = new Posts();
         post.setAuthor(usersService.getUser());
-        post.setTime(validDate(TIME_NEW_POST.parse(time)));
+        post.setTime(validDate(FIRST_PUBLICATION.parse(time)));
         post.setIsActive(active);
         post.setTitle(title);
         post.setText(text);
@@ -391,17 +391,11 @@ public class PostsService<T> {
         Integer postCount = postsRepository.countByAuthor(u.getId());
         Integer likesCount = postVotesRepository.countByUserIdAndValue(u.getId(), 1);
         Integer dislikesCount = postVotesRepository.countByUserIdAndValue(u.getId(), -1);
-        Integer viewsCount = generateViewsCount(postsRepository.findByAuthor(u.getId()));
+        Integer viewsCount = postsRepository.countViews(u.getId());
         String firstPublication = FIRST_PUBLICATION.format(postsRepository.findFirstByTimeAndAuthor(u.getId()).getTime());
         return new StatisticsDto(postCount, likesCount, dislikesCount, viewsCount, firstPublication);
     }
 
-    private Integer generateViewsCount(Optional<List<Posts>> byAuthor) {
-        List<Posts> l = byAuthor.get();
-        AtomicInteger i = new AtomicInteger();
-
-        return null;
-    }
 
     public StatisticsDto allStatistic() {
         Integer postCount = postsRepository.getAllPosts().size();

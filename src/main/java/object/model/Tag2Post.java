@@ -1,11 +1,15 @@
 package object.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 @Data
 @Entity
+@ToString
+@EqualsAndHashCode
 public class Tag2Post {
 
     @Id

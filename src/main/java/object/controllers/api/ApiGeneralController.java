@@ -15,12 +15,12 @@ import object.services.GlobalSettingsService;
 import object.services.PostsService;
 import object.services.UsersService;
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.*;
 import java.util.Base64;
@@ -70,7 +70,8 @@ public class ApiGeneralController {
     }
 
     @PostMapping("/image")
-    public ResponseEntity addImage(Image image){
+    public ResponseEntity addImage(@RequestBody MultipartFile image){
+        log.info(image.getContentType());
         String imagePath = userService.addImage(image);
         return  ResponseEntity.ok(imagePath);
     }
@@ -100,13 +101,15 @@ public class ApiGeneralController {
 
     @GetMapping("/settings")
     public ResponseEntity getSettings(){
-        log.info("settings");
         return ResponseEntity.ok(globalSettingsService.getSetting());
     }
 
     @PutMapping("/settings")
-    public ResponseEntity setSettings(@RequestBody Map<String, Boolean> global_setting){
-        log.info(global_setting.keySet() + " " + global_setting.values());
+    public ResponseEntity setSettings(@RequestBody Map<String, Boolean> globalSetting){
+        if (userService.getUser().getIsModerator() > 0) {
+            log.info(globalSetting.keySet() + " " + globalSetting.values());
+            globalSettingsService.saveSettings(globalSetting);
+        }
         return ResponseEntity.ok(HttpStatus.ACCEPTED);
     }
 

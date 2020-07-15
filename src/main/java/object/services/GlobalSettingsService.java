@@ -21,4 +21,16 @@ public class GlobalSettingsService {
         return settings;
     }
 
+    public void saveSettings(Map<String, Boolean> globalSetting) {
+        for (Map.Entry<String, Boolean> setting : globalSetting.entrySet()){
+            GlobalSettings byCode = globalSettingsRepository.findByCode(setting.getKey());
+            if (byCode == null){
+                byCode = new GlobalSettings();
+                byCode.setName(setting.getKey());
+                byCode.setCode(setting.getKey());
+            }
+            byCode.setValue(setting.getValue().toString());
+            globalSettingsRepository.save(byCode);
+        }
+    }
 }

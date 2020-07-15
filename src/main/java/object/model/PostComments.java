@@ -1,6 +1,8 @@
 package object.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
@@ -9,6 +11,8 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "post_comments")
+@ToString
+@EqualsAndHashCode
 public class PostComments {
 
     @Id

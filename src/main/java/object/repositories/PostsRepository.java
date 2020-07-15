@@ -66,6 +66,7 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
     @Query(value = "SELECT * FROM Posts where user_id = ?1", nativeQuery = true)
     Optional<List<Posts>> findByAuthor(Integer userId);
 
+    @Query(value = "SELECT SUM(p.view_count) FROM Posts p WHERE p.user_id = ?1 AND p.moderation_status = 'ACCEPTED' AND p.time <= current_date", nativeQuery = true)
     Integer countViews(Integer authorId);
 
 }

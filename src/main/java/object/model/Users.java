@@ -2,6 +2,8 @@ package object.model;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -10,6 +12,8 @@ import java.util.Date;
 
 @Data
 @Entity
+@ToString
+@EqualsAndHashCode
 public class Users {
 
     @Id
@@ -33,6 +37,7 @@ public class Users {
 
     private String code;
 
+    @Lob
     private String photo;
 
 }

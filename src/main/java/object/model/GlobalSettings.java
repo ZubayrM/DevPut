@@ -1,12 +1,16 @@
 package object.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 @Data
 @Entity
 @Table(name = "global_settings")
+@ToString
+@EqualsAndHashCode
 public class GlobalSettings {
 
     @Id

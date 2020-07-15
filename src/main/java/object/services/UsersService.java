@@ -18,17 +18,18 @@ import object.model.enums.ModerationStatus;
 import object.repositories.CaptchaCodesRepository;
 import object.repositories.PostsRepository;
 import object.repositories.UsersRepository;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
-import java.awt.*;
-import java.awt.image.RenderedImage;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Base64;
 import java.util.Date;
@@ -44,7 +45,7 @@ public class UsersService {
 
     private AuthenticationManager authenticationManager;
 
-    private final String PATH_TO_IMAGE = "upload/";
+    private final String PATH_TO_IMAGE = "unload/";
 
     private UsersRepository usersRepository;
     private PostsRepository postsRepository;
@@ -53,9 +54,18 @@ public class UsersService {
     private ImagePath imagePath;
 
     @SneakyThrows
-    public String addImage(Image image) {
-        String newPath = generatePathImage();
-        ImageIO.write((RenderedImage) image, "png", new File(newPath));
+    public String addImage(MultipartFile image) {
+        int i = image.getContentType().indexOf("/");
+        String type = image.getContentType().substring(i + 1);
+        String imageName = UUID.randomUUID().toString().substring(0,3);
+
+        String newPath = generatePathImage().concat(imageName + "." + type);
+        log.info(type);
+        log.info(newPath);
+
+        BufferedImage bi = ImageIO.read(image.getInputStream());
+
+        ImageIO.write(bi, type, new File(newPath));
         return newPath;
     }
 
@@ -112,13 +122,21 @@ public class UsersService {
                 .build();
     }
 
+    @SneakyThrows
     private String generatePathImage() {
         String dir1 = getRandomPath();
         String dir2 = getRandomPath();
         String dir3 = getRandomPath();
-        String image = UUID.randomUUID().toString().substring(0,3).concat("/");
-        return "/img/unload" + dir1 + dir2 + dir3 + image + ".png";
+        File dir = new File("/resources/static/img/unload/" + dir1 + dir2 + dir3);
+
+        log.info(dir.getAbsolutePath());
+        if (!dir.exists())
+        dir.mkdir();
+
+
+        return dir.getPath();
     }
+
 
     private String getRandomPath() {
         return UUID.randomUUID().toString().substring(0,2).concat("/");
@@ -190,7 +208,7 @@ public class UsersService {
 
 
         if (dto.getName() != null) {
-            if (dto.getName().split(" ").length > 1) {
+            if (dto.getName().length() > 1) {
                 u.setName(dto.getName());
             } else
                 return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, "Имя указано неверно", null, null, null), false);

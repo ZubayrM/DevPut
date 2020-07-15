@@ -12,4 +12,6 @@ public interface GlobalSettingsRepository extends CrudRepository<GlobalSettings,
     List<GlobalSettings> findAll();
 
 
+    @Query(value = "FROM GlobalSettings gS WHERE gS.code = :code")
+    GlobalSettings findByCode(String code);
 }

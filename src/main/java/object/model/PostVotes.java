@@ -1,6 +1,8 @@
 package object.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -8,6 +10,8 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "post_votes")
+@ToString
+@EqualsAndHashCode
 public class PostVotes {
 
     @Id
@@ -26,5 +30,7 @@ public class PostVotes {
 
     @Column(nullable = false)
     private Integer value;
+
+
 
 }

@@ -2,6 +2,8 @@ package object.model;
 
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.With;
 import object.model.enums.ModerationStatus;
 
@@ -10,6 +12,8 @@ import java.util.*;
 
 @Data
 @Entity
+@ToString
+@EqualsAndHashCode
 public class Posts {
 
     @Id

@@ -1,6 +1,8 @@
 package object.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -8,6 +10,8 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "captcha_codes")
+@ToString
+@EqualsAndHashCode
 public class CaptchaCodes {
 
     @Id
