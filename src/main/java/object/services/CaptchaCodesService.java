@@ -15,6 +15,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalUnit;
 import java.util.Date;
 import java.util.UUID;
 
@@ -27,6 +30,8 @@ public class CaptchaCodesService {
 
     @SneakyThrows
     public CaptchaDto captcha() {
+
+        deleteStarCaptcha();
 
         String code = UUID.randomUUID().toString().substring(0, 4);
         String secretCode = UUID.randomUUID().toString().substring(0, 4);
@@ -45,6 +50,13 @@ public class CaptchaCodesService {
                 .image(path)
                 .secret(code)
                 .build();
+    }
+
+    private void deleteStarCaptcha() {
+        LocalDateTime time = LocalDateTime.now();
+        time.minusHours(1L);
+
+        captchaCodesRepository.deleteByTimeBefore(time);
     }
 
     private String getPathToImage(File file) {

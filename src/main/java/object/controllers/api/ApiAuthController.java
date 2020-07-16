@@ -51,7 +51,7 @@ public class ApiAuthController {
                                          @RequestParam String captcha,
                                          @RequestParam("captcha_secret") String captchaSecret){
         ResultDto dto = usersService.password(code, password, captcha, captchaSecret);
-        return null;
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/register")

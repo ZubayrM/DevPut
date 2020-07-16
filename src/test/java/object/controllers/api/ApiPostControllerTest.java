@@ -44,7 +44,7 @@ class ApiPostControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    @Autowired
+    @MockBean
     private AuthenticationManager authenticationManager;
 
     @Autowired
@@ -59,8 +59,6 @@ class ApiPostControllerTest {
         UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken("user1@mail.ru", "111333");
         Authentication authentication = authenticationManager.authenticate(authRequest);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-
 
     }
 
@@ -152,13 +150,6 @@ class ApiPostControllerTest {
                 .param("tags", "jUnit, test"))
                 .andDo(print())
                 .andExpect(status().isOk());
-
-
-//        @RequestParam String time,
-//        @RequestParam Integer active,
-//        @RequestParam String title,
-//        @RequestParam String text,
-//        @RequestParam String tags
     }
 
     @Test
@@ -179,7 +170,7 @@ class ApiPostControllerTest {
     @SneakyThrows
     void addComment() {
         mvc.perform(post("/api/comment")
-                .header("Authentication", "KluchOtBaldi")
+                //.header("Authentication", "KluchOtBaldi")
                 .param("parent_id" , "1")
                 .param("post_id", "1")
                 .param("text", "new test comment"))
@@ -194,5 +185,22 @@ class ApiPostControllerTest {
                 .param("query" , "testTag"))
                 .andDo(print())
                 .andExpect(status().isOk());
+    }
+
+
+
+    @Test
+    void getPost() {
+    }
+
+
+
+
+    @Test
+    void like() {
+    }
+
+    @Test
+    void dislike() {
     }
 }

@@ -24,22 +24,32 @@ class ApiAuthControllerTest {
     @Autowired
     private MockMvc mvc;
 
+
     @Test
-    @SneakyThrows
-    void getCalendar() {
-        mvc.perform(get("/api/calendar")
-                .param("year", "2019"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.years[0]", is("2019")));
+    void login() {
     }
 
     @Test
-    @SneakyThrows
-    void allStatistics() {
-        mvc.perform(get("/api/statistics/all"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.liceCount", is(1)));
+    void check() {
+    }
+
+    @Test
+    void restore() {
+    }
+
+    @Test
+    void updatePassword() {
+    }
+
+    @Test
+    void register() {
+    }
+
+    @Test
+    void captcha() {
+    }
+
+    @Test
+    void logout() {
     }
 }

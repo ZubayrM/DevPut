@@ -37,4 +37,50 @@ class ApiGeneralControllerTest {
     @Test
     void addImage() {
     }
+
+
+
+    @Test
+    @SneakyThrows
+    void getCalendar() {
+        mvc.perform(get("/api/calendar")
+                .param("year", "2019"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.years[0]", is("2019")));
+    }
+
+    @Test
+    void profileMy() {
+    }
+
+    @Test
+    void myStatistics() {
+    }
+
+    @Test
+    @SneakyThrows
+    void allStatistics() {
+        mvc.perform(get("/api/statistics/all"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.liceCount", is(1)));
+    }
+
+
+    @Test
+    void getImage() {
+    }
+
+    @Test
+    void moderation() {
+    }
+
+    @Test
+    void getSettings() {
+    }
+
+    @Test
+    void setSettings() {
+    }
 }

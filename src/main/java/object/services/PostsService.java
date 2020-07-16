@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,7 +32,6 @@ public class PostsService<T> {
     private PostCommentsRepository postCommentsRepository;
     private PostsRepository postsRepository;
     private TagsRepository tagsRepository;
-    private UsersRepository usersRepository;
     private PostVotesRepository postVotesRepository;
     private UsersService usersService;
     private Tag2PostRepository tag2PostRepository;
