@@ -31,10 +31,10 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Base64;
-import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
+import java.nio.file.Path;
+import java.util.*;
+
+import static java.util.Arrays.asList;
 
 
 @Service
@@ -44,9 +44,6 @@ public class UsersService {
 
 
     private AuthenticationManager authenticationManager;
-
-    private final String PATH_TO_IMAGE = "unload/";
-
     private UsersRepository usersRepository;
     private PostsRepository postsRepository;
     private MailSenderService mailSenderService;
@@ -57,16 +54,17 @@ public class UsersService {
     public String addImage(MultipartFile image) {
         int i = image.getContentType().indexOf("/");
         String type = image.getContentType().substring(i + 1);
-        String imageName = UUID.randomUUID().toString().substring(0,3);
 
-        String newPath = generatePathImage().concat(imageName + "." + type);
-        log.info(type);
-        log.info(newPath);
+        String imageName = UUID.randomUUID().toString().substring(0,3).concat("." + type);
 
+        List<String> list = generatePathImage();
+
+        String newPath = list.get(0).concat(imageName);
         BufferedImage bi = ImageIO.read(image.getInputStream());
-
         ImageIO.write(bi, type, new File(newPath));
-        return newPath;
+
+
+        return list.get(1).concat(imageName);
     }
 
 
@@ -123,18 +121,21 @@ public class UsersService {
     }
 
     @SneakyThrows
-    private String generatePathImage() {
+    private List<String> generatePathImage() {
+        String path = "img/unload/";
+        String absolutePath = "src/main/resources/static/post/img/unload/";
+
         String dir1 = getRandomPath();
         String dir2 = getRandomPath();
         String dir3 = getRandomPath();
-        File dir = new File("/resources/static/img/unload/" + dir1 + dir2 + dir3);
 
-        log.info(dir.getAbsolutePath());
-        if (!dir.exists())
-        dir.mkdir();
+        path += (dir1 + dir2 + dir3);
+        absolutePath += (dir1 + dir2 + dir3);
 
+        File dir = new File(absolutePath);
+        dir.mkdirs();
 
-        return dir.getPath();
+        return Arrays.asList(absolutePath, path);
     }
 
 

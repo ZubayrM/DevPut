@@ -127,7 +127,14 @@ public class PostsService<T> {
         post.setTitle(title);
         post.setText(text);
         saveTag(tags);
-        post.setModerationStatus(ModerationStatus.NEW);
+
+        if (usersService.getUser().getIsModerator() == 0)
+            post.setModerationStatus(ModerationStatus.NEW);
+        else {
+            post.setModerationStatus(ModerationStatus.ACCEPTED);
+            post.setModerationId(usersService.getUser().getId());
+        }
+
         post.setViewCount(0);
         Posts result = postsRepository.save(post);
 
@@ -178,7 +185,7 @@ public class PostsService<T> {
     public ResultDto update(String time, Integer active, String title, String text, String[] tags, Integer id) {
         if (title.length() > 15 && text.length() > 15 ) {
             Posts post = postsRepository.findById(id).get();
-            post.setTime(TIME_NEW_POST.parse(time));
+            post.setTime(FIRST_PUBLICATION.parse(time));
             post.setIsActive(active);
             post.setTitle(title);
             post.setText(text);

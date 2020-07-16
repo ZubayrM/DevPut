@@ -71,7 +71,6 @@ public class ApiGeneralController {
 
     @PostMapping("/image")
     public ResponseEntity addImage(@RequestBody MultipartFile image){
-        log.info(image.getContentType());
         String imagePath = userService.addImage(image);
         return  ResponseEntity.ok(imagePath);
     }
