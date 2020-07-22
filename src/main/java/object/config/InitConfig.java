@@ -1,6 +1,7 @@
 package object.config;
 
 import object.dto.response.InitResponseDto;
+import object.services.TagsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -13,4 +14,5 @@ public class InitConfig {
     public InitResponseDto  initResponseDto(){
         return new InitResponseDto();
     }
+
 }

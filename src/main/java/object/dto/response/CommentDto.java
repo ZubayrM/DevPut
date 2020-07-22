@@ -12,5 +12,5 @@ public class CommentDto {
     private Integer id;
     private String time;
     private String text;
-    private UserDto user;
+    private UserPhotoDto user;
 }

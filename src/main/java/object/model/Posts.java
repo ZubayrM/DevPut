@@ -1,10 +1,10 @@
 package object.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import lombok.With;
 import object.model.enums.ModerationStatus;
 
 import javax.persistence.*;
@@ -47,9 +47,11 @@ public class Posts {
     private Integer viewCount;
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<PostVotes> postVotesList = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<PostComments> postCommentsList = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

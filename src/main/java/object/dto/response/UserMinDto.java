@@ -1,12 +1,18 @@
 package object.dto.response;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDto extends UserResponseDto {
-    private String photo;
+public class UserMinDto {
+
+    private Integer id;
+
+    private String name;
+
 }

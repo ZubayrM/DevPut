@@ -12,10 +12,10 @@ import java.util.Optional;
 public interface Tag2PostRepository extends CrudRepository<Tag2Post, Integer> {
 
 
-    //не работает COUNT
-//    @Query(value = "SELECT COUNT(t2p) FROM Tag2Post t2p WHERE t2p.tagId = :id")
-//    Integer countByTag(Integer id);
 
-    @Query(value = "FROM Tag2Post t2p WHERE t2p.tagId = :id ")
-    List<Tag2Post> countByTag(Integer id);
+    @Query(value = "SELECT COUNT(*) FROM Tag2Post WHERE tag_id = ?1", nativeQuery = true)
+    Integer countByTag(Integer id);
+
+    @Query(value = "SELECT COUNT(*) FROM Tag2Post", nativeQuery = true)
+    Integer countTag2Post();
 }

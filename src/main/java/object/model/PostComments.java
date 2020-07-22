@@ -1,5 +1,6 @@
 package object.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -25,6 +26,7 @@ public class PostComments {
 
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
+    @JsonManagedReference
     private Posts post;
 
     @Column(name = "user_id", nullable = false)

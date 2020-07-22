@@ -189,9 +189,6 @@ class ApiPostControllerTest {
 
 
 
-    @Test
-    void getPost() {
-    }
 
 
 

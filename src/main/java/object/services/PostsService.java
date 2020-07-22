@@ -5,7 +5,7 @@ import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import object.dto.response.ResultDto;
 import object.dto.response.StatisticsDto;
-import object.dto.response.UserResponseDto;
+import object.dto.response.UserMinDto;
 import object.dto.response.post.*;
 import object.dto.response.resultPost.ErrorPostDto;
 import object.dto.response.resultPost.ParamError;
@@ -16,6 +16,7 @@ import object.model.*;
 import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
 import object.repositories.*;
+import org.jsoup.Jsoup;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -238,9 +239,9 @@ public class PostsService<T> {
     private<T extends PostAndAuthorDto> T createPostDto(T dto, Posts p, SimpleDateFormat format){
         dto.setId(p.getId());
         dto.setTime(createTime(p.getTime(), format));
-        dto.setUser(new UserResponseDto(p.getAuthor().getId(), p.getAuthor().getName()));
+        dto.setUser(new UserMinDto(p.getAuthor().getId(), p.getAuthor().getName()));
         dto.setTitle(p.getTitle());
-        dto.setAnnounce(p.getText().substring(0, 15));
+        dto.setAnnounce(Jsoup.parse(p.getText()).text().substring(0,15));
         return dto;
     }
 
@@ -282,7 +283,7 @@ public class PostsService<T> {
         for (Posts post : posts){
             listResponseDto.add(createPostFullDto(new PostFullDto(),post));
         }
-        return new ListPostResponseDto<>(postsRepository.getAllPosts().size(), listResponseDto);
+        return new ListPostResponseDto<>(postsRepository.countPosts(), listResponseDto);//
     }
 
     private List<Posts> getPostsByMode(Integer offset, Integer limit, Mode mode){

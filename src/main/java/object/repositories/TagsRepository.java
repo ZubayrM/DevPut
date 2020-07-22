@@ -21,4 +21,7 @@ public interface TagsRepository extends CrudRepository<Tags, Integer> {
 
     @Query(value = "FROM Tags")
     List<Tags> findAll();
+
+    @Query(value = "SELECT COUNT(*) FROM Tags", nativeQuery = true)
+    Integer countTags();
 }

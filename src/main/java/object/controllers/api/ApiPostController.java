@@ -55,7 +55,7 @@ public class ApiPostController {
     }
 
     @GetMapping("/post/{id}")
-    public ResponseEntity getPost(@PathVariable Integer id){
+    public ResponseEntity getPostById(@PathVariable Integer id){
         PostAllCommentsAndAllTagsDto dto = postsService.getPostAllCommentsAndAllTagsDto(id);
         return ResponseEntity.ok(dto);
     }

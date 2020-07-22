@@ -1,6 +1,5 @@
 package object.repositories;
 
-import object.dto.response.UserResponseDto;
 import object.model.Posts;
 import object.model.Users;
 import object.model.enums.ModerationStatus;
@@ -68,5 +67,8 @@ public interface PostsRepository extends CrudRepository<Posts,Integer> {
 
     @Query(value = "SELECT SUM(p.view_count) FROM Posts p WHERE p.user_id = ?1 AND p.moderation_status = 'ACCEPTED' AND p.time <= current_date", nativeQuery = true)
     Integer countViews(Integer authorId);
+
+    @Query(value = "SELECT COUNT(*) FROM Posts WHERE moderation_status = 'ACCEPTED' AND time <= current_date", nativeQuery = true)
+    Integer countPosts();
 
 }

@@ -1,5 +1,6 @@
 package object.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -10,8 +11,8 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "post_votes")
-@ToString
-@EqualsAndHashCode
+@ToString//(exclude = "post")
+@EqualsAndHashCode//(exclude = "post")
 public class PostVotes {
 
     @Id
@@ -23,6 +24,7 @@ public class PostVotes {
 
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
+    @JsonManagedReference
     private Posts post;
 
     @Column(nullable = false)

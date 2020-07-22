@@ -69,10 +69,6 @@ class ApiGeneralControllerTest {
 
 
     @Test
-    void getImage() {
-    }
-
-    @Test
     void moderation() {
     }
 

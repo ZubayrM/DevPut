@@ -63,6 +63,7 @@ public class UsersService {
         BufferedImage bi = ImageIO.read(image.getInputStream());
         ImageIO.write(bi, type, new File(newPath));
 
+        log.info(list.get(0) + list.get(1));
 
         return list.get(1).concat(imageName);
     }
@@ -122,8 +123,8 @@ public class UsersService {
 
     @SneakyThrows
     private List<String> generatePathImage() {
-        String path = "img/unload/";
-        String absolutePath = "src/main/resources/static/post/img/unload/";
+        String path = "/img/unload/";
+        String absolutePath = "src/main/resources/static/img/unload/";
 
         String dir1 = getRandomPath();
         String dir2 = getRandomPath();
@@ -186,8 +187,6 @@ public class UsersService {
 
     private ResultDto generatedNewUser( String email, String password, String name) {
         Users user = new Users();
-//        int index = email.indexOf("@");
-//        user.setName(email.substring(0,index));
         user.setName(name);
         user.setEmail(email);
         user.setPassword(password);
