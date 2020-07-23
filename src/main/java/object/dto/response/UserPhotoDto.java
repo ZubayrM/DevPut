@@ -9,4 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserPhotoDto extends UserMinDto {
     private String photo;
+
+    public UserPhotoDto (Integer id, String name, String photo){
+        super(id, name);
+        this.photo = photo;
+    }
 }

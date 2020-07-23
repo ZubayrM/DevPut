@@ -1,30 +1,25 @@
 package object.controllers.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import object.dto.request.post.NewPostDto;
 import object.services.UsersService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.web.servlet.SecurityMarker;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-
-import javax.servlet.http.HttpSessionAttributeListener;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -33,9 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//@Sql(value = {"/delete.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-//@Sql(value = {"/insert.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-//@Sql(value = {"/delete.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @AutoConfigureMockMvc
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -47,8 +39,13 @@ class ApiPostControllerTest {
     @MockBean
     private AuthenticationManager authenticationManager;
 
-    @Autowired
+    @Mock
     private UsersService usersService;
+
+    private MockHttpSession session;
+
+    @Autowired
+    private ObjectMapper oM;
 
 
 
@@ -60,6 +57,8 @@ class ApiPostControllerTest {
         Authentication authentication = authenticationManager.authenticate(authRequest);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        session = new MockHttpSession();
+        session.setAttribute("Authentication", SecurityContextHolder.getContext().getAuthentication());
     }
 
     @Test
@@ -133,7 +132,8 @@ class ApiPostControllerTest {
         mvc.perform(get("/api/post/my")
                 .param("offset", "0")
                 .param("limit", "10")
-                .param("status", "published").principal(SecurityContextHolder.getContext().getAuthentication()))
+                .param("status", "published")
+                .session(session))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -141,13 +141,18 @@ class ApiPostControllerTest {
     @Test
     @SneakyThrows
     void addPost() {
+
+        NewPostDto dto = new NewPostDto();
+        dto.setTime("2020-05-21 20:20");
+        dto.setActive(1);
+        dto.setTitle("Test post");
+        dto.setText("Тестовый текст для тестирования");
+        dto.setTags(new String[]{"test", "jUnit"});
+
         mvc.perform(post("/api/post")
                 .contentType(MediaType.APPLICATION_JSON)
-                .param("time", "2020-05-21 20:20")
-                .param("active", "1")
-                .param( "title","testPost")
-                .param( "text","тестовый текст для тестирования")
-                .param("tags", "jUnit, test"))
+                .session(session)
+                .content(oM.writeValueAsString(dto)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -155,49 +160,38 @@ class ApiPostControllerTest {
     @Test
     @SneakyThrows
     void update() {
+        NewPostDto dto = new NewPostDto();
+        dto.setTime("2020-05-21 20:20");
+        dto.setActive(1);
+        dto.setTitle("Test post");
+        dto.setText("Тестовый текст для тестирования");
+        dto.setTags(new String[]{"test", "jUnit"});
+
         mvc.perform(post("/api/post/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .param("time", "2020-05-21 20:20")
-                .param("active", "1")
-                .param( "title","testPost")
-                .param( "text","тестовый текст для тестирования")
-                .param("tags", "jUnit, test"))
+                .session(session)
+                .content(oM.writeValueAsString(dto)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
     @Test
     @SneakyThrows
-    void addComment() {
-        mvc.perform(post("/api/comment")
-                //.header("Authentication", "KluchOtBaldi")
-                .param("parent_id" , "1")
-                .param("post_id", "1")
-                .param("text", "new test comment"))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @SneakyThrows
-    void getTags() {
-        mvc.perform(get("/api/tag")
-                .param("query" , "testTag"))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
-
-
-
-
-
-
-
-    @Test
     void like() {
+        mvc.perform(post("/api/like")
+                .param("post_id", "1")
+                .session(session))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
+    @SneakyThrows
     void dislike() {
+        mvc.perform(post("/api/dislike")
+                .param("post_id", "2")
+                .session(session))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 }

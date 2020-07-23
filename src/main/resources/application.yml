@@ -5,7 +5,7 @@ spring.datasource.password: "00400040"
 spring.jpa.hibernate.ddl-auto: none
 
 server:
-  port: 80
+  port: 8080
 
 spring.jpa.show-sql: true
 spring.jpa.properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect

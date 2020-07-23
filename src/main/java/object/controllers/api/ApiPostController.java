@@ -1,5 +1,6 @@
 package object.controllers.api;
 
+import lombok.AllArgsConstructor;
 import object.dto.request.post.CommentDto;
 import object.dto.request.post.NewPostDto;
 import object.dto.request.post.VotesDto;
@@ -10,7 +11,6 @@ import object.dto.response.resultPostComment.ResultPostCommentDto;
 import object.dto.response.tag.TagsDto;
 import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
-import object.services.PostCommentsService;
 import object.services.PostVotesService;
 import object.services.PostsService;
 import object.services.TagsService;
@@ -19,24 +19,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-
 @RestController
 @RequestMapping("/api")
+@AllArgsConstructor
 public class ApiPostController {
 
     private PostsService postsService;
     private PostVotesService postVotesService;
-    private PostCommentsService postCommentsService;
-    private TagsService tagsService;
-
-    @Autowired
-    public ApiPostController(PostsService postsService, PostVotesService postVotesService, PostCommentsService postCommentsService, TagsService tagsService) {
-        this.postsService = postsService;
-        this.postVotesService = postVotesService;
-        this.postCommentsService = postCommentsService;
-        this.tagsService = tagsService;
-    }
 
     @GetMapping("/post")
     public ResponseEntity<?> getAllPosts(@RequestParam Integer offset,
@@ -99,8 +88,6 @@ public class ApiPostController {
         return ResponseEntity.ok(dto);
     }
 
-
-
     @PutMapping("/post/{id}")
     public ResponseEntity update(@RequestBody NewPostDto request,
                                  @PathVariable Integer id){
@@ -108,28 +95,15 @@ public class ApiPostController {
         return ResponseEntity.ok(dto);
     }
 
-
-    @PostMapping("/comment")
-    public ResponseEntity addComment(@RequestBody CommentDto commentDto){
-        ResultPostCommentDto dto = postsService.addComment(commentDto.getParentId(), commentDto.getPostId(), commentDto.getText());
-        return ResponseEntity.ok(dto);
-    }
-
-    @GetMapping("/tag")
-    public ResponseEntity getTags(@RequestParam @Nullable String query){
-        TagsDto dto = tagsService.getTagByQuery(query);
-        return ResponseEntity.ok(dto);
-    }
-
     @PostMapping("/post/like")
-    public ResponseEntity like(@RequestBody VotesDto votesDto, HttpServletRequest request){
-        ResultDto dto = postVotesService.like(votesDto.getPost_id(), request);
+    public ResponseEntity like(@RequestBody VotesDto votesDto ){
+        ResultDto dto = postVotesService.like(votesDto.getPost_id());
         return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/post/dislike")
-    public ResponseEntity dislike(@RequestBody VotesDto votesDto, HttpServletRequest request){
-        ResultDto dto = postVotesService.disLike(votesDto.getPost_id(), request);
+    public ResponseEntity dislike(@RequestBody VotesDto votesDto ){
+        ResultDto dto = postVotesService.disLike(votesDto.getPost_id());
         return ResponseEntity.ok(dto);
     }
 

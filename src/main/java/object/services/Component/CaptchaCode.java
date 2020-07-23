@@ -1,4 +1,4 @@
-package object.services;
+package object.services.Component;
 
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -8,6 +8,7 @@ import object.repositories.CaptchaCodesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -21,17 +22,15 @@ import java.time.temporal.TemporalUnit;
 import java.util.Date;
 import java.util.UUID;
 
-@Service
+@Component
 @Log4j2
-public class CaptchaCodesService {
+public class CaptchaCode {
 
     @Autowired
     private CaptchaCodesRepository captchaCodesRepository;
 
     @SneakyThrows
-    public CaptchaDto captcha() {
-
-        deleteStarCaptcha();
+    public CaptchaDto getCaptchaDto() {
 
         String code = UUID.randomUUID().toString().substring(0, 4);
         String secretCode = UUID.randomUUID().toString().substring(0, 4);
@@ -52,10 +51,9 @@ public class CaptchaCodesService {
                 .build();
     }
 
-    private void deleteStarCaptcha() {
+    public void deleteOld() {
         LocalDateTime time = LocalDateTime.now();
         time.minusHours(1L);
-
         captchaCodesRepository.deleteByTimeBefore(time);
     }
 

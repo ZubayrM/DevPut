@@ -18,7 +18,7 @@ import object.model.enums.ModerationStatus;
 import object.repositories.CaptchaCodesRepository;
 import object.repositories.PostsRepository;
 import object.repositories.UsersRepository;
-import org.springframework.core.io.ClassPathResource;
+import object.services.Component.MailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,10 +31,7 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.nio.file.Path;
 import java.util.*;
-
-import static java.util.Arrays.asList;
 
 
 @Service
@@ -46,7 +43,7 @@ public class UsersService {
     private AuthenticationManager authenticationManager;
     private UsersRepository usersRepository;
     private PostsRepository postsRepository;
-    private MailSenderService mailSenderService;
+    private MailSender mailSender;
     private CaptchaCodesRepository captchaCodesRepository;
     private ImagePath imagePath;
 
@@ -103,7 +100,7 @@ public class UsersService {
             user.get().setCode(token);
             String url = "http://localhost:8080/login/change-password/" + user.get().getCode();
             String message = String.format("Для восстановления пароля перейдите по ссылке %s", url );
-            mailSenderService.send(user.get().getEmail(), "Password recovery", message);
+            mailSender.send(user.get().getEmail(), "Password recovery", message);
             return new ResultDto(true);
         } else
             return new ResultDto(false);

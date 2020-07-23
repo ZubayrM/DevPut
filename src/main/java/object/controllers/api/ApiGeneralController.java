@@ -4,15 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import object.component.ImagePath;
+import object.dto.request.post.CommentDto;
 import object.dto.request.post.ModerationPostDto;
 import object.dto.request.user.MyProfileDto;
 import object.dto.response.InitResponseDto;
 import object.dto.response.ResultDto;
 import object.dto.response.StatisticsDto;
 import object.dto.response.post.CalendarDto;
+import object.dto.response.resultPostComment.ResultPostCommentDto;
+import object.dto.response.tag.TagsDto;
 import object.model.Users;
-import object.services.GlobalSettingsService;
+import object.services.GeneralService;
 import object.services.PostsService;
+import object.services.TagsService;
 import object.services.UsersService;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
@@ -22,7 +26,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.*;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,8 +40,9 @@ public class ApiGeneralController {
     private InitResponseDto initResponseDto;
     private PostsService postsService;
     private UsersService userService;
-    private GlobalSettingsService globalSettingsService;
+    private GeneralService generalService;
     private ImagePath imagePath;
+    private TagsService tagsService;
 
     @GetMapping("/init")
     public ResponseEntity getInfo(){
@@ -47,7 +51,7 @@ public class ApiGeneralController {
 
     @GetMapping("/calendar")
     public ResponseEntity getCalendar(@RequestParam @Nullable String year ){
-        CalendarDto dto = postsService.getCalendar(year);
+        CalendarDto dto = generalService.getCalendar(year);
         return ResponseEntity.ok(dto);
     }
 
@@ -59,13 +63,13 @@ public class ApiGeneralController {
 
     @GetMapping("/statistics/my")
     public ResponseEntity myStatistics(){
-        StatisticsDto dto = postsService.myStatistics();
+        StatisticsDto dto = generalService.myStatistics();
         return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/statistics/all")
     public ResponseEntity allStatistics(){
-        StatisticsDto dto = postsService.allStatistic();
+        StatisticsDto dto = generalService.allStatistic();
         return ResponseEntity.ok(dto);
     }
 
@@ -91,7 +95,7 @@ public class ApiGeneralController {
 
     @PostMapping("/moderation")
     public ResponseEntity moderation(@RequestBody ModerationPostDto request){
-        postsService.moderationPost(request.getPostId(),request.getDecision());
+        generalService.moderationPost(request.getPostId(),request.getDecision());
         Map<String, String> m = new HashMap<>();
         m.put("data", new Date().toString());
         return ResponseEntity.ok(m);
@@ -100,19 +104,29 @@ public class ApiGeneralController {
 
     @GetMapping("/settings")
     public ResponseEntity getSettings(){
-        return ResponseEntity.ok(globalSettingsService.getSetting());
+        return ResponseEntity.ok(generalService.getSetting());
     }
 
     @PutMapping("/settings")
     public ResponseEntity setSettings(@RequestBody Map<String, Boolean> globalSetting){
         if (userService.getUser().getIsModerator() > 0) {
             log.info(globalSetting.keySet() + " " + globalSetting.values());
-            globalSettingsService.saveSettings(globalSetting);
+            generalService.saveSettings(globalSetting);
         }
         return ResponseEntity.ok(HttpStatus.ACCEPTED);
     }
 
+    @PostMapping("/comment")
+    public ResponseEntity addComment(@RequestBody CommentDto commentDto){
+        ResultPostCommentDto dto =  generalService.addComment(commentDto.getParentId(), commentDto.getPostId(), commentDto.getText());
+        return ResponseEntity.ok(dto);
+    }
 
+    @GetMapping("/tag")
+    public ResponseEntity getTags(@RequestParam @Nullable String query){
+        TagsDto dto = tagsService.getTagByQuery(query);
+        return ResponseEntity.ok(dto);
+    }
 
 
 

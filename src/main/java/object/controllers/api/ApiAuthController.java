@@ -4,11 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import object.dto.request.auth.LoginDto;
 import object.dto.request.auth.RegisterDto;
-import object.dto.request.user.MyProfileDto;
 import object.dto.response.CaptchaDto;
 import object.dto.response.ResultDto;
 import object.dto.response.auth.AuthUserResponseDto;
-import object.services.CaptchaCodesService;
+import object.services.GeneralService;
 import object.services.UsersService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 public class ApiAuthController {
 
     private UsersService usersService;
-    private CaptchaCodesService captchaCodesService;
+    private GeneralService generalService;
 
 
     @PostMapping("/login")
@@ -65,7 +64,7 @@ public class ApiAuthController {
 
     @GetMapping("/captcha")
     public ResponseEntity captcha(){
-        CaptchaDto dto = captchaCodesService.captcha();
+        CaptchaDto dto = generalService.getCaptcha();
         return ResponseEntity.ok(dto);
     }
 

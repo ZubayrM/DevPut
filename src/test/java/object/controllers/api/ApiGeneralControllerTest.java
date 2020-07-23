@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -35,12 +36,6 @@ class ApiGeneralControllerTest {
     }
 
     @Test
-    void addImage() {
-    }
-
-
-
-    @Test
     @SneakyThrows
     void getCalendar() {
         mvc.perform(get("/api/calendar")
@@ -53,6 +48,8 @@ class ApiGeneralControllerTest {
     @Test
     void profileMy() {
     }
+
+
 
     @Test
     void myStatistics() {
@@ -67,6 +64,10 @@ class ApiGeneralControllerTest {
                 .andExpect(jsonPath("$.liceCount", is(1)));
     }
 
+    @Test
+    void addImage() {
+    }
+
 
     @Test
     void moderation() {
@@ -78,5 +79,26 @@ class ApiGeneralControllerTest {
 
     @Test
     void setSettings() {
+    }
+
+    @Test
+    @SneakyThrows
+    void addComment() {
+        mvc.perform(post("/api/comment")
+                //.header("Authentication", "KluchOtBaldi")
+                .param("parent_id" , "1")
+                .param("post_id", "1")
+                .param("text", "new test comment"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @SneakyThrows
+    void getTags() {
+        mvc.perform(get("/api/tag")
+                .param("query" , "testTag"))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 }

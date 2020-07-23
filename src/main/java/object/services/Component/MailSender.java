@@ -1,12 +1,13 @@
-package object.services;
+package object.services.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-@Service
-public class MailSenderService {
+@Component
+public class MailSender {
 
     @Autowired
     private JavaMailSender mailSender;

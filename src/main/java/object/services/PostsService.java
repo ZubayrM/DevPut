@@ -3,9 +3,8 @@ package object.services;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import object.dto.response.ResultDto;
-import object.dto.response.StatisticsDto;
-import object.dto.response.UserMinDto;
+import object.component.ImagePath;
+import object.dto.response.*;
 import object.dto.response.post.*;
 import object.dto.response.resultPost.ErrorPostDto;
 import object.dto.response.resultPost.ParamError;
@@ -22,6 +21,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.TextStyle;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,16 +32,17 @@ import java.util.stream.Collectors;
 @Log4j2
 public class PostsService<T> {
 
-    private PostCommentsRepository postCommentsRepository;
     private PostsRepository postsRepository;
     private TagsRepository tagsRepository;
-    private PostVotesRepository postVotesRepository;
     private UsersService usersService;
     private Tag2PostRepository tag2PostRepository;
+    private UsersRepository usersRepository;
+    private ImagePath imagePath;
 
 
+    private static final SimpleDateFormat TIME_2_DATE = new SimpleDateFormat("hh:mm, dd.MM.yyyy");
     private static final SimpleDateFormat TIME_NEW_POST = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm");
-    private static final SimpleDateFormat FIRST_PUBLICATION = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+    private static final SimpleDateFormat DATE_2_TIME = new SimpleDateFormat("yyyy-MM-dd hh:mm");
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat YEAR = new SimpleDateFormat("yyyy");
     private static final SimpleDateFormat MONTH = new SimpleDateFormat("MM");
@@ -61,7 +64,7 @@ public class PostsService<T> {
 
     public PostAllCommentsAndAllTagsDto getPostAllCommentsAndAllTagsDto(Integer id) {
         Posts post = postsRepository.findById(id).get();
-        return createPostAllCommentsAndAllTagsDto(new PostAllCommentsAndAllTagsDto(), post, TIME_NEW_POST);
+        return createPostAllCommentsAndAllTagsDto(new PostAllCommentsAndAllTagsDto(), post, TIME_2_DATE);
     }
 
 
@@ -112,6 +115,7 @@ public class PostsService<T> {
         }
 
         Users user = usersService.getUser();
+        log.info(user);
         List<Posts> allPosts = postsRepository.getAllPosts(active, moderationStatus, user, PageRequest.of(offset, limit));
 
         return createListPostDto(allPosts);
@@ -123,7 +127,7 @@ public class PostsService<T> {
     public ResultDto addPost(String time, Integer active, String title, String text, String[] tags) {
         Posts post = new Posts();
         post.setAuthor(usersService.getUser());
-        post.setTime(validDate(FIRST_PUBLICATION.parse(time)));
+        post.setTime(validDate(DATE_2_TIME.parse(time)));
         post.setIsActive(active);
         post.setTitle(title);
         post.setText(text);
@@ -186,7 +190,7 @@ public class PostsService<T> {
     public ResultDto update(String time, Integer active, String title, String text, String[] tags, Integer id) {
         if (title.length() > 15 && text.length() > 15 ) {
             Posts post = postsRepository.findById(id).get();
-            post.setTime(FIRST_PUBLICATION.parse(time));
+            post.setTime(DATE_2_TIME.parse(time));
             post.setIsActive(active);
             post.setTitle(title);
             post.setText(text);
@@ -202,43 +206,14 @@ public class PostsService<T> {
             ErrorPostDto dto = new ErrorPostDto();
             dto.setErrors(error);
             return dto;
-    }
-
-    }
-
-    public ResultPostCommentDto addComment(Integer parentId, Integer postId, String text) {
-        PostComments pC = new PostComments();
-        pC.setUserId(usersService.getUser().getId());
-        pC.setPost(postsRepository.findById(postId).get());
-        if (text.length() > 0) pC.setText(text);
-        else return new  ErrorCommentDto();
-        pC.setTime(new Date());
-        pC.setParentId(parentId);
-        PostComments result = postCommentsRepository.save(pC);
-        return new OkCommentDto(result.getId());
-    }
-
-    public void moderationPost(Integer postId, String status) {
-        Posts post = postsRepository.findById(postId).get();
-        post.setModerationId(usersService.getUser().getId());
-        post.setModerationStatus(status.equalsIgnoreCase("ACCEPT") ? ModerationStatus.ACCEPTED : ModerationStatus.DECLINED);
-        postsRepository.save(post);
-    }
-
-
-    @SneakyThrows
-    public CalendarDto getCalendar(String year) {
-        if (year.isEmpty()){
-            return generateCalendarDto(postsRepository.getAllPosts(), year);
         }
-        else return generateCalendarDto(postsRepository.getAllPosts());
     }
 
 
 
     private<T extends PostAndAuthorDto> T createPostDto(T dto, Posts p, SimpleDateFormat format){
         dto.setId(p.getId());
-        dto.setTime(createTime(p.getTime(), format));
+        dto.setTime(dateToString(p.getTime(), format));
         dto.setUser(new UserMinDto(p.getAuthor().getId(), p.getAuthor().getName()));
         dto.setTitle(p.getTitle());
         dto.setAnnounce(Jsoup.parse(p.getText()).text().substring(0,15));
@@ -266,14 +241,26 @@ public class PostsService<T> {
     private <T extends PostAllCommentsAndAllTagsDto> T createPostAllCommentsAndAllTagsDto(T dto, Posts post, SimpleDateFormat format){
         T newDto = createPostFullDto(dto, post);
 
-        List<PostComments> postCommentsList = post.getPostCommentsList();
-        newDto.setComments(postCommentsList == null ? new ArrayList<>() : postCommentsList);
+        List<CommentDto> postCommentsList  = new ArrayList<>();
+        for (PostComments pC : post.getPostCommentsList()) {
+
+            Users u = usersRepository.findById(pC.getUserId()).get();
+
+            postCommentsList.add(CommentDto.builder()
+                    .id(pC.getId())
+                    .time(dateToString(pC.getTime(), format))
+                    .text(pC.getText())
+                    .user(new UserPhotoDto(u.getId(), u.getName(), imagePath.getImage() + "?email=" + u.getEmail()))
+                    .build()
+            );
+
+        }
+        newDto.setComments(postCommentsList);
 
         List<String> tagsList = (post.getTagList().stream().map(Tags::getName).collect(Collectors.toList()));
-        newDto.setTags(tagsList == null ? new ArrayList<>() : tagsList);
+        newDto.setTags(tagsList);
 
         newDto.setText(post.getText());
-        newDto.setTime(createTime(post.getTime(), format));
         return newDto;
     }
 
@@ -296,8 +283,8 @@ public class PostsService<T> {
                 break;
             default: sort = Sort.by(Sort.Direction.ASC, "id");
         }
-        posts = postsRepository.findAll(PageRequest.of(offset, limit, sort));
-
+        posts = postsRepository.findAll(PageRequest.of(offset/limit, limit, sort));
+        log.info(posts.size());
 
         if (mode == Mode.BEST){
             posts.sort(Comparator.comparing((p) -> p.getPostVotesList().size()));
@@ -306,30 +293,32 @@ public class PostsService<T> {
         else if (mode == Mode.POPULAR){
             posts.sort(Comparator.comparing((p)-> p.getPostVotesList().size()));
         }
+
+        log.info(posts.size());
+
         return posts;
     }
 
-    private String createTime(Date time, SimpleDateFormat timeFormat) {
-        Date today = new Date();
 
-        Calendar calendar = new GregorianCalendar();
-        calendar.setTime(time);
+    private String dateToString(Date date, SimpleDateFormat simpleDateFormat){
+        LocalDateTime timeTodo = LocalDateTime.now();
+        LocalDateTime time = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        String format;
 
-        Calendar todayCalendar = new GregorianCalendar();
-        todayCalendar.setTime(today);
+        if (time.getDayOfYear() == timeTodo.getDayOfYear())
+            format = "hh:mm";
+        else if (time.getDayOfYear() == timeTodo.minusDays(1).getDayOfYear())
+            format = "'вчера' hh:mm";
+        else if (time.getDayOfYear() >= timeTodo.minusDays(3).getDayOfYear())
+            format = "'" + time.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault()) + "' hh:mm";
+        else format = null;
 
-        if (timeFormat == null) {
-            String format;
-            if (calendar.get(Calendar.DAY_OF_YEAR) == todayCalendar.get(Calendar.DAY_OF_YEAR))
-                format = "HH:mm";
-            else if (calendar.get(Calendar.MONTH) == todayCalendar.get(Calendar.MONTH))
-                format = "EEEE HH:mm";
-            else
-                format = "dd.MM.yyyy";
-            timeFormat = new SimpleDateFormat(format);
+        log.info(format);
 
-        }
-        return timeFormat.format(time);
+        if (format != null) simpleDateFormat = new SimpleDateFormat(format);
+        else if (simpleDateFormat == null) simpleDateFormat = DATE_2_TIME;
+
+        return simpleDateFormat.format(date);
     }
 
     @SneakyThrows
@@ -354,62 +343,5 @@ public class PostsService<T> {
         }
         return tagsSet;
     }
-    private CalendarDto generateCalendarDto(List<Posts> list, String year) {
-        CalendarDto dto = new CalendarDto();
-        for (Posts p : list){
-            String y = YEAR.format(p.getTime()).trim();
 
-            dto.getYears().add(y);
-
-            if (y.equals(year) ){
-                String time = DATE_FORMAT.format(p.getTime());
-                if (dto.getPosts().containsKey(time)){
-                    dto.getPosts().put(time,  dto.getPosts().get(time) + 1);
-                } else
-                    dto.getPosts().put(time, 1);
-            }
-        }
-        return dto;
-    }
-
-    private CalendarDto generateCalendarDto(List<Posts> list) {
-        CalendarDto dto = new CalendarDto();
-        for (Posts p : list){
-            String y = YEAR.format(p.getTime()).trim();
-
-            dto.getYears().add(y);
-
-
-            String time = DATE_FORMAT.format(p.getTime());
-            if (dto.getPosts().containsKey(time)){
-                dto.getPosts().put(time,  dto.getPosts().get(time) + 1);
-            } else
-                dto.getPosts().put(time, 1);
-        }
-        return dto;
-    }
-
-
-
-    public StatisticsDto myStatistics() {
-
-        Users u = usersService.getUser();
-        Integer postCount = postsRepository.countByAuthor(u.getId());
-        Integer likesCount = postVotesRepository.countByUserIdAndValue(u.getId(), 1);
-        Integer dislikesCount = postVotesRepository.countByUserIdAndValue(u.getId(), -1);
-        Integer viewsCount = postsRepository.countViews(u.getId());
-        String firstPublication = FIRST_PUBLICATION.format(postsRepository.findFirstByTimeAndAuthor(u.getId()).getTime());
-        return new StatisticsDto(postCount, likesCount, dislikesCount, viewsCount, firstPublication);
-    }
-
-
-    public StatisticsDto allStatistic() {
-        Integer postCount = postsRepository.getAllPosts().size();
-        Integer likesCount = postVotesRepository.countByValue(1);
-        Integer dislikesCount = postVotesRepository.countByValue(-1);
-        Integer viewsCount = postsRepository.countByViewCount();
-        Posts p = postsRepository.findFirstByTime();
-        String firstPublication = FIRST_PUBLICATION.format(p.getTime());
-        return new StatisticsDto(postCount, likesCount, dislikesCount, viewsCount, firstPublication);
-    }
 }
