@@ -13,7 +13,7 @@ public class ImagePath {
     private String port;
 
     public String getImage(){
-        return "https://" + host + ":" + port + "/api/image/";
+        return host + ":" + port + "/api/image/";
     }
 
 }

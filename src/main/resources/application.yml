@@ -23,5 +23,5 @@ spring.mail:
     debag: true
 
 
-host: zubayr.herokuapp.com
+host: ${HOST_URL:https://zubayr.herokuapp.com}
 
