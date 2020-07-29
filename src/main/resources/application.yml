@@ -1,5 +1,5 @@
 spring.datasource.driver-class-name: com.mysql.cj.jdbc.Driver
-spring.datasource.url: jdbc:${CLEARDB_DATABASE_URL:mysql://localhost:3306/dev_put?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC}
+spring.datasource.url: jdbc:${CLEARDB_MAUVE_URL:mysql://localhost:3306/dev_put?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC}
 spring.datasource.username: root
 spring.datasource.password: "00400040"
 spring.jpa.hibernate.ddl-auto: none
