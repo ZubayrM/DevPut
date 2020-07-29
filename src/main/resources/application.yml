@@ -23,5 +23,5 @@ spring.mail:
     debag: true
 
 
-host: localhost
+host: zubayr.herokuapp.com
 
