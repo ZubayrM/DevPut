@@ -64,7 +64,7 @@ public class CaptchaCode {
 
 
     private String saveImage(BufferedImage img) throws IOException {
-        File dir = new File(new ClassPathResource("static/img/captcha/").getPath());
+        File dir = new File(new ClassPathResource("src/main/resources/static/img/captcha/").getPath());
         dir.mkdirs();
         File file = new File(dir.getAbsolutePath() + "/captcha.png");
         ImageIO.write(img, "png", file);
