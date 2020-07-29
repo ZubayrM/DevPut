@@ -27,7 +27,7 @@ public class PostComments {
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
     @JsonManagedReference
-    private Posts post;
+    private Post post;
 
     @Column(name = "user_id", nullable = false)
     private Integer userId;

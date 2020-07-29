@@ -13,9 +13,9 @@ public interface Tag2PostRepository extends CrudRepository<Tag2Post, Integer> {
 
 
 
-    @Query(value = "SELECT COUNT(*) FROM Tag2Post WHERE tag_id = ?1", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM tag2post WHERE tag_id = ?1", nativeQuery = true)
     Integer countByTag(Integer id);
 
-    @Query(value = "SELECT COUNT(*) FROM Tag2Post", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM tag2post", nativeQuery = true)
     Integer countTag2Post();
 }

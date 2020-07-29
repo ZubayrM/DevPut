@@ -3,7 +3,7 @@ package object.services;
 import lombok.AllArgsConstructor;
 import object.dto.response.tag.ParamResultDto;
 import object.dto.response.tag.TagsDto;
-import object.model.Tags;
+import object.model.Tag;
 import object.repositories.Tag2PostRepository;
 import object.repositories.TagsRepository;
 import org.springframework.stereotype.Service;
@@ -21,14 +21,14 @@ public class TagsService {
 
     public TagsDto getTagByQuery(String query) {
         TagsDto dto = new TagsDto();
-        List<Tags> list;
+        List<Tag> list;
 
         if (query != null) {
             list = tagsRepository.findAllByName(query);
         } else {
             list = tagsRepository.findAll();
         }
-        for (Tags tag : list) {
+        for (Tag tag : list) {
             dto.getTags().add(new ParamResultDto(tag.getName(), getWight(tag)));
         }
 
@@ -36,7 +36,7 @@ public class TagsService {
 
     }
 
-    private Double getWight(Tags tag) {
+    private Double getWight(Tag tag) {
         Integer countTag = tag2PostRepository.countByTag(tag.getId());
         Integer countPost = tag2PostRepository.countTag2Post();
 

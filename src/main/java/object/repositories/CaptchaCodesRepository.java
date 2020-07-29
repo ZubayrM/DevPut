@@ -15,8 +15,7 @@ public interface CaptchaCodesRepository extends CrudRepository<CaptchaCodes, Int
     @Query("from CaptchaCodes cc where cc.code = :captcha")
     CaptchaCodes findByCode(String captcha);
 
-//    @Query(value = "DELETE FROM CaptchaCodes WHERE time < current_date ", nativeQuery = true)
-//    void deleteByDate();
 
+    @Query(value = "DELETE FROM CaptchaCodes WHERE time < :date")
     void deleteByTimeBefore(LocalDateTime date);
 }

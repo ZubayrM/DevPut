@@ -2,7 +2,6 @@ package object.services;
 
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import object.component.ImagePath;
 import object.dto.response.CaptchaDto;
 import object.dto.response.StatisticsDto;
 import object.dto.response.post.CalendarDto;
@@ -11,8 +10,8 @@ import object.dto.response.resultPostComment.OkCommentDto;
 import object.dto.response.resultPostComment.ResultPostCommentDto;
 import object.model.GlobalSettings;
 import object.model.PostComments;
-import object.model.Posts;
-import object.model.Users;
+import object.model.Post;
+import object.model.User;
 import object.model.enums.ModerationStatus;
 import object.repositories.*;
 import object.services.Component.CaptchaCode;
@@ -66,24 +65,33 @@ public class GeneralService {
     }
 
     public StatisticsDto myStatistics() {
-        Users u = usersService.getUser();
-        Integer postCount = postsRepository.countByAuthor(u.getId());
-        Integer likesCount = postVotesRepository.countByUserIdAndValue(u.getId(), 1);
-        Integer dislikesCount = postVotesRepository.countByUserIdAndValue(u.getId(), -1);
-        Integer viewsCount = postsRepository.countViews(u.getId());
-        String firstPublication = DATE_2_TIME.format(postsRepository.findFirstByTimeAndAuthor(u.getId()).getTime());
-        return new StatisticsDto(postCount, likesCount, dislikesCount, viewsCount, firstPublication);
+        User u = usersService.getUser();
+        Post p = postsRepository.findFirstByTimeToAuthor(u.getId());
+
+        String time;
+        if (p != null) time = DATE_2_TIME.format(p.getTime());
+        else time = "0";
+
+        return StatisticsDto.builder()
+                .postsCount(postsRepository.countByAuthor(u.getId()))
+                .dislikesCount(postVotesRepository.countByUserIdAndValue(u.getId(), 1))
+                .likesCount(postVotesRepository.countByUserIdAndValue(u.getId(), -1))
+                .viewsCount(postsRepository.countViews(u.getId()))
+                .firstPublication(time)
+                .build();
     }
 
 
     public StatisticsDto allStatistic() {
-        Integer postCount = postsRepository.getAllPosts().size();
-        Integer likesCount = postVotesRepository.countByValue(1);
-        Integer dislikesCount = postVotesRepository.countByValue(-1);
-        Integer viewsCount = postsRepository.countByViewCount();
-        Posts p = postsRepository.findFirstByTime();
-        String firstPublication = DATE_2_TIME.format(p.getTime());
-        return new StatisticsDto(postCount, likesCount, dislikesCount, viewsCount, firstPublication);
+        Post p = postsRepository.findFirstByTime();
+
+        return StatisticsDto.builder()
+                .postsCount(postsRepository.countPosts())
+                .dislikesCount(postVotesRepository.countByValue(-1))
+                .likesCount(postVotesRepository.countByValue(1))
+                .viewsCount(postsRepository.countByViewCount())
+                .firstPublication(DATE_2_TIME.format(p.getTime()))
+                .build();
     }
 
     @SneakyThrows
@@ -94,9 +102,9 @@ public class GeneralService {
         else return generateCalendarDto(postsRepository.getAllPosts());
     }
 
-    private CalendarDto generateCalendarDto(List<Posts> list, String year) {
+    private CalendarDto generateCalendarDto(List<Post> list, String year) {
         CalendarDto dto = new CalendarDto();
-        for (Posts p : list){
+        for (Post p : list){
             String y = YEAR.format(p.getTime()).trim();
 
             dto.getYears().add(y);
@@ -112,9 +120,9 @@ public class GeneralService {
         return dto;
     }
 
-    private CalendarDto generateCalendarDto(List<Posts> list) {
+    private CalendarDto generateCalendarDto(List<Post> list) {
         CalendarDto dto = new CalendarDto();
-        for (Posts p : list){
+        for (Post p : list){
             String y = YEAR.format(p.getTime()).trim();
 
             dto.getYears().add(y);
@@ -142,7 +150,7 @@ public class GeneralService {
     }
 
     public void moderationPost(Integer postId, String status) {
-        Posts post = postsRepository.findById(postId).get();
+        Post post = postsRepository.findById(postId).get();
         post.setModerationId(usersService.getUser().getId());
         post.setModerationStatus(status.equalsIgnoreCase("ACCEPT") ? ModerationStatus.ACCEPTED : ModerationStatus.DECLINED);
         postsRepository.save(post);

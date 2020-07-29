@@ -54,7 +54,7 @@ public class CaptchaCode {
     public void deleteOld() {
         LocalDateTime time = LocalDateTime.now();
         time.minusHours(1L);
-        captchaCodesRepository.deleteByTimeBefore(time);
+//        captchaCodesRepository.deleteByTimeBefore(time);
     }
 
     private String getPathToImage(File file) {
@@ -64,11 +64,8 @@ public class CaptchaCode {
 
 
     private String saveImage(BufferedImage img) throws IOException {
-       // String path = UUID.randomUUID().toString();
-
-        Resource res = new ClassPathResource("static/img/captcha/");
-        File dir = res.getFile();
-        dir.mkdir();
+        File dir = new File(new ClassPathResource("static/img/captcha/").getPath());
+        dir.mkdirs();
         File file = new File(dir.getAbsolutePath() + "/captcha.png");
         ImageIO.write(img, "png", file);
         return getPathToImage(file);

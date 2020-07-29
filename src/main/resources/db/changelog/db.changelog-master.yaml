@@ -2,9 +2,9 @@ databaseChangeLog:
   - logicalFilePath: db/changelog/db.changelog-master.yaml
   - changeSet:
       id: 1
-      author: Zubayr
+      author: zubayr
       changes:
-        - updateTable:
+        - createTable:
             tableName: users
             columns:
               - column:
@@ -17,15 +17,18 @@ databaseChangeLog:
               - column:
                   name: is_moderator
                   type: int(11)
-                  nulable: false
+                  constraints:
+                    nulable: false
               - column:
                   name: reg_time
                   type: DATETIME(6)
-                  nulable: false
+                  constraints:
+                    nulable: false
               - column:
                   name: name
                   type: varchar(50)
-                  nulable: false
+                  constraints:
+                    nulable: false
               - column:
                   name: email
                   type: varchar(50)
@@ -43,7 +46,7 @@ databaseChangeLog:
       id: 2
       author: Zubayr
       changes:
-        - updateTable:
+        - createTable:
             tableName: posts
             columns:
               - column:
@@ -56,15 +59,18 @@ databaseChangeLog:
               - column:
                   name: is_active
                   type: int(50)
-                  nulable: false
+                  constraints:
+                    nulable: false
               - column:
                   name: moderation_status
                   type: enum("NEW", "ACCEPTED", "DECLINED")
-                  nulable: false
+                  constraints:
+                    nulable: false
               - column:
                   name: moderation_id
                   type: int(10)
-                  nulable: false
+                  constraints:
+                    nulable: false
               - column:
                   name: user_id
                   type: int(10)
@@ -84,7 +90,7 @@ databaseChangeLog:
       id: 3
       author: Zubayr
       changes:
-        - updateTable:
+        - createTable:
             tableName: post_votes
             columns:
               - column:
@@ -97,24 +103,28 @@ databaseChangeLog:
               - column:
                   name: user_id
                   type: int(10)
-                  nulable: false
+                  constraints:
+                    nulable: false
               - column:
                   name: post_id
                   type: int(10)
-                  nulable: false
+                  constraints:
+                    nulable: false
               - column:
                   name: time
-                  type: int(10)
-                  nulable: false
+                  type: date(50)
+                  constraints:
+                    nulable: false
               - column:
                   name: value
                   type: int(1)
-                  nulable: false
+                  constraints:
+                    nulable: false
   - changeSet:
       id: 4
       author: Zubayr
       changes:
-        - updateTable:
+        - createTable:
             tableName: tags
             columns:
               - column:
@@ -127,13 +137,14 @@ databaseChangeLog:
               - column:
                   name: name
                   type: varchar(255)
-                  nulable: false
+                  constraints:
+                    nulable: false
   - changeSet:
       id: 5
       author: Zubayr
       changes:
-        - updateTable:
-            tableName: tags2post
+        - createTable:
+            tableName: tag2post
             columns:
               - column:
                   name: id
@@ -145,16 +156,18 @@ databaseChangeLog:
               - column:
                   name: post_id
                   type: int(10)
-                  nulable: false
+                  constraints:
+                    nulable: false
               - column:
                    name: tag_id
                    type: int(10)
-                   nulable: false
+                   constraints:
+                     nulable: false
   - changeSet:
       id: 6
       author: Zubayr
       changes:
-        - updateTable:
+        - createTable:
             tableName: post_comments
             columns:
               - column:
@@ -170,24 +183,28 @@ databaseChangeLog:
               - column:
                   name: post_id
                   type: int(512)
-                  nullable: false
+                  constraints:
+                    nullable: false
               - column:
                   name: user_id
                   type: int(50)
-                  nullable: false
+                  constraints:
+                    nullable: false
               - column:
                   name: time
                   type: date(50)
-                  nullable: false
+                  constraints:
+                    nullable: false
               - column:
                   name: text
                   type: varchar(255)
-                  nullable: false
+                  constraints:
+                    nullable: false
   - changeSet:
       id: 7
       author: Zubayr
       changes:
-        - updateTable:
+        - createTable:
             tableName: captcha_codes
             columns:
               - column:
@@ -200,19 +217,23 @@ databaseChangeLog:
               - column:
                   name: time
                   type: date(50)
-                  nullable: false
+                  constraints:
+                    nullable: false
               - column:
                   name: code
                   type: text(1000)
+                  constraints:
+                    nullable: false
               - column:
                   name: secret_code
                   type: text(50)
-                  nullable: false
+                  constraints:
+                    nullable: false
   - changeSet:
       id: 8
       author: Zubayr
       changes:
-        - updateTable:
+        - createTable:
             tableName: global_settings
             columns:
               - column:
@@ -225,15 +246,18 @@ databaseChangeLog:
               - column:
                   name: code
                   type: varchar(255)
-                  nullable: false
+                  constraints:
+                    nullable: false
               - column:
                   name: name
                   type: varchar(255)
-                  nullable: false
+                  constraints:
+                    nullable: false
               - column:
                   name: value
                   type: varchar(255)
-                  nullable: false
+                  constraints:
+                    nullable: false
   - changeSet:
       id: 9
       author: Zubayr

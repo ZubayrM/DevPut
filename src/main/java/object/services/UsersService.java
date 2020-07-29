@@ -13,7 +13,7 @@ import object.dto.response.errors.ErrorsAuthDto;
 import object.dto.response.errors.ErrorsMessageDto;
 import object.dto.response.errors.ErrorsRegisterDto;
 import object.model.CaptchaCodes;
-import object.model.Users;
+import object.model.User;
 import object.model.enums.ModerationStatus;
 import object.repositories.CaptchaCodesRepository;
 import object.repositories.PostsRepository;
@@ -68,7 +68,7 @@ public class UsersService {
 
 
     public ResultDto login(String email, String password) {
-        Optional<Users> user = usersRepository.findByEmail(email);
+        Optional<User> user = usersRepository.findByEmail(email);
 
         if (user.isPresent()){
             if (user.get().getPassword().equals(password)) {
@@ -94,7 +94,7 @@ public class UsersService {
     }
 
     public ResultDto restore(String email) {
-        Optional<Users> user = usersRepository.findByEmail(email);
+        Optional<User> user = usersRepository.findByEmail(email);
         if (user.isPresent()){
             String token = UUID.randomUUID().toString();
             user.get().setCode(token);
@@ -106,7 +106,7 @@ public class UsersService {
             return new ResultDto(false);
     }
 
-    private UserAuthDto generatedUserAuth(Users user) {
+    private UserAuthDto generatedUserAuth(User user) {
         return UserAuthDto.builder()
                 .id(user.getId())
                 .name(user.getName())
@@ -142,7 +142,7 @@ public class UsersService {
     }
 
     public ResultDto password(String code, String password, String captcha, String captchaSecret) {
-        Optional<Users> user = usersRepository.findByCode(code);
+        Optional<User> user = usersRepository.findByCode(code);
         if (user.isPresent()){
             CaptchaCodes captchaCodes = captchaCodesRepository.findByCode(captcha);
             if (captchaCodes.getSecretCode().equals(captchaSecret)){
@@ -161,7 +161,7 @@ public class UsersService {
     }
 
     public ResultDto register(String email, String password, String captcha, String captchaSecret, String name) {
-        Optional<Users> user = usersRepository.findByEmail(email);
+        Optional<User> user = usersRepository.findByEmail(email);
 
         if (!user.isPresent()){
            // if (name.split(" ").length == 2){
@@ -183,7 +183,7 @@ public class UsersService {
     }
 
     private ResultDto generatedNewUser( String email, String password, String name) {
-        Users user = new Users();
+        User user = new User();
         user.setName(name);
         user.setEmail(email);
         user.setPassword(password);
@@ -195,7 +195,7 @@ public class UsersService {
 
     @SneakyThrows
     public ResultDto updateProfile(MyProfileDto dto) {
-        Users u = getUser();
+        User u = getUser();
 
         if (dto.getPhoto() != null) {
             if (dto.getPhoto().getSize() < 50_000)
@@ -238,18 +238,18 @@ public class UsersService {
         request.getSession(false);
     }
 
-    public Users getUser(){
+    public User getUser(){
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserDetails) {
             String userEmail = ((MyUserDetails) principal).getEmail();
             log.info(userEmail + " мои молитвы услышанны");
-            Optional<Users> user = usersRepository.findByEmail(userEmail);
+            Optional<User> user = usersRepository.findByEmail(userEmail);
             return user.orElse(null);
         }
         else return null;
     }
 
-    public Users getUser(String email){
+    public User getUser(String email){
         return usersRepository.findByEmail(email).orElse(null);
     }
 }

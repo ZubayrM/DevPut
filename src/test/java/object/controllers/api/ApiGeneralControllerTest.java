@@ -61,7 +61,7 @@ class ApiGeneralControllerTest {
         mvc.perform(get("/api/statistics/all"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.liceCount", is(1)));
+                .andExpect(jsonPath("$.likesCount", is(1)));
     }
 
     @Test

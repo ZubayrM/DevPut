@@ -28,7 +28,7 @@ public class ApiPostController {
     private PostVotesService postVotesService;
 
     @GetMapping("/post")
-    public ResponseEntity<?> getAllPosts(@RequestParam Integer offset,
+    public ResponseEntity<ListPostResponseDto> getAllPosts(@RequestParam Integer offset,
                                          @RequestParam Integer limit,
                                          @RequestParam String mode){
         ListPostResponseDto dto = postsService.getListPostResponseDtoByMode(offset, limit, Mode.valueOf(mode.toUpperCase()));
@@ -36,7 +36,7 @@ public class ApiPostController {
     }
 
     @GetMapping("/post/search")
-    public ResponseEntity getPostsBySearch(@RequestParam Integer offset,
+    public ResponseEntity<ListPostResponseDto> getPostsBySearch(@RequestParam Integer offset,
                                            @RequestParam Integer limit,
                                            @RequestParam String query){
         ListPostResponseDto dto = postsService.getListPostResponseDtoBySearch(offset, limit, query);
@@ -44,13 +44,13 @@ public class ApiPostController {
     }
 
     @GetMapping("/post/{id}")
-    public ResponseEntity getPostById(@PathVariable Integer id){
+    public ResponseEntity<PostAllCommentsAndAllTagsDto> getPostById(@PathVariable Integer id){
         PostAllCommentsAndAllTagsDto dto = postsService.getPostAllCommentsAndAllTagsDto(id);
         return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/post/byDate")
-    public ResponseEntity getPostsByDate(@RequestParam Integer offset,
+    public ResponseEntity<ListPostResponseDto> getPostsByDate(@RequestParam Integer offset,
                                          @RequestParam Integer limit,
                                          @RequestParam String date){
         ListPostResponseDto dto = postsService.getListPostResponseDtoByDate(offset, limit, date);
@@ -58,7 +58,7 @@ public class ApiPostController {
     }
 
     @GetMapping("/post/byTag")
-    public ResponseEntity getPostsByTag(@RequestParam Integer offset,
+    public ResponseEntity<ListPostResponseDto> getPostsByTag(@RequestParam Integer offset,
                                         @RequestParam Integer limit,
                                         @RequestParam String tag){
         ListPostResponseDto dto = postsService.getListPostResponseDtoByTag(offset, limit, tag);
@@ -66,7 +66,7 @@ public class ApiPostController {
     }
 
     @GetMapping("/post/moderation")
-    public ResponseEntity getPostsModeration(@RequestParam Integer offset,
+    public ResponseEntity<ListPostResponseDto> getPostsModeration(@RequestParam Integer offset,
                                              @RequestParam Integer limit,
                                              @RequestParam String status){
         ListPostResponseDto dto = postsService.getPostDtoModeration(offset, limit, ModerationStatus.valueOf(status.toUpperCase()));
@@ -74,7 +74,7 @@ public class ApiPostController {
     }
 
     @GetMapping("/post/my")
-    public ResponseEntity getMyPosts(@RequestParam Integer offset,
+    public ResponseEntity<ListPostResponseDto> getMyPosts(@RequestParam Integer offset,
                                      @RequestParam Integer limit,
                                      @RequestParam String status){
         ListPostResponseDto dto = postsService.getMyListPost(offset, limit, status);
@@ -83,26 +83,26 @@ public class ApiPostController {
 
 
     @PostMapping("/post")
-    public ResponseEntity addPost(@RequestBody NewPostDto request){
+    public ResponseEntity<ResultDto> addPost(@RequestBody NewPostDto request){
         ResultDto dto = postsService.addPost(request.getTime(), request.getActive(), request.getTitle(), request.getText(), request.getTags());
         return ResponseEntity.ok(dto);
     }
 
     @PutMapping("/post/{id}")
-    public ResponseEntity update(@RequestBody NewPostDto request,
+    public ResponseEntity<ResultDto> update(@RequestBody NewPostDto request,
                                  @PathVariable Integer id){
         ResultDto dto = postsService.update(request.getTime(), request.getActive(), request.getTitle(), request.getText(), request.getTags(), id);
         return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/post/like")
-    public ResponseEntity like(@RequestBody VotesDto votesDto ){
+    public ResponseEntity<ResultDto> like(@RequestBody VotesDto votesDto ){
         ResultDto dto = postVotesService.like(votesDto.getPost_id());
         return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/post/dislike")
-    public ResponseEntity dislike(@RequestBody VotesDto votesDto ){
+    public ResponseEntity<ResultDto> dislike(@RequestBody VotesDto votesDto ){
         ResultDto dto = postVotesService.disLike(votesDto.getPost_id());
         return ResponseEntity.ok(dto);
     }

@@ -8,9 +8,9 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "global_settings")
 @ToString
 @EqualsAndHashCode
+@Table(name = "global_settings")
 public class GlobalSettings {
 
     @Id

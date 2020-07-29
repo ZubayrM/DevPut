@@ -25,13 +25,13 @@ public class ApiAuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody LoginDto loginDto){
+    public ResponseEntity<ResultDto> login(@RequestBody LoginDto loginDto){
         ResultDto dto = usersService.login(loginDto.getEMail(), loginDto.getPassword());
         return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/check")
-    public ResponseEntity check(){
+    public ResponseEntity<AuthUserResponseDto> check(){
         AuthUserResponseDto dto = usersService.check();
         if (dto.getUser() != null)
             log.info(dto.getUser().getEmail());
@@ -39,13 +39,13 @@ public class ApiAuthController {
     }
 
     @PostMapping("/restore")
-    public ResponseEntity restore(@RequestParam String email){
+    public ResponseEntity<ResultDto> restore(@RequestParam String email){
         ResultDto dto = usersService.restore(email);
         return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/password")
-    public ResponseEntity updatePassword(@RequestParam String code,
+    public ResponseEntity<ResultDto> updatePassword(@RequestParam String code,
                                          @RequestParam String password,
                                          @RequestParam String captcha,
                                          @RequestParam("captcha_secret") String captchaSecret){
@@ -54,22 +54,19 @@ public class ApiAuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody RegisterDto request){
+    public ResponseEntity<ResultDto> register(@RequestBody RegisterDto request){
         ResultDto dto = usersService.register(request.getEMail(), request.getPassword(), request.getCaptcha(), request.getCaptchaSecret(), request.getName());
         return ResponseEntity.ok(dto);
     }
 
-
-
-
     @GetMapping("/captcha")
-    public ResponseEntity captcha(){
+    public ResponseEntity<CaptchaDto> captcha(){
         CaptchaDto dto = generalService.getCaptcha();
         return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/logout")
-    public ResponseEntity logout(HttpServletRequest request){
+    public ResponseEntity<?> logout(HttpServletRequest request){
         usersService.logout(request);
         return ResponseEntity.ok(true);
     }

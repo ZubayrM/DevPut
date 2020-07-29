@@ -1,6 +1,6 @@
 package object.repositories;
 
-import object.model.Users;
+import object.model.User;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -8,14 +8,10 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UsersRepository extends CrudRepository<Users,Integer> {
+public interface UsersRepository extends CrudRepository<User,Integer> {
 
-    //Users findById(int id);
+    @Query(value = "FROM User WHERE email = :email")
+    Optional<User> findByEmail(String email);
 
-    Users findByName(String s);
-
-    @Query(value = "FROM Users WHERE email = :email")
-    Optional<Users> findByEmail(String email);
-
-    Optional<Users> findByCode(String code);
+    Optional<User> findByCode(String code);
 }

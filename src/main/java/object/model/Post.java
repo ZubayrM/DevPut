@@ -14,7 +14,8 @@ import java.util.*;
 @Entity
 @ToString
 @EqualsAndHashCode
-public class Posts {
+@Table(name = "posts")
+public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,7 +33,7 @@ public class Posts {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private Users author;
+    private User author;
 
     @Column(nullable = false)
     private Date time;
@@ -58,6 +59,6 @@ public class Posts {
     @JoinTable(name = "tag2post",
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private Set<Tags> tagList = new HashSet<>();
+    private Set<Tag> tagList = new HashSet<>();
 
 }

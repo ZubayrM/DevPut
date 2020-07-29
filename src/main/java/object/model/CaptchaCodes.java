@@ -9,13 +9,13 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "captcha_codes")
 @ToString
 @EqualsAndHashCode
+@Table(name = "captcha_codes")
 public class CaptchaCodes {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(nullable = false)

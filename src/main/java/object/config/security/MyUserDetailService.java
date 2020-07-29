@@ -1,6 +1,6 @@
 package object.config.security;
 
-import object.model.Users;
+import object.model.User;
 import object.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,8 +19,8 @@ public class MyUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        Optional<Users> user = usersRepository.findByEmail(s);
-        Users u;
+        Optional<User> user = usersRepository.findByEmail(s);
+        User u;
         if (user.isPresent()){
             u = user.get();
             return new MyUserDetails(u.getEmail(), u.getPassword(), u.getName() , u.getIsModerator());

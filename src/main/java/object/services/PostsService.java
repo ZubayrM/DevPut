@@ -8,9 +8,6 @@ import object.dto.response.*;
 import object.dto.response.post.*;
 import object.dto.response.resultPost.ErrorPostDto;
 import object.dto.response.resultPost.ParamError;
-import object.dto.response.resultPostComment.ErrorCommentDto;
-import object.dto.response.resultPostComment.OkCommentDto;
-import object.dto.response.resultPostComment.ResultPostCommentDto;
 import object.model.*;
 import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
@@ -39,9 +36,7 @@ public class PostsService<T> {
     private UsersRepository usersRepository;
     private ImagePath imagePath;
 
-
     private static final SimpleDateFormat TIME_2_DATE = new SimpleDateFormat("hh:mm, dd.MM.yyyy");
-    private static final SimpleDateFormat TIME_NEW_POST = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm");
     private static final SimpleDateFormat DATE_2_TIME = new SimpleDateFormat("yyyy-MM-dd hh:mm");
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat YEAR = new SimpleDateFormat("yyyy");
@@ -53,7 +48,7 @@ public class PostsService<T> {
     }
 
     public ListPostResponseDto getListPostResponseDtoBySearch(Integer offset, Integer limit, String query){
-        Optional<List<Posts>> optionalPostsList = postsRepository.findBySearch(
+        Optional<List<Post>> optionalPostsList = postsRepository.findBySearch(
                 query,
                 PageRequest.of(offset, limit, Sort.by(Sort.Direction.DESC, "time"))
         );
@@ -63,8 +58,9 @@ public class PostsService<T> {
     }
 
     public PostAllCommentsAndAllTagsDto getPostAllCommentsAndAllTagsDto(Integer id) {
-        Posts post = postsRepository.findById(id).get();
-        return createPostAllCommentsAndAllTagsDto(new PostAllCommentsAndAllTagsDto(), post, TIME_2_DATE);
+        Post post = postsRepository.findById(id).get();
+        post.setViewCount(post.getViewCount() + 1);
+        return createPostAllCommentsAndAllTagsDto(new PostAllCommentsAndAllTagsDto(), postsRepository.save(post), TIME_2_DATE);
     }
 
 
@@ -80,7 +76,7 @@ public class PostsService<T> {
 
 
     public ListPostResponseDto getListPostResponseDtoByTag(Integer offset, Integer limit, String tag) {
-        Optional<List<Posts>> optionalTags = postsRepository.findByTag(
+        Optional<List<Post>> optionalTags = postsRepository.findByTag(
                 tag,
                 PageRequest.of(offset, limit, Sort.by(Sort.Direction.DESC, "time")));
 
@@ -91,16 +87,16 @@ public class PostsService<T> {
     }
 
     public ListPostResponseDto<PostAndAuthorDto> getPostDtoModeration(Integer offset, Integer limit, ModerationStatus status) {
-        Optional<List<Posts>> listPostModeration = postsRepository
+        Optional<List<Post>> listPostModeration = postsRepository
                 .findByModerationStatus(
                         status,
                         PageRequest.of(offset, limit, Sort.by(Sort.Direction.ASC, "time")));
         return listPostModeration
-                .map(this::createListPostDto).get();
+                .map(this::createListPostDto).orElse(new ListPostResponseDto<>());
     }
 
     public ListPostResponseDto getMyListPost(Integer offset, Integer limit, String status) {
-        Integer active;
+        int active;
         ModerationStatus moderationStatus;
 
         switch (status){
@@ -114,9 +110,9 @@ public class PostsService<T> {
                 active = 1; moderationStatus = ModerationStatus.ACCEPTED;
         }
 
-        Users user = usersService.getUser();
+        User user = usersService.getUser();
         log.info(user);
-        List<Posts> allPosts = postsRepository.getAllPosts(active, moderationStatus, user, PageRequest.of(offset, limit));
+        List<Post> allPosts = postsRepository.getAllPosts(active, moderationStatus, user, PageRequest.of(offset, limit));
 
         return createListPostDto(allPosts);
 
@@ -125,7 +121,7 @@ public class PostsService<T> {
 
     @SneakyThrows
     public ResultDto addPost(String time, Integer active, String title, String text, String[] tags) {
-        Posts post = new Posts();
+        Post post = new Post();
         post.setAuthor(usersService.getUser());
         post.setTime(validDate(DATE_2_TIME.parse(time)));
         post.setIsActive(active);
@@ -141,7 +137,7 @@ public class PostsService<T> {
         }
 
         post.setViewCount(0);
-        Posts result = postsRepository.save(post);
+        Post result = postsRepository.save(post);
 
         if (result != null) {
             saveTag(tags);
@@ -151,7 +147,7 @@ public class PostsService<T> {
         else return new ErrorPostDto();
     }
 
-    private void saveTag2Post(String[] tags, Posts posts) {
+    private void saveTag2Post(String[] tags, Post posts) {
         for (String tag: tags) {
             Tag2Post t2p = new Tag2Post();
             t2p.setTagId(tagsRepository.findByName(tag).get().getId());
@@ -161,18 +157,18 @@ public class PostsService<T> {
     }
 
 
-    private Tags saveTag(String tag) {
-        Optional<Tags> t = tagsRepository.findByName(tag);
+    private Tag saveTag(String tag) {
+        Optional<Tag> t = tagsRepository.findByName(tag);
         if (t.isPresent()) return t.get();
-        Tags newTag = new Tags();
+        Tag newTag = new Tag();
         newTag.setName(tag);
         return tagsRepository.save(newTag);
     }
 
 
-    private Set<Tags> saveTag(String[] tags) {
-        Set<Tags> tagsSet = new HashSet<>();
-        Tags newTag = null;
+    private Set<Tag> saveTag(String[] tags) {
+        Set<Tag> tagsSet = new HashSet<>();
+        Tag newTag = null;
         for (String tag: tags) {
             newTag = saveTag(tag);
             tagsSet.add(newTag);
@@ -189,7 +185,7 @@ public class PostsService<T> {
     @SneakyThrows
     public ResultDto update(String time, Integer active, String title, String text, String[] tags, Integer id) {
         if (title.length() > 15 && text.length() > 15 ) {
-            Posts post = postsRepository.findById(id).get();
+            Post post = postsRepository.findById(id).get();
             post.setTime(DATE_2_TIME.parse(time));
             post.setIsActive(active);
             post.setTitle(title);
@@ -211,7 +207,7 @@ public class PostsService<T> {
 
 
 
-    private<T extends PostAndAuthorDto> T createPostDto(T dto, Posts p, SimpleDateFormat format){
+    private<T extends PostAndAuthorDto> T createPostDto(T dto, Post p, SimpleDateFormat format){
         dto.setId(p.getId());
         dto.setTime(dateToString(p.getTime(), format));
         dto.setUser(new UserMinDto(p.getAuthor().getId(), p.getAuthor().getName()));
@@ -220,15 +216,15 @@ public class PostsService<T> {
         return dto;
     }
 
-    private ListPostResponseDto<PostAndAuthorDto> createListPostDto(List<Posts> posts) {
+    private ListPostResponseDto<PostAndAuthorDto> createListPostDto(List<Post> posts) {
         List<PostAndAuthorDto> postsList = new ArrayList<>();
-        for (Posts post: posts) {
+        for (Post post: posts) {
             postsList.add(createPostDto(new PostAndAuthorDto(), post, null));
         }
         return new ListPostResponseDto<>(postsRepository.getAllPosts().size(), postsList);
     }
 
-    private<T extends PostFullDto> T createPostFullDto(T dto, Posts post){
+    private<T extends PostFullDto> T createPostFullDto(T dto, Post post){
         T newDto = createPostDto(dto, post, null);
 
         newDto.setViewCount(post.getViewCount());
@@ -238,13 +234,12 @@ public class PostsService<T> {
         return dto;
     }
 
-    private <T extends PostAllCommentsAndAllTagsDto> T createPostAllCommentsAndAllTagsDto(T dto, Posts post, SimpleDateFormat format){
+    private <T extends PostAllCommentsAndAllTagsDto> T createPostAllCommentsAndAllTagsDto(T dto, Post post, SimpleDateFormat format){
         T newDto = createPostFullDto(dto, post);
-
         List<CommentDto> postCommentsList  = new ArrayList<>();
         for (PostComments pC : post.getPostCommentsList()) {
 
-            Users u = usersRepository.findById(pC.getUserId()).get();
+            User u = usersRepository.findById(pC.getUserId()).get();
 
             postCommentsList.add(CommentDto.builder()
                     .id(pC.getId())
@@ -257,29 +252,31 @@ public class PostsService<T> {
         }
         newDto.setComments(postCommentsList);
 
-        List<String> tagsList = (post.getTagList().stream().map(Tags::getName).collect(Collectors.toList()));
+        List<String> tagsList = (post.getTagList().stream().map(Tag::getName).collect(Collectors.toList()));
         newDto.setTags(tagsList);
 
         newDto.setText(post.getText());
         return newDto;
     }
 
-    private ListPostResponseDto<PostFullDto> createListPostResponseDto (List<Posts> posts){
+    private ListPostResponseDto<PostFullDto> createListPostResponseDto (List<Post> posts){
 
         List<PostFullDto> listResponseDto = new ArrayList<>();
-        for (Posts post : posts){
+        for (Post post : posts){
             listResponseDto.add(createPostFullDto(new PostFullDto(),post));
         }
         return new ListPostResponseDto<>(postsRepository.countPosts(), listResponseDto);//
     }
 
-    private List<Posts> getPostsByMode(Integer offset, Integer limit, Mode mode){
-        List<Posts> posts;
+    private List<Post> getPostsByMode(Integer offset, Integer limit, Mode mode){
+        List<Post> posts;
         Sort sort = null;
         switch (mode){
             case EARLY: sort = Sort.by(Sort.Direction.ASC, "time");
                 break;
             case RECENT: sort = Sort.by(Sort.Direction.DESC, "time");
+                break;
+            case POPULAR: sort = Sort.by(Sort.Direction.ASC, "view_count");
                 break;
             default: sort = Sort.by(Sort.Direction.ASC, "id");
         }
@@ -287,12 +284,13 @@ public class PostsService<T> {
         log.info(posts.size());
 
         if (mode == Mode.BEST){
-            posts.sort(Comparator.comparing((p) -> p.getPostVotesList().size()));
+            posts.sort(Comparator.comparing((p) -> p.getPostVotesList().size()));//-sql
+            Collections.reverse(posts);
         }
 
-        else if (mode == Mode.POPULAR){
-            posts.sort(Comparator.comparing((p)-> p.getPostVotesList().size()));
-        }
+//        else if (mode == Mode.POPULAR){
+//            posts.sort(Comparator.comparing(Post::getViewCount));//-sql
+//        }
 
         log.info(posts.size());
 
@@ -328,15 +326,15 @@ public class PostsService<T> {
     }
 
     @Deprecated
-    private Set<Tags> generateTagList(String tags) {
-        Set<Tags> tagsSet = new HashSet<>();
+    private Set<Tag> generateTagList(String tags) {
+        Set<Tag> tagsSet = new HashSet<>();
         String[] result = tags.split(", ");
         for (String tag: result){
             if (tagsRepository.findByName(tag).isPresent()){
                 tagsSet.add(tagsRepository.findByName(tag).get());
             }
             else {
-                Tags newTag = new Tags();
+                Tag newTag = new Tag();
                 newTag.setName(tag);
                 tagsSet.add(tagsRepository.save(newTag));
             }

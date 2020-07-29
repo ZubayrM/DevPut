@@ -10,9 +10,9 @@ import java.util.Date;
 
 @Data
 @Entity
+@ToString
+@EqualsAndHashCode
 @Table(name = "post_votes")
-@ToString//(exclude = "post")
-@EqualsAndHashCode//(exclude = "post")
 public class PostVotes {
 
     @Id
@@ -25,7 +25,7 @@ public class PostVotes {
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
     @JsonManagedReference
-    private Posts post;
+    private Post post;
 
     @Column(nullable = false)
     private Date time;

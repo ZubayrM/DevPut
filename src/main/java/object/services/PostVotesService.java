@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import object.dto.response.ResultDto;
 import object.model.PostVotes;
-import object.model.Posts;
-import object.model.Users;
+import object.model.Post;
+import object.model.User;
 import object.repositories.PostVotesRepository;
 import object.repositories.PostsRepository;
 import org.springframework.stereotype.Service;
@@ -34,9 +34,9 @@ public class PostVotesService {
 
     private ResultDto getResultVotes(Integer postId, Integer value) {
 
-        Optional<Posts> post = postsRepository.findById(postId);
+        Optional<Post> post = postsRepository.findById(postId);
 
-        Users user = usersService.getUser();
+        User user = usersService.getUser();
 
         if (post.isPresent()) {
             Optional<List<PostVotes>> listPostVotes = postVotesRepository.getByPostIdAndUserId(post.get(), user.getId());
@@ -55,7 +55,7 @@ public class PostVotesService {
         return new ResultDto(false);
     }
 
-    private void savePostVotes(Integer value, Posts post, Users user) {
+    private void savePostVotes(Integer value, Post post, User user) {
         PostVotes pVotes = new PostVotes();
         pVotes.setPost(post);
         pVotes.setUserId(user.getId());

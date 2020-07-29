@@ -10,6 +10,7 @@ import javax.persistence.*;
 @Entity
 @ToString
 @EqualsAndHashCode
+@Table(name = "tag2post")
 public class Tag2Post {
 
     @Id

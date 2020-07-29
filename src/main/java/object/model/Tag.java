@@ -10,7 +10,8 @@ import javax.persistence.*;
 @Entity
 @ToString
 @EqualsAndHashCode
-public class Tags {
+@Table(name = "tags")
+public class Tag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
