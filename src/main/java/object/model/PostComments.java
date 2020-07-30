@@ -17,7 +17,7 @@ import java.util.Date;
 public class PostComments {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Nullable

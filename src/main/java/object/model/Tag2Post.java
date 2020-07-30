@@ -14,7 +14,7 @@ import javax.persistence.*;
 public class Tag2Post {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "post_id", nullable = false)
