@@ -276,7 +276,7 @@ public class PostsService<T> {
                 break;
             case RECENT: sort = Sort.by(Sort.Direction.DESC, "time");
                 break;
-            case POPULAR: sort = Sort.by(Sort.Direction.ASC, "view_count");
+            case POPULAR: sort = Sort.by(Sort.Direction.DESC, "view_count");
                 break;
             default: sort = Sort.by(Sort.Direction.ASC, "id");
         }
@@ -285,7 +285,7 @@ public class PostsService<T> {
 
         if (mode == Mode.BEST){
             posts.sort(Comparator.comparing((p) -> p.getPostVotesList().size()));//-sql
-            Collections.reverse(posts);
+            //Collections.reverse(posts);
         }
 
 //        else if (mode == Mode.POPULAR){
