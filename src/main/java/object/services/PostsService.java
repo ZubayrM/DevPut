@@ -276,7 +276,7 @@ public class PostsService<T> {
                 break;
             case RECENT: sort = Sort.by(Sort.Direction.DESC, "time");
                 break;
-            case POPULAR: sort = Sort.by(Sort.Direction.DESC, "view_count");
+            case POPULAR: sort = Sort.by(Sort.Direction.DESC, "postCommentsList.size");
                 break;
             default: sort = Sort.by(Sort.Direction.ASC, "id");
         }
@@ -284,13 +284,11 @@ public class PostsService<T> {
         log.info(posts.size());
 
         if (mode == Mode.BEST){
-            posts.sort(Comparator.comparing((p) -> p.getPostVotesList().size()));//-sql
-            //Collections.reverse(posts);
+            posts = posts.stream().sorted((p1, p2) -> Integer.compare((int) p1.getPostVotesList().stream().filter(s -> s.getValue() > 0).count(), (int) p2.getPostVotesList().stream().filter(s -> s.getValue() > 0).count())).collect(Collectors.toList());
+            //posts.sort(Comparator.comparing((p) -> p.getPostVotesList()));//-sql
+            Collections.reverse(posts);
         }
 
-//        else if (mode == Mode.POPULAR){
-//            posts.sort(Comparator.comparing(Post::getViewCount));//-sql
-//        }
 
         log.info(posts.size());
 

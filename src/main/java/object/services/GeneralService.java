@@ -14,7 +14,7 @@ import object.model.Post;
 import object.model.User;
 import object.model.enums.ModerationStatus;
 import object.repositories.*;
-import object.services.Component.CaptchaCode;
+import object.services.Component.CaptchaCodeService;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -28,7 +28,7 @@ import java.util.Map;
 public class GeneralService {
 
     private GlobalSettingsRepository globalSettingsRepository;
-    private CaptchaCode captchaCode;
+    private CaptchaCodeService captchaCode;
     private UsersService usersService;
     private PostsRepository postsRepository;
     private PostVotesRepository postVotesRepository;
@@ -40,7 +40,6 @@ public class GeneralService {
     private static final SimpleDateFormat YEAR = new SimpleDateFormat("yyyy");
 
     public CaptchaDto getCaptcha(){
-        captchaCode.deleteOld();
         return captchaCode.getCaptchaDto();
     }
 

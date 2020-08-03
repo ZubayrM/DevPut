@@ -5,71 +5,59 @@ import lombok.extern.log4j.Log4j2;
 import object.dto.response.CaptchaDto;
 import object.model.CaptchaCodes;
 import object.repositories.CaptchaCodesRepository;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalUnit;
+import java.time.ZoneId;
+import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
 
 @Component
 @Log4j2
-public class CaptchaCode {
+public class CaptchaCodeService {
+
+    @Value("${captcha.lifetime}")
+    private long captchaLifetime;
 
     @Autowired
     private CaptchaCodesRepository captchaCodesRepository;
 
     @SneakyThrows
     public CaptchaDto getCaptchaDto() {
+        LocalDateTime time = LocalDateTime.now().minusHours(captchaLifetime);
+        captchaCodesRepository.deleteByTimeBefore(Date.from(time.atZone(ZoneId.systemDefault()).toInstant()));
 
         String code = UUID.randomUUID().toString().substring(0, 4);
         String secretCode = UUID.randomUUID().toString().substring(0, 4);
 
         BufferedImage image = createBufferedImage(secretCode);
 
-        String path = saveImage(image);
-        log.info(path);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", byteArrayOutputStream);
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        String imageBase64 = Base64.getEncoder().encodeToString(bytes);
 
-        Thread.sleep(1000);
-        CaptchaCodes captcha = createCaptcha(code, secretCode);
+
+
+        CaptchaCodes captcha = createCaptcha(code, imageBase64);
         captchaCodesRepository.save(captcha);
 
 
         return CaptchaDto.builder()
-                .image(path)
+                .image("data:image/png;base64," + captcha.getSecretCode())
                 .secret(code)
                 .build();
     }
 
-    public void deleteOld() {
-        LocalDateTime time = LocalDateTime.now();
-        time.minusHours(1L);
-//        captchaCodesRepository.deleteByTimeBefore(time);
-    }
 
-    private String getPathToImage(File file) {
-        int index = file.getAbsolutePath().indexOf("img");
-        return file.getAbsolutePath().substring(index-1);
-    }
-
-
-    private String saveImage(BufferedImage img) throws IOException {
-        File dir = new File(new ClassPathResource("src/main/resources/static/img/captcha/").getPath());
-        dir.mkdirs();
-        File file = new File(dir.getAbsolutePath() + "/captcha.png");
-        ImageIO.write(img, "png", file);
-        return getPathToImage(file);
-    }
 
     private CaptchaCodes createCaptcha(String code, String secretCode) {
         CaptchaCodes captchaCodes = new CaptchaCodes();

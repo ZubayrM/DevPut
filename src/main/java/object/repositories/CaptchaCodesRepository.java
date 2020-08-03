@@ -4,10 +4,8 @@ import object.model.CaptchaCodes;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Date;
+
 
 @Repository
 public interface CaptchaCodesRepository extends CrudRepository<CaptchaCodes, Integer> {
@@ -17,5 +15,5 @@ public interface CaptchaCodesRepository extends CrudRepository<CaptchaCodes, Int
 
 
     @Query(value = "DELETE FROM CaptchaCodes WHERE time < :date")
-    void deleteByTimeBefore(LocalDateTime date);
+    void deleteByTimeBefore(Date date);
 }
