@@ -198,7 +198,7 @@ public class UsersService {
         User u = getUser();
 
         if (dto.getPhoto() != null) {
-            if (dto.getPhoto().getSize() < 50_000)
+            if (dto.getPhoto().getSize() < 5_000_000)
                 u.setPhoto(Base64.getEncoder().encodeToString(dto.getPhoto().getBytes()));
             else
                 return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, null, null, null, "Фото слишком большое, нужно не более 5 Мб"), false);
