@@ -77,6 +77,7 @@ public class ApiGeneralController {
 
     @SneakyThrows
     @GetMapping("/image")
+    @Deprecated
     public ResponseEntity<byte[]> getImage(@RequestParam String email){
         User user = userService.getUser(email);
         byte[] img;

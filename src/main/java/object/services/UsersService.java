@@ -60,8 +60,6 @@ public class UsersService {
         BufferedImage bi = ImageIO.read(image.getInputStream());
         ImageIO.write(bi, type, new File(newPath));
 
-        log.info(list.get(0) + list.get(1));
-
         return list.get(1).concat(imageName);
     }
 
@@ -110,7 +108,8 @@ public class UsersService {
         return UserAuthDto.builder()
                 .id(user.getId())
                 .name(user.getName())
-                .photo(imagePath.getImage() + "?email=" + user.getEmail())
+                //.photo(imagePath.getImage() + "?email=" + user.getEmail())
+                .photo(user.getPhoto())
                 .email(user.getEmail())
                 .moderation(user.getIsModerator() > 0)
                 .moderationCount(user.getIsModerator() > 0 ? postsRepository.findByModerationStatus(ModerationStatus.NEW).get().size() : 0)
@@ -121,7 +120,7 @@ public class UsersService {
     @SneakyThrows
     private List<String> generatePathImage() {
         String path = "/unload/";
-        String absolutePath = "src/main/resources/static/unload/";
+        String absolutePath = "src/main/resources/unload/";
 
         String dir1 = getRandomPath();
         String dir2 = getRandomPath();
@@ -199,7 +198,7 @@ public class UsersService {
 
         if (dto.getPhoto() != null) {
             if (dto.getPhoto().getSize() < 5_000_000)
-                u.setPhoto(Base64.getEncoder().encodeToString(dto.getPhoto().getBytes()));
+                u.setPhoto("data:image/png;base64," + Base64.getEncoder().encodeToString(dto.getPhoto().getBytes()));
             else
                 return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, null, null, null, "Фото слишком большое, нужно не более 5 Мб"), false);
         }
@@ -242,7 +241,6 @@ public class UsersService {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserDetails) {
             String userEmail = ((MyUserDetails) principal).getEmail();
-            log.info(userEmail + " мои молитвы услышанны");
             Optional<User> user = usersRepository.findByEmail(userEmail);
             return user.orElse(null);
         }

@@ -33,8 +33,6 @@ public class ApiAuthController {
     @GetMapping("/check")
     public ResponseEntity<AuthUserResponseDto> check(){
         AuthUserResponseDto dto = usersService.check();
-        if (dto.getUser() != null)
-            log.info(dto.getUser().getEmail());
         return ResponseEntity.ok(dto);
     }
 
