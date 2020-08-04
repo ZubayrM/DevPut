@@ -246,7 +246,7 @@ public class PostsService<T> {
                     .id(pC.getId())
                     .time(dateToString(pC.getTime(), format))
                     .text(pC.getText())
-                    .user(new UserPhotoDto(u.getId(), u.getName(), imagePath.getImage() + "?email=" + u.getEmail()))
+                    .user(new UserPhotoDto(u.getId(), u.getName(), u.getPhoto()))
                     .build()
             );
 
