@@ -15,6 +15,7 @@ import object.repositories.*;
 import org.jsoup.Jsoup;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -278,14 +279,18 @@ public class PostsService<T> {
                 break;
             case POPULAR: sort = Sort.by(Sort.Direction.DESC, "postCommentsList.size");
                 break;
-            default: sort = Sort.by(Sort.Direction.ASC, "id");
+            default: sort = Sort.by(Sort.Direction.ASC, "time");
         }
+
+
         posts = postsRepository.findAll(PageRequest.of(offset/limit, limit, sort));
-        log.info(posts.size());
+
+
+
+        posts.stream().filter( p -> p.getPostVotesList().stream().anyMatch(s -> s.getValue() > 0)).count();
 
         if (mode == Mode.BEST){
             posts = posts.stream().sorted((p1, p2) -> Integer.compare((int) p1.getPostVotesList().stream().filter(s -> s.getValue() > 0).count(), (int) p2.getPostVotesList().stream().filter(s -> s.getValue() > 0).count())).collect(Collectors.toList());
-            //posts.sort(Comparator.comparing((p) -> p.getPostVotesList()));//-sql
             Collections.reverse(posts);
         }
 
