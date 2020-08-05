@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 @RestController
 @AllArgsConstructor
@@ -57,6 +58,7 @@ public class ApiAuthController {
         return ResponseEntity.ok(dto);
     }
 
+    @Transactional
     @GetMapping("/captcha")
     public ResponseEntity<CaptchaDto> captcha(){
         CaptchaDto dto = generalService.getCaptcha();

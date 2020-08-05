@@ -266,7 +266,7 @@ public class PostsService<T> {
         for (Post post : posts){
             listResponseDto.add(createPostFullDto(new PostFullDto(),post));
         }
-        return new ListPostResponseDto<>(postsRepository.countPosts(), listResponseDto);//
+        return new ListPostResponseDto<>(posts.size(), listResponseDto);//
     }
 
     private List<Post> getPostsByMode(Integer offset, Integer limit, Mode mode){

@@ -47,12 +47,12 @@ public class CaptchaCodeService {
 
 
 
-        CaptchaCodes captcha = createCaptcha(code, imageBase64);
+        CaptchaCodes captcha = createCaptcha(code, secretCode);
         captchaCodesRepository.save(captcha);
 
 
         return CaptchaDto.builder()
-                .image("data:image/png;base64," + captcha.getSecretCode())
+                .image("data:image/png;base64," + imageBase64)
                 .secret(code)
                 .build();
     }
