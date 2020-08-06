@@ -37,6 +37,7 @@ public class PostVotesService {
         Optional<Post> post = postsRepository.findById(postId);
 
         User user = usersService.getUser();
+        if (user == null) return null;
 
         if (post.isPresent()) {
             Optional<List<PostVotes>> listPostVotes = postVotesRepository.getByPostIdAndUserId(post.get(), user.getId());

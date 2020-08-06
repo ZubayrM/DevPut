@@ -1,22 +1,17 @@
 package object.controllers.api;
 
 import lombok.AllArgsConstructor;
-import object.dto.request.post.CommentDto;
 import object.dto.request.post.NewPostDto;
 import object.dto.request.post.VotesDto;
 import object.dto.response.ResultDto;
 import object.dto.response.post.ListPostResponseDto;
 import object.dto.response.post.PostAllCommentsAndAllTagsDto;
-import object.dto.response.resultPostComment.ResultPostCommentDto;
-import object.dto.response.tag.TagsDto;
 import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
 import object.services.PostVotesService;
 import object.services.PostsService;
-import object.services.TagsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -44,9 +39,11 @@ public class ApiPostController {
     }
 
     @GetMapping("/post/{id}")
-    public ResponseEntity<PostAllCommentsAndAllTagsDto> getPostById(@PathVariable Integer id){
+    public ResponseEntity getPostById(@PathVariable Integer id){
         PostAllCommentsAndAllTagsDto dto = postsService.getPostAllCommentsAndAllTagsDto(id);
+        if (dto != null)
         return ResponseEntity.ok(dto);
+        else return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/post/byDate")
@@ -98,13 +95,17 @@ public class ApiPostController {
     @PostMapping("/post/like")
     public ResponseEntity<ResultDto> like(@RequestBody VotesDto votesDto ){
         ResultDto dto = postVotesService.like(votesDto.getPost_id());
-        return ResponseEntity.ok(dto);
+        if (dto != null)
+            return ResponseEntity.ok(dto);
+        else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @PostMapping("/post/dislike")
     public ResponseEntity<ResultDto> dislike(@RequestBody VotesDto votesDto ){
         ResultDto dto = postVotesService.disLike(votesDto.getPost_id());
-        return ResponseEntity.ok(dto);
+        if (dto != null)
+            return ResponseEntity.ok(dto);
+        else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
 

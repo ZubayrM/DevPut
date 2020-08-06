@@ -59,9 +59,12 @@ public class PostsService<T> {
     }
 
     public PostAllCommentsAndAllTagsDto getPostAllCommentsAndAllTagsDto(Integer id) {
-        Post post = postsRepository.findById(id).get();
-        post.setViewCount(post.getViewCount() + 1);
-        return createPostAllCommentsAndAllTagsDto(new PostAllCommentsAndAllTagsDto(), postsRepository.save(post), TIME_2_DATE);
+        Post post = postsRepository.findById(id).orElse(null);
+        if (post != null) {
+            post.setViewCount(post.getViewCount() + 1);
+            return createPostAllCommentsAndAllTagsDto(new PostAllCommentsAndAllTagsDto(), postsRepository.save(post), TIME_2_DATE);
+        }
+        else return null;
     }
 
 
