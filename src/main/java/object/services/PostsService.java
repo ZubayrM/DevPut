@@ -213,7 +213,7 @@ public class PostsService<T> {
 
     private<T extends PostAndAuthorDto> T createPostDto(T dto, Post p, SimpleDateFormat format){
         dto.setId(p.getId());
-        dto.setTime(dateToString(p.getTime(), format));
+        dto.setTimestamp(String.valueOf(p.getTime().getTime()/1000));
         dto.setUser(new UserMinDto(p.getAuthor().getId(), p.getAuthor().getName()));
         dto.setTitle(p.getTitle());
         String textPost = Jsoup.parse(p.getText()).text();
@@ -248,7 +248,8 @@ public class PostsService<T> {
 
             postCommentsList.add(CommentDto.builder()
                     .id(pC.getId())
-                    .time(dateToString(pC.getTime(), format))
+                    .time(String.valueOf(pC.getTime().getTime()/1000))
+                    //.time(dateToString(pC.getTime(), format))
                     .text(pC.getText())
                     .user(new UserPhotoDto(u.getId(), u.getName(), u.getPhoto()))
                     .build()
@@ -305,6 +306,7 @@ public class PostsService<T> {
     }
 
 
+    @Deprecated
     private String dateToString(Date date, SimpleDateFormat simpleDateFormat){
         LocalDateTime timeTodo = LocalDateTime.now();
         LocalDateTime time = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 public class PostMinimalDto {
     private Integer id;
 
-    private String time;
+    private String timestamp;
 
     private String title;
 
