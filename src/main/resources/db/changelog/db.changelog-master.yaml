@@ -711,3 +711,62 @@ databaseChangeLog:
               - column:
                   name: tag_id
                   value: "3"
+
+  - changeSet:
+      id: 32
+      author: Zubayr
+      changes:
+          - insert:
+              tableName: global_settings
+              columns:
+                  - column:
+                      name: id
+                      value: "1"
+                  - column:
+                      name: code
+                      value: "MULTIUSER_MODE"
+                  - column:
+                      name: name
+                      value: "MULTIUSER_MODE"
+                  - column:
+                      name: value
+                      value: "false"
+  - changeSet:
+      id: 33
+      author: Zubayr
+      changes:
+          - insert:
+              tableName: global_settings
+              columns:
+                - column:
+                    name: id
+                    value: "2"
+                - column:
+                    name: code
+                    value: "POST_PREMODERATION"
+                - column:
+                    name: name
+                    value: "POST_PREMODERATION"
+                - column:
+                    name: value
+                    value: "false"
+
+  - changeSet:
+      id: 34
+      author: Zubayr
+      changes:
+          - insert:
+              tableName: global_settings
+              columns:
+                - column:
+                    name: id
+                    value: "3"
+                - column:
+                    name: code
+                    value: "STATISTICS_IS_PUBLIC"
+                - column:
+                    name: name
+                    value: "STATISTICS_IS_PUBLIC"
+                - column:
+                    name: value
+                    value: "false"

@@ -12,8 +12,8 @@ public class ImagePath {
     @Value("${server.port}")
     private String port;
 
-    public String getImage(){
-        return host + ":" + port + "/api/image/";
+    public String getImagePath(){
+        return host + ":" + port;
     }
 
 }

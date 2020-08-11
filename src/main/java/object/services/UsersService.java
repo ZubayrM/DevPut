@@ -13,6 +13,7 @@ import object.dto.response.errors.ErrorsAuthDto;
 import object.dto.response.errors.ErrorsMessageDto;
 import object.dto.response.errors.ErrorsRegisterDto;
 import object.model.CaptchaCodes;
+import object.model.Post;
 import object.model.User;
 import object.model.enums.ModerationStatus;
 import object.repositories.CaptchaCodesRepository;
@@ -46,6 +47,7 @@ public class UsersService {
     private MailSender mailSender;
     private CaptchaCodesRepository captchaCodesRepository;
     private ImagePath imagePath;
+
 
     @SneakyThrows
     public String addImage(MultipartFile image) {
@@ -105,21 +107,26 @@ public class UsersService {
     }
 
     private UserAuthDto generatedUserAuth(User user) {
+        int moderationPostsCount = 0;
+
+        if (user.getIsModerator() > 0) {
+            Optional<List<Post>> posts = postsRepository.findByModerationStatus(ModerationStatus.NEW);
+            moderationPostsCount = posts.map(List::size).orElse(0);
+        }
         return UserAuthDto.builder()
                 .id(user.getId())
                 .name(user.getName())
-                //.photo(imagePath.getImage() + "?email=" + user.getEmail())
                 .photo(user.getPhoto())
                 .email(user.getEmail())
                 .moderation(user.getIsModerator() > 0)
-                .moderationCount(user.getIsModerator() > 0 ? postsRepository.findByModerationStatus(ModerationStatus.NEW).get().size() : 0)
+                .moderationCount(moderationPostsCount)
                 .settings(user.getIsModerator() > 0)
                 .build();
     }
 
     @SneakyThrows
     private List<String> generatePathImage() {
-        String path = "unload/";
+        String path = imagePath.getImagePath() + "/unload/";
         String absolutePath = "src/main/resources/unload/";
 
         String dir1 = getRandomPath();

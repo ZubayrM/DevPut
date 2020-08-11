@@ -5,7 +5,6 @@ spring.datasource.password: "00400040"
 spring.jpa.hibernate.ddl-auto: none
 
 
-
 server:
   port: ${PORT:8080}
 
@@ -25,4 +24,6 @@ spring.mail:
 
 host: ${HOST_URL:http://localhost}
 captcha.lifetime: 1
-
+#spring:
+#  mvc:
+#    static-path-pattern: /resources/**

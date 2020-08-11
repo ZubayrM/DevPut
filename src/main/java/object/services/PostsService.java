@@ -216,7 +216,8 @@ public class PostsService<T> {
         dto.setTime(dateToString(p.getTime(), format));
         dto.setUser(new UserMinDto(p.getAuthor().getId(), p.getAuthor().getName()));
         dto.setTitle(p.getTitle());
-        dto.setAnnounce(Jsoup.parse(p.getText()).text().substring(0,15));
+        String textPost = Jsoup.parse(p.getText()).text();
+        dto.setAnnounce(textPost.length() > 15 ? textPost.substring(0,15) : textPost);
         return dto;
     }
 
@@ -225,7 +226,7 @@ public class PostsService<T> {
         for (Post post: posts) {
             postsList.add(createPostDto(new PostAndAuthorDto(), post, null));
         }
-        return new ListPostResponseDto<>(postsRepository.getAllPosts().size(), postsList);
+        return new ListPostResponseDto<>(posts.size(), postsList);
     }
 
     private<T extends PostFullDto> T createPostFullDto(T dto, Post post){
