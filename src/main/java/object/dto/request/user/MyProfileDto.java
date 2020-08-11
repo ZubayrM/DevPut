@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class MyProfileDto {
 
+
     private String email;
 
     private String name;

@@ -51,8 +51,14 @@ public class ApiGeneralController {
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping("/profile/my")
-    public ResponseEntity<ResultDto> profileMy(@ModelAttribute MyProfileDto request){
+    @PostMapping(value = "/profile/my", consumes = "multipart/form-data")
+    public ResponseEntity<ResultDto> profileMyPhoto(@ModelAttribute MyProfileDto request){
+        ResultDto dto = userService.updateProfile(request);
+        return ResponseEntity.ok(dto);
+    }
+
+    @PostMapping(value = "/profile/my", consumes = "application/json")
+    public ResponseEntity<ResultDto> profileMy(@RequestBody MyProfileDto request){
         ResultDto dto = userService.updateProfile(request);
         return ResponseEntity.ok(dto);
     }

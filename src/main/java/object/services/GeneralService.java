@@ -18,10 +18,7 @@ import object.services.Component.CaptchaCodeService;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -68,14 +65,17 @@ public class GeneralService {
         Post p = postsRepository.findFirstByTimeToAuthor(u.getId());
 
         String time;
-        if (p != null) time = DATE_2_TIME.format(p.getTime());
-        else time = "0";
+        if (p != null)
+            time = String.valueOf(p.getTime().getTime()/1000);
+        else time = "ноль";
+
+
 
         return StatisticsDto.builder()
-                .postsCount(postsRepository.countByAuthor(u.getId()))
-                .dislikesCount(postVotesRepository.countByUserIdAndValue(u.getId(), 1))
-                .likesCount(postVotesRepository.countByUserIdAndValue(u.getId(), -1))
-                .viewsCount(postsRepository.countViews(u.getId()))
+                .postsCount(Optional.ofNullable(postsRepository.countByAuthor(u.getId())).orElse(0))
+                .dislikesCount(Optional.ofNullable(postVotesRepository.countByUserIdAndValue(u.getId(), 1)).orElse(0))
+                .likesCount(Optional.ofNullable(postVotesRepository.countByUserIdAndValue(u.getId(), -1)).orElse(0))
+                .viewsCount(Optional.ofNullable(postsRepository.countViews(u.getId())).orElse(0))
                 .firstPublication(time)
                 .build();
     }
@@ -84,12 +84,17 @@ public class GeneralService {
     public StatisticsDto allStatistic() {
         Post p = postsRepository.findFirstByTime();
 
+        String time;
+        if (p != null)
+            time = String.valueOf(p.getTime().getTime()/1000);
+        else time = "0";
+
         return StatisticsDto.builder()
-                .postsCount(postsRepository.countPosts())
-                .dislikesCount(postVotesRepository.countByValue(-1))
-                .likesCount(postVotesRepository.countByValue(1))
-                .viewsCount(postsRepository.countByViewCount())
-                .firstPublication(DATE_2_TIME.format(p.getTime()))
+                .postsCount(Optional.of(postsRepository.countPosts()).orElse(0))
+                .dislikesCount(Optional.of(postVotesRepository.countByValue(-1)).orElse(0))
+                .likesCount(Optional.of(postVotesRepository.countByValue(1)).orElse(0))
+                .viewsCount(Optional.of(postsRepository.countByViewCount()).orElse(0))
+                .firstPublication(time)
                 .build();
     }
 

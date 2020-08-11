@@ -38,7 +38,7 @@ public class ApiAuthController {
     }
 
     @PostMapping("/restore")
-    public ResponseEntity<ResultDto> restore(@RequestParam String email){
+    public ResponseEntity<ResultDto> restore(@RequestBody String email){
         ResultDto dto = usersService.restore(email);
         return ResponseEntity.ok(dto);
     }
