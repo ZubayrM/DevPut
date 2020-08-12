@@ -17,7 +17,7 @@ import java.util.Set;
 public interface PostsRepository extends CrudRepository<Post,Integer> {
 
 
-    @Query(value = "FROM Post WHERE isActive = 1 and moderationStatus = 'ACCEPTED' and time <= current_date")
+    @Query(value = "FROM Post WHERE isActive = 1 and moderationStatus = 'ACCEPTED' and time <= current_time")
     List<Post> findAll(Pageable pageable);
 
     @Query(value = "FROM Post WHERE isActive = 1 and moderationStatus = 'ACCEPTED' and time <= current_date and text LIKE CONCAT('%', :query, '%')")

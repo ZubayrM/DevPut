@@ -259,7 +259,7 @@ public class PostsService<T> {
 
             postCommentsList.add(CommentDto.builder()
                     .id(pC.getId())
-                    .time(String.valueOf(pC.getTime().getTime()/1000))
+                    .timestamp(String.valueOf(pC.getTime().getTime()/1000))
                     //.time(dateToString(pC.getTime(), format))
                     .text(pC.getText())
                     .user(new UserPhotoDto(u.getId(), u.getName(), u.getPhoto()))
@@ -303,7 +303,7 @@ public class PostsService<T> {
 
 
 
-        posts.stream().filter( p -> p.getPostVotesList().stream().anyMatch(s -> s.getValue() > 0)).count();
+        //posts.stream().filter( p -> p.getPostVotesList().stream().anyMatch(s -> s.getValue() > 0)).count();
 
         if (mode == Mode.BEST){
             posts = posts.stream().sorted((p1, p2) -> Integer.compare((int) p1.getPostVotesList().stream().filter(s -> s.getValue() > 0).count(), (int) p2.getPostVotesList().stream().filter(s -> s.getValue() > 0).count())).collect(Collectors.toList());

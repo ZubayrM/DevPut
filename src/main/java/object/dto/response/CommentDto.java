@@ -14,7 +14,7 @@ import java.util.Date;
 @Builder
 public class CommentDto {
     private Integer id;
-    private String time;
+    private String timestamp;
     private String text;
     private UserPhotoDto user;
 }
