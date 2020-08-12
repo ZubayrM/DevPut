@@ -143,7 +143,7 @@ class ApiPostControllerTest {
     void addPost() {
 
         NewPostDto dto = new NewPostDto();
-        dto.setTime("2020-05-21 20:20");
+        //dto.setTimestamp("2020-05-21 20:20");
         dto.setActive(1);
         dto.setTitle("Test post");
         dto.setText("Тестовый текст для тестирования");
@@ -161,7 +161,7 @@ class ApiPostControllerTest {
     @SneakyThrows
     void update() {
         NewPostDto dto = new NewPostDto();
-        dto.setTime("2020-05-21 20:20");
+        //dto.setTimestamp("2020-05-21 20:20");
         dto.setActive(1);
         dto.setTitle("Test post");
         dto.setText("Тестовый текст для тестирования");

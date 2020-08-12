@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import object.dto.request.auth.LoginDto;
 import object.dto.request.auth.RegisterDto;
+import object.dto.request.auth.UpdatePasswordDto;
 import object.dto.response.CaptchaDto;
 import object.dto.response.ResultDto;
 import object.dto.response.auth.AuthUserResponseDto;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -38,17 +40,14 @@ public class ApiAuthController {
     }
 
     @PostMapping("/restore")
-    public ResponseEntity<ResultDto> restore(@RequestBody String email){
-        ResultDto dto = usersService.restore(email);
+    public ResponseEntity<ResultDto> restore(@RequestBody Map<String, String> email){
+        ResultDto dto = usersService.restore(email.get("email")); // чтоб без DTO
         return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/password")
-    public ResponseEntity<ResultDto> updatePassword(@RequestParam String code,
-                                         @RequestParam String password,
-                                         @RequestParam String captcha,
-                                         @RequestParam("captcha_secret") String captchaSecret){
-        ResultDto dto = usersService.password(code, password, captcha, captchaSecret);
+    public ResponseEntity<ResultDto> updatePassword(@RequestBody UpdatePasswordDto request){
+        ResultDto dto = usersService.password(request.getCode(), request.getPassword(), request.getCaptchaSecret(), request.getCaptcha());
         return ResponseEntity.ok(dto);
     }
 

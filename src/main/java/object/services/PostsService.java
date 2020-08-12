@@ -4,21 +4,30 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import object.component.ImagePath;
-import object.dto.response.*;
-import object.dto.response.post.*;
+import object.dto.response.CommentDto;
+import object.dto.response.ResultDto;
+import object.dto.response.UserMinDto;
+import object.dto.response.UserPhotoDto;
+import object.dto.response.post.ListPostResponseDto;
+import object.dto.response.post.PostAllCommentsAndAllTagsDto;
+import object.dto.response.post.PostAndAuthorDto;
+import object.dto.response.post.PostFullDto;
 import object.dto.response.resultPost.ErrorPostDto;
 import object.dto.response.resultPost.ParamError;
 import object.model.*;
 import object.model.enums.Mode;
 import object.model.enums.ModerationStatus;
-import object.repositories.*;
+import object.repositories.PostsRepository;
+import object.repositories.Tag2PostRepository;
+import object.repositories.TagsRepository;
+import object.repositories.UsersRepository;
 import org.jsoup.Jsoup;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.TextStyle;
@@ -55,7 +64,8 @@ public class PostsService<T> {
         );
         return optionalPostsList
                 .map(this::createListPostResponseDto)
-                .orElseGet(() -> createListPostResponseDto(getPostsByMode(offset, limit, Mode.EARLY)));
+//                .orElseGet(() -> createListPostResponseDto(getPostsByMode(offset, limit, Mode.EARLY)));
+                .orElse(new ListPostResponseDto<>(0, new ArrayList<>()));
     }
 
     public PostAllCommentsAndAllTagsDto getPostAllCommentsAndAllTagsDto(Integer id) {
@@ -96,7 +106,7 @@ public class PostsService<T> {
                         status,
                         PageRequest.of(offset, limit, Sort.by(Sort.Direction.ASC, "time")));
         return listPostModeration
-                .map(this::createListPostDto).orElse(new ListPostResponseDto<>());
+                .map(this::createListPostDto).orElse(new ListPostResponseDto<PostAndAuthorDto>(0, new ArrayList()));
     }
 
     public ListPostResponseDto getMyListPost(Integer offset, Integer limit, String status) {
@@ -124,10 +134,11 @@ public class PostsService<T> {
 
 
     @SneakyThrows
-    public ResultDto addPost(String time, Integer active, String title, String text, String[] tags) {
+    public ResultDto addPost(Long time, Integer active, String title, String text, String[] tags) {
         Post post = new Post();
         post.setAuthor(usersService.getUser());
-        post.setTime(validDate(DATE_2_TIME.parse(time)));
+        //post.setTime(validDate(DATE_2_TIME.parse(time)));
+        post.setTime(Date.from(Instant.ofEpochSecond(time).atZone(ZoneId.systemDefault()).toInstant()));
         post.setIsActive(active);
         post.setTitle(title);
         post.setText(text);
@@ -187,10 +198,10 @@ public class PostsService<T> {
     }
 
     @SneakyThrows
-    public ResultDto update(String time, Integer active, String title, String text, String[] tags, Integer id) {
+    public ResultDto update(Long time, Integer active, String title, String text, String[] tags, Integer id) {
         if (title.length() > 15 && text.length() > 15 ) {
             Post post = postsRepository.findById(id).get();
-            post.setTime(DATE_2_TIME.parse(time));
+            post.setTime(Date.from(Instant.ofEpochSecond(time).atZone(ZoneId.systemDefault()).toInstant()));
             post.setIsActive(active);
             post.setTitle(title);
             post.setText(text);

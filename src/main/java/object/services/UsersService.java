@@ -96,11 +96,13 @@ public class UsersService {
     public ResultDto restore(String email) {
         Optional<User> user = usersRepository.findByEmail(email);
         if (user.isPresent()){
+            User u = user.get();
             String token = UUID.randomUUID().toString();
-            user.get().setCode(token);
-            String url = "http://localhost:8080/login/change-password/" + user.get().getCode();
+            u.setCode(token);
+            String url = "http://localhost:8080/login/change-password/" + u.getCode();
             String message = String.format("Для восстановления пароля перейдите по ссылке %s", url );
-            mailSender.send(user.get().getEmail(), "Password recovery", message);
+            usersRepository.save(u);
+            mailSender.send(u.getEmail(), "Password recovery", message);
             return new ResultDto(true);
         } else
             return new ResultDto(false);
@@ -226,7 +228,7 @@ public class UsersService {
         }
 
         if (dto.getPassword() != null) {
-            if (dto.getPassword().length() > 6) {
+            if (dto.getPassword().length() >= 6) {
                 u.setPassword(dto.getPassword());
             } else
                 return new ErrorsMessageDto<>(new ErrorsRegisterDto(null, null, "Пароль короче 6-ти символов", null, null), false);

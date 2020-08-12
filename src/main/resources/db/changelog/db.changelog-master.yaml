@@ -76,7 +76,7 @@ databaseChangeLog:
                   type: int(10)
               - column:
                   name: time
-                  type: date(50)
+                  type: DATETIME(50)
               - column:
                   name: title
                   type: varchar(255)

@@ -81,14 +81,14 @@ public class ApiPostController {
 
     @PostMapping("/post")
     public ResponseEntity<ResultDto> addPost(@RequestBody NewPostDto request){
-        ResultDto dto = postsService.addPost(request.getTime(), request.getActive(), request.getTitle(), request.getText(), request.getTags());
+        ResultDto dto = postsService.addPost(request.getTimestamp(), request.getActive(), request.getTitle(), request.getText(), request.getTags());
         return ResponseEntity.ok(dto);
     }
 
     @PutMapping("/post/{id}")
     public ResponseEntity<ResultDto> update(@RequestBody NewPostDto request,
                                  @PathVariable Integer id){
-        ResultDto dto = postsService.update(request.getTime(), request.getActive(), request.getTitle(), request.getText(), request.getTags(), id);
+        ResultDto dto = postsService.update(request.getTimestamp(), request.getActive(), request.getTitle(), request.getText(), request.getTags(), id);
         return ResponseEntity.ok(dto);
     }
 

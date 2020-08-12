@@ -2,13 +2,16 @@ package object.dto.request.post;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
 
 
 @Data
 @NoArgsConstructor
 public class NewPostDto {
 
-    private String time;
+    private Long timestamp;
 
     private Integer active;
 

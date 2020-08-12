@@ -13,5 +13,6 @@ public interface UsersRepository extends CrudRepository<User,Integer> {
     @Query(value = "FROM User WHERE email = :email")
     Optional<User> findByEmail(String email);
 
+    @Query(value = "FROM User WHERE code = :code")
     Optional<User> findByCode(String code);
 }
