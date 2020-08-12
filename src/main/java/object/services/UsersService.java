@@ -128,7 +128,7 @@ public class UsersService {
 
     @SneakyThrows
     private List<String> generatePathImage() {
-        String path = imagePath.getImagePath() + "/unload/";
+        String path =  "/unload/";
         String absolutePath = "src/main/resources/unload/";
 
         String dir1 = getRandomPath();
