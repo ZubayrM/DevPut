@@ -2,7 +2,9 @@ package object.controllers.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import object.config.security.MyUserDetails;
 import object.dto.request.post.NewPostDto;
+import object.dto.request.post.VotesDto;
 import object.services.UsersService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,8 +22,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import static org.hamcrest.Matchers.is;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -47,18 +53,23 @@ class ApiPostControllerTest {
     @Autowired
     private ObjectMapper oM;
 
+    @Autowired
+    private WebApplicationContext context;
 
+    private static MyUserDetails mod;
 
+    private static MyUserDetails user;
 
     @BeforeEach
-    void setUp() {
+    public void setMvc() {
 
-        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken("user1@mail.ru", "111333");
-        Authentication authentication = authenticationManager.authenticate(authRequest);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        mod = new MyUserDetails("mod@mail.ru", "111222", "Moderator Name", 1);
+        user = new MyUserDetails("user2@mail.ru", "111444", "User2 Name", 0);
 
-        session = new MockHttpSession();
-        session.setAttribute("Authentication", SecurityContextHolder.getContext().getAuthentication());
+        mvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .apply(springSecurity())
+                .build();
     }
 
     @Test
@@ -121,7 +132,8 @@ class ApiPostControllerTest {
         mvc.perform(get("/api/post/moderation")
                 .param("offset", "0")
                 .param("limit", "10")
-                .param("status", "ACCEPTED"))
+                .param("status", "ACCEPTED")
+                .with(user(mod)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -133,7 +145,7 @@ class ApiPostControllerTest {
                 .param("offset", "0")
                 .param("limit", "10")
                 .param("status", "published")
-                .session(session))
+                .with(user(user)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -143,7 +155,7 @@ class ApiPostControllerTest {
     void addPost() {
 
         NewPostDto dto = new NewPostDto();
-        //dto.setTimestamp("2020-05-21 20:20");
+        dto.setTimestamp(1590869185L);
         dto.setActive(1);
         dto.setTitle("Test post");
         dto.setText("Тестовый текст для тестирования");
@@ -151,7 +163,7 @@ class ApiPostControllerTest {
 
         mvc.perform(post("/api/post")
                 .contentType(MediaType.APPLICATION_JSON)
-                .session(session)
+                .with(user(user))
                 .content(oM.writeValueAsString(dto)))
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -161,16 +173,16 @@ class ApiPostControllerTest {
     @SneakyThrows
     void update() {
         NewPostDto dto = new NewPostDto();
-        //dto.setTimestamp("2020-05-21 20:20");
+        dto.setTimestamp(1590869185L);
         dto.setActive(1);
-        dto.setTitle("Test post");
+        dto.setTitle("Test post test post");
         dto.setText("Тестовый текст для тестирования");
         dto.setTags(new String[]{"test", "jUnit"});
 
-        mvc.perform(post("/api/post/1")
+        mvc.perform(post("/api/post/2")
                 .contentType(MediaType.APPLICATION_JSON)
-                .session(session)
-                .content(oM.writeValueAsString(dto)))
+                .content(oM.writeValueAsString(dto))
+                .with(user(user)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -178,9 +190,10 @@ class ApiPostControllerTest {
     @Test
     @SneakyThrows
     void like() {
-        mvc.perform(post("/api/like")
-                .param("post_id", "1")
-                .session(session))
+        mvc.perform(post("/api/post/like")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(oM.writeValueAsString(new VotesDto(1)))
+                .with(user(user)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -188,9 +201,11 @@ class ApiPostControllerTest {
     @Test
     @SneakyThrows
     void dislike() {
-        mvc.perform(post("/api/dislike")
-                .param("post_id", "2")
-                .session(session))
+        mvc.perform(post("/api/post/dislike")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(oM.writeValueAsString(new VotesDto(2)))
+                //.content("{'post_id':2}")
+                .with(user(user)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

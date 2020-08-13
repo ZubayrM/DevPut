@@ -3,7 +3,7 @@ package object.controllers.api;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import object.dto.request.post.CommentDto;
+import object.dto.request.post.RequestCommentDto;
 import object.dto.request.post.ModerationPostDto;
 import object.dto.request.user.MyProfileDto;
 import object.dto.response.InitResponseDto;
@@ -120,7 +120,7 @@ public class ApiGeneralController {
     }
 
     @PostMapping("/comment")
-    public ResponseEntity<ResultPostCommentDto> addComment(@RequestBody CommentDto commentDto){
+    public ResponseEntity<ResultPostCommentDto> addComment(@RequestBody RequestCommentDto commentDto){
         ResultPostCommentDto dto =  generalService.addComment(commentDto.getParentId(), commentDto.getPostId(), commentDto.getText());
         return ResponseEntity.ok(dto);
     }

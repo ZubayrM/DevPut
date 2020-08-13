@@ -1,13 +1,15 @@
 package object.dto.request.post;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 
 @Data
 @NoArgsConstructor
-public class CommentDto {
+@AllArgsConstructor
+public class RequestCommentDto {
 
     @Nullable
     @JsonProperty("parent_id")
