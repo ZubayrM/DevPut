@@ -25,6 +25,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,6 +49,7 @@ public class UsersService {
     private MailSender mailSender;
     private CaptchaCodesRepository captchaCodesRepository;
     private ImagePath imagePath;
+    private PasswordEncoder encoder;
 
 
     @SneakyThrows
@@ -68,10 +71,14 @@ public class UsersService {
 
 
     public ResultDto login(String email, String password) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
         Optional<User> user = usersRepository.findByEmail(email);
 
         if (user.isPresent()){
-            if (user.get().getPassword().equals(password)) {
+
+            if (encoder.matches(password, user.get().getPassword())) {
+            //if (user.get().getPassword().equals(password)) {
 
                 UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(email, password);
                 Authentication authentication = authenticationManager.authenticate(authRequest);
@@ -194,7 +201,7 @@ public class UsersService {
         User user = new User();
         user.setName(name);
         user.setEmail(email);
-        user.setPassword(password);
+        user.setPassword(encoder.encode(password));
         user.setRegTime(new Date());
         user.setIsModerator(0);
         usersRepository.save(user);

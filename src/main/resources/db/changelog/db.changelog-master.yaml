@@ -34,7 +34,7 @@ databaseChangeLog:
                   type: varchar(50)
               - column:
                   name: password
-                  type: varchar(50)
+                  type: varchar(100)
               - column:
                   name: code
                   type: varchar(50)
@@ -282,7 +282,7 @@ databaseChangeLog:
                   value: "mod@mail.ru"
               - column:
                   name: password
-                  value: "111222"
+                  value: "$2a$10$bZzc/LUdO27bhE6mNfCsHu5FKTJdmLKExCRWzW3pDIkhwZDbV8c7m"
   - changeSet:
       id: 10
       author: Zubayr
@@ -307,7 +307,7 @@ databaseChangeLog:
                   value: "user1@mail.ru"
               - column:
                   name: password
-                  value: "111333"
+                  value: "$2a$10$bZzc/LUdO27bhE6mNfCsHu5FKTJdmLKExCRWzW3pDIkhwZDbV8c7m"
   - changeSet:
       id: 11
       author: Zubayr
@@ -332,7 +332,7 @@ databaseChangeLog:
                   value: "user2@mail.ru"
               - column:
                   name: password
-                  value: "111444"
+                  value: "$2a$10$bZzc/LUdO27bhE6mNfCsHu5FKTJdmLKExCRWzW3pDIkhwZDbV8c7m"
   - changeSet:
       id: 12
       author: Zubayr

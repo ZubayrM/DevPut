@@ -14,8 +14,6 @@ public class MvcConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry
                 .addResourceHandler("/post/**", "/**" )
-                .addResourceLocations("classpath:/static/", "classpath:/")
-                .setCachePeriod(3600)
-                .resourceChain(true).addResolver(new PathResourceResolver());
+                .addResourceLocations("classpath:/static/", "classpath:/");
     }
 }

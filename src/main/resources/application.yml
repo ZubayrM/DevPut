@@ -24,6 +24,4 @@ spring.mail:
 
 host: ${HOST_URL:http://localhost}
 captcha.lifetime: 1
-spring:
-  mvc:
-    static-path-pattern: /classpath:/**
+
