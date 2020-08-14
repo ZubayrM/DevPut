@@ -10,10 +10,12 @@ import org.springframework.web.servlet.resource.PathResourceResolver;
 @EnableWebMvc
 public class MvcConfig implements WebMvcConfigurer {
 
+
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry
-                .addResourceHandler("/post/**", "/**" )
-                .addResourceLocations("classpath:/static/", "classpath:/");
+                .addResourceHandler("/post/**", "/**")
+                .addResourceLocations("classpath:/static/");
     }
 }

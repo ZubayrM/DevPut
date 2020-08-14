@@ -53,7 +53,7 @@ class ApiAuthControllerTest {
     public void setMvc() {
 
         mod = new MyUserDetails("mod@mail.ru", "111222", "Moderator Name", 1);
-        user = new MyUserDetails("user2@mail.ru", "111444", "User2 Name", 0);
+        user = new MyUserDetails("user2@mail.ru", "111222", "User2 Name", 0);
 
         mvc = MockMvcBuilders
                 .webAppContextSetup(context)

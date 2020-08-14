@@ -7,7 +7,6 @@ import object.dto.request.post.ModerationPostDto;
 import object.dto.request.post.RequestCommentDto;
 import object.dto.request.user.MyProfileDto;
 import object.model.enums.ModerationStatus;
-import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -18,18 +17,13 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.ImageOutputStreamImpl;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.OutputStream;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -121,7 +115,7 @@ class ApiGeneralControllerTest {
         mvc.perform(get("/api/statistics/all"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.likesCount", is(1)));
+                .andExpect(jsonPath("$.likesCount", is(2)));
     }
 
     @Test
@@ -133,8 +127,10 @@ class ApiGeneralControllerTest {
         ImageIO.write(image, "png", byteArrayOutputStream);
         MockMultipartFile firstFile = new MockMultipartFile("data", "filename.png", "image/png", byteArrayOutputStream.toByteArray());
 
-        mvc.perform(post("/api/image")
-                .contentType(MediaType.MULTIPART_FORM_DATA)
+        mvc.perform(multipart("/api/image")
+                .file(firstFile)
+                .characterEncoding("UTF-8")
+                .contentType(MediaType.IMAGE_PNG)
                 .with(user(user)))
                 .andDo(print())
                 .andExpect(status().isOk());
