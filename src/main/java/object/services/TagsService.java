@@ -1,7 +1,7 @@
 package object.services;
 
 import lombok.AllArgsConstructor;
-import object.dto.response.tag.ParamResultDto;
+import object.dto.response.tag.TagDto;
 import object.dto.response.tag.TagsDto;
 import object.model.Tag;
 import object.repositories.Tag2PostRepository;
@@ -21,21 +21,23 @@ public class TagsService {
 
     public TagsDto getTagByQuery(String query) {
         TagsDto dto = new TagsDto();
-        List<Tag> list;
+        List<Object[]> list;
 
         if (query != null) {
-            list = tagsRepository.findAllByName(query);
+            list = tag2PostRepository.getAllByQuery(query);
+            //list = tagsRepository.findAllByName(query);
         } else {
-            list = tagsRepository.findAll();
+            list = tag2PostRepository.getAll();
+            //list = tagsRepository.findAll();
         }
-        for (Tag tag : list) {
-            dto.getTags().add(new ParamResultDto(tag.getName(), getWight(tag)));
-        }
-
+        list.forEach(t ->  dto.getTags().add(new TagDto(String.valueOf(t[0]), Double.valueOf(String.valueOf(t[1])))));
+//        for (Tag tag : list) {
+//            dto.getTags().add(new TagDto(tag.getName(), getWight(tag)));
+//        }
         return dto;
-
     }
 
+    @Deprecated
     private Double getWight(Tag tag) {
         Integer countTag = tag2PostRepository.countByTag(tag.getId());
         Integer countPost = tag2PostRepository.countTag2Post();

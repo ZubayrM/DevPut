@@ -8,23 +8,24 @@ import object.dto.response.post.CalendarDto;
 import object.dto.response.resultPostComment.ErrorCommentDto;
 import object.dto.response.resultPostComment.OkCommentDto;
 import object.dto.response.resultPostComment.ResultPostCommentDto;
-import object.model.GlobalSettings;
-import object.model.PostComments;
 import object.model.Post;
+import object.model.PostComments;
 import object.model.User;
-import object.model.enums.ModerationStatus;
-import object.repositories.*;
+import object.repositories.PostCommentsRepository;
+import object.repositories.PostVotesRepository;
+import object.repositories.PostsRepository;
 import object.services.Component.CaptchaCodeService;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class GeneralService {
 
-    private GlobalSettingsRepository globalSettingsRepository;
     private CaptchaCodeService captchaCode;
     private UsersService usersService;
     private PostsRepository postsRepository;
@@ -40,25 +41,7 @@ public class GeneralService {
         return captchaCode.getCaptchaDto();
     }
 
-    public Map<String, String> getSetting(){
-        Iterable<GlobalSettings> globalSettings = globalSettingsRepository.findAll();
-        Map<String, String> settings = new HashMap<>();
-        globalSettings.forEach(gS -> settings.put(gS.getName(), gS.getValue()));
-        return settings;
-    }
 
-    public void saveSettings(Map<String, Boolean> globalSetting) {
-        for (Map.Entry<String, Boolean> setting : globalSetting.entrySet()){
-            GlobalSettings byCode = globalSettingsRepository.findByCode(setting.getKey());
-            if (byCode == null){
-                byCode = new GlobalSettings();
-                byCode.setName(setting.getKey());
-                byCode.setCode(setting.getKey());
-            }
-            byCode.setValue(setting.getValue().toString());
-            globalSettingsRepository.save(byCode);
-        }
-    }
 
     public StatisticsDto myStatistics() {
         User u = usersService.getUser();
@@ -100,12 +83,28 @@ public class GeneralService {
 
     @SneakyThrows
     public CalendarDto getCalendar(String year) {
-        if (year.isEmpty()){
-            return generateCalendarDto(postsRepository.getAllPosts(), year);
-        }
-        else return generateCalendarDto(postsRepository.getAllPosts());
+
+        CalendarDto dto = new CalendarDto();
+
+        List<Object> allYearToPost = postsRepository.getAllYearToPost();
+        allYearToPost.forEach(y -> dto.getYears().add(String.valueOf(y)));
+
+        List<Object> allDateToYear = postsRepository.getAllDateToYear(year);
+        allDateToYear.forEach(y -> {
+            if (dto.getPosts().containsKey(String.valueOf(y)))
+                dto.getPosts().compute(String.valueOf(y), (k, v) -> v += 1);
+            else
+                dto.getPosts().put(String.valueOf(y), 1);
+        });
+        return dto;
+
+//        if (year.isEmpty()){
+//            return generateCalendarDto(postsRepository.getAllPosts(), year);
+//        }
+//        else return generateCalendarDto(postsRepository.getAllPosts());
     }
 
+    @Deprecated
     private CalendarDto generateCalendarDto(List<Post> list, String year) {
         CalendarDto dto = new CalendarDto();
         for (Post p : list){
@@ -124,6 +123,7 @@ public class GeneralService {
         return dto;
     }
 
+    @Deprecated
     private CalendarDto generateCalendarDto(List<Post> list) {
         CalendarDto dto = new CalendarDto();
         for (Post p : list){
@@ -153,10 +153,5 @@ public class GeneralService {
         return new OkCommentDto(result.getId());
     }
 
-    public void moderationPost(Integer postId, String status) {
-        Post post = postsRepository.findById(postId).get();
-        post.setModerationId(usersService.getUser().getId());
-        post.setModerationStatus(status.equalsIgnoreCase("ACCEPT") ? ModerationStatus.ACCEPTED : ModerationStatus.DECLINED);
-        postsRepository.save(post);
-    }
+
 }

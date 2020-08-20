@@ -3,7 +3,6 @@ package object.services;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import object.component.ImagePath;
 import object.dto.response.CommentDto;
 import object.dto.response.ResultDto;
 import object.dto.response.UserMinDto;
@@ -44,7 +43,6 @@ public class PostsService<T> {
     private UsersService usersService;
     private Tag2PostRepository tag2PostRepository;
     private UsersRepository usersRepository;
-    private ImagePath imagePath;
 
     private static final SimpleDateFormat TIME_2_DATE = new SimpleDateFormat("hh:mm, dd.MM.yyyy");
     private static final SimpleDateFormat DATE_2_TIME = new SimpleDateFormat("yyyy-MM-dd hh:mm");
@@ -64,7 +62,6 @@ public class PostsService<T> {
         );
         return optionalPostsList
                 .map(this::createListPostResponseDto)
-//                .orElseGet(() -> createListPostResponseDto(getPostsByMode(offset, limit, Mode.EARLY)));
                 .orElse(new ListPostResponseDto<>(0, new ArrayList<>()));
     }
 
@@ -228,7 +225,7 @@ public class PostsService<T> {
         dto.setUser(new UserMinDto(p.getAuthor().getId(), p.getAuthor().getName()));
         dto.setTitle(p.getTitle());
         String textPost = Jsoup.parse(p.getText()).text();
-        dto.setAnnounce(textPost.length() > 15 ? textPost.substring(0,15) : textPost);
+        dto.setAnnounce(textPost.length() > 80 ? textPost.substring(0,80) + "..." : textPost + "...");
         return dto;
     }
 
@@ -265,7 +262,6 @@ public class PostsService<T> {
                     .user(new UserPhotoDto(u.getId(), u.getName(), u.getPhoto()))
                     .build()
             );
-
         }
         newDto.setComments(postCommentsList);
 
@@ -298,21 +294,11 @@ public class PostsService<T> {
             default: sort = Sort.by(Sort.Direction.ASC, "time");
         }
 
-
         posts = postsRepository.findAll(PageRequest.of(offset/limit, limit, sort));
-
-
-
-        //posts.stream().filter( p -> p.getPostVotesList().stream().anyMatch(s -> s.getValue() > 0)).count();
-
         if (mode == Mode.BEST){
             posts = posts.stream().sorted((p1, p2) -> Integer.compare((int) p1.getPostVotesList().stream().filter(s -> s.getValue() > 0).count(), (int) p2.getPostVotesList().stream().filter(s -> s.getValue() > 0).count())).collect(Collectors.toList());
             Collections.reverse(posts);
         }
-
-
-        log.info(posts.size());
-
         return posts;
     }
 

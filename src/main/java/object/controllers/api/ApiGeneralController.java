@@ -51,17 +51,7 @@ public class ApiGeneralController {
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping(value = "/profile/my", consumes = "multipart/form-data")
-    public ResponseEntity<ResultDto> profileMyPhoto(@ModelAttribute MyProfileDto request){
-        ResultDto dto = userService.updateProfile(request);
-        return ResponseEntity.ok(dto);
-    }
 
-    @PostMapping(value = "/profile/my", consumes = "application/json")
-    public ResponseEntity<ResultDto> profileMy(@RequestBody MyProfileDto request){
-        ResultDto dto = userService.updateProfile(request);
-        return ResponseEntity.ok(dto);
-    }
 
     @GetMapping("/statistics/my")
     public ResponseEntity<StatisticsDto> myStatistics(){
@@ -79,44 +69,6 @@ public class ApiGeneralController {
     public ResponseEntity<String> addImage(@RequestBody MultipartFile image){
         String imagePath = userService.addImage(image);
         return  ResponseEntity.ok(imagePath);
-    }
-
-    @SneakyThrows
-    @GetMapping("/image")
-    @Deprecated
-    public ResponseEntity<byte[]> getImage(@RequestParam String email){
-        User user = userService.getUser(email);
-        byte[] img;
-
-        if (user.getPhoto() != null)
-        img = Base64.getDecoder().decode(user.getPhoto());
-        else img = IOUtils.toByteArray(new ClassPathResource("static/img/default-1.png").getInputStream());
-
-        return ResponseEntity.ok(img);
-    }
-
-
-    @PostMapping("/moderation")
-    public ResponseEntity<Map<String,String>> moderation(@RequestBody ModerationPostDto request){
-        generalService.moderationPost(request.getPostId(),request.getDecision());
-        Map<String, String> m = new HashMap<>();
-        m.put("data", new Date().toString());
-        return ResponseEntity.ok(m);
-    }
-
-
-    @GetMapping("/settings")
-    public ResponseEntity<Map<String,String>> getSettings(){
-        return ResponseEntity.ok(generalService.getSetting());
-    }
-
-    @PutMapping("/settings")
-    public ResponseEntity<HttpStatus> setSettings(@RequestBody Map<String, Boolean> globalSetting){
-        if (userService.getUser().getIsModerator() > 0) {
-            log.info(globalSetting.keySet() + " " + globalSetting.values());
-            generalService.saveSettings(globalSetting);
-        }
-        return ResponseEntity.ok(HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/comment")

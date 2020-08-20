@@ -82,7 +82,7 @@ databaseChangeLog:
                   type: varchar(255)
               - column:
                   name: text
-                  type: varchar(255)
+                  type: varchar(1000)
               - column:
                   name: view_count
                   type: int(10)
@@ -276,7 +276,7 @@ databaseChangeLog:
                   value: "2020-05-30 20:06:25"
               - column:
                   name: name
-                  value: "Moderator Name"
+                  value: "Зубайр"
               - column:
                   name: email
                   value: "mod@mail.ru"
@@ -301,7 +301,7 @@ databaseChangeLog:
                   value: "2020-05-30 20:06:25"
               - column:
                   name: name
-                  value: "User1 Name"
+                  value: "Курбан"
               - column:
                   name: email
                   value: "user1@mail.ru"
@@ -326,7 +326,7 @@ databaseChangeLog:
                   value: "2020-05-30 20:06:25"
               - column:
                   name: name
-                  value: "User2 Name"
+                  value: "Абдул"
               - column:
                   name: email
                   value: "user2@mail.ru"
@@ -360,10 +360,10 @@ databaseChangeLog:
                   value: "2020-05-30 20:06:25"
               - column:
                   name: title
-                  value: "test post test post"
+                  value: "Коротко о Java"
               - column:
                   name: text
-                  value: "new post, new post, new post, new post, new post, new post"
+                  value: "Java — строго типизированный объектно-ориентированный язык программирования общего назначения, разработанный компанией Sun Microsystems. Разработка ведётся сообществом, организованным через Java Community Process, язык и основные реализующие его технологии распространяются по лицензии GPL"
               - column:
                   name: view_count
                   value: "0"
@@ -394,7 +394,7 @@ databaseChangeLog:
                   value: "2019-05-30 20:06:25"
               - column:
                   name: title
-                  value: "new post new post"
+                  value: "Новый пост для проверки"
               - column:
                   name: text
                   value: "Пост который не должны увидеть"
@@ -428,10 +428,10 @@ databaseChangeLog:
                   value: "2019-05-30 20:06:25"
               - column:
                   name: title
-                  value: "oracle oracle oracle"
+                  value: "oracle time"
               - column:
                   name: text
-                  value: "Oracle Cloud helps National Pharmacies put members first"
+                  value: "Oracle — американская корпорация, второй по величине доходов производитель программного обеспечения, крупнейший производитель программного обеспечения для организаций, крупный поставщик серверного оборудования"
               - column:
                   name: view_count
                   value: "0"
@@ -462,10 +462,10 @@ databaseChangeLog:
                   value: "2020-05-30 20:06:25"
               - column:
                   name: title
-                  value: "google google google"
+                  value: "Корпорация Google"
               - column:
                   name: text
-                  value: "Once upon a time, a very long time ago now, about last Friday, Winnie-the-Pooh lived in a forest all by himself under the name of Sanders."
+                  value: "Google — американская транснациональная корпорация, реорганизованная 15 октября 2015 года в международный конгломерат Alphabet Inc., компания в составе холдинга Alphabet, инвестирующая в интернет-поиск, облачные вычисления и рекламные технологии."
               - column:
                   name: view_count
                   value: "0"
@@ -496,10 +496,10 @@ databaseChangeLog:
                   value: "2017-05-30 20:06:25"
               - column:
                   name: title
-                  value: "post post post"
+                  value: "Надо учить C++"
               - column:
                   name: text
-                  value: "Once upon a time, a very long time ago now, about last Friday, Winnie-the-Pooh lived in a forest all by himself under the name of Sanders."
+                  value: "C++ — компилируемый, статически типизированный язык программирования общего назначения. Поддерживает такие парадигмы программирования, как процедурное программирование, объектно-ориентированное программирование, обобщённое программирование."
               - column:
                   name: view_count
                   value: "0"
@@ -530,10 +530,10 @@ databaseChangeLog:
                   value: "2019-06-30 20:06:25"
               - column:
                   name: title
-                  value: "text text text"
+                  value: "Немного о C#"
               - column:
                   name: text
-                  value: "Once upon a time, a very long time ago now, about last Friday, Winnie-the-Pooh lived in a forest all by himself under the name of Sanders."
+                  value: "C# — объектно-ориентированный язык программирования. Разработан в 1998—2001 годах группой инженеров компании Microsoft под руководством Андерса Хейлсберга и Скотта Вильтаумота как язык разработки приложений для платформы Microsoft .NET Framework. Впоследствии был стандартизирован как ECMA-334 и ISO/IEC 23270"
               - column:
                   name: view_count
                   value: "0"
@@ -572,7 +572,7 @@ databaseChangeLog:
                   value: "1"
               - column:
                   name: name
-                  value: "google"
+                  value: "Java"
   - changeSet:
       id: 23
       author: Zubayr

@@ -11,5 +11,5 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TagsDto {
-    List<ParamResultDto> tags = new ArrayList<>();
+    List<TagDto> tags = new ArrayList<>();
 }

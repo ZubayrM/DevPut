@@ -44,6 +44,12 @@ public interface PostsRepository extends CrudRepository<Post,Integer> {
     @Query(value = "FROM Post WHERE isActive = 1 and moderationStatus = 'ACCEPTED' and time <= current_date")
     List<Post> getAllPosts();
 
+    @Query(value = "SELECT distinct year(p.time) FROM posts p WHERE p.is_active = 1 and p.moderation_status = 'ACCEPTED' and p.time <= current_date", nativeQuery = true)
+    List<Object> getAllYearToPost();
+
+    @Query(value = "SELECT date(p.time) FROM posts p WHERE year(p.time) = ?1 and p.is_active = 1 and p.moderation_status = 'ACCEPTED' and p.time <= current_date", nativeQuery = true)
+    List<Object> getAllDateToYear(String year);
+
     @Query(value = "FROM Post WHERE isActive = :active and moderationStatus = :moderationStatus and author = :user and time <= current_date")
     List<Post> getAllPosts(Integer active, ModerationStatus moderationStatus, User user, Pageable pageable);
 
