@@ -50,14 +50,14 @@ public class GeneralService {
         String time;
         if (p != null)
             time = String.valueOf(p.getTime().getTime()/1000);
-        else time = "ноль";
+        else time = "";
 
 
 
         return StatisticsDto.builder()
                 .postsCount(Optional.ofNullable(postsRepository.countByAuthor(u.getId())).orElse(0))
-                .dislikesCount(Optional.ofNullable(postVotesRepository.countByUserIdAndValue(u.getId(), 1)).orElse(0))
-                .likesCount(Optional.ofNullable(postVotesRepository.countByUserIdAndValue(u.getId(), -1)).orElse(0))
+                .dislikesCount(Optional.ofNullable(postVotesRepository.countByUserIdAndValue(u.getId(), -1)).orElse(0))
+                .likesCount(Optional.ofNullable(postVotesRepository.countByUserIdAndValue(u.getId(), 1)).orElse(0))
                 .viewsCount(Optional.ofNullable(postsRepository.countViews(u.getId())).orElse(0))
                 .firstPublication(time)
                 .build();
