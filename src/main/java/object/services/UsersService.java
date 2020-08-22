@@ -109,7 +109,7 @@ public class UsersService {
             String url = host2Port.getHost() + "/login/change-password/" + u.getCode();
             String message = String.format("Для восстановления пароля перейдите по ссылке %s", url );
             usersRepository.save(u);
-            mailSender.send(u.getEmail(), "Востановление пароля", message);
+            mailSender.send(u.getEmail(), "FFF", message);
             return new ResultDto(true);
         } else
             return new ResultDto(false);
