@@ -107,7 +107,7 @@ public class UsersService {
             String token = UUID.randomUUID().toString();
             u.setCode(token);
             String url = host2Port.getHost() + "/login/change-password/" + u.getCode();
-            String message = String.format("Для восстановления пароля перейдите по ссылке %s", url );
+            String message = String.format("\tЗдравствуйте %s!\n\n\tДля восстановления пароля перейдите по ссылке %s",u.getName(), url );
             usersRepository.save(u);
             mailSender.send(u.getEmail(), "Password recovery", message);
             return new ResultDto(true);
