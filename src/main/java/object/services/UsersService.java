@@ -161,8 +161,8 @@ public class UsersService {
         if (user.isPresent()){
             CaptchaCodes captchaCodes = captchaCodesRepository.findByCode(captcha);
             if (captchaCodes.getSecretCode().equals(captchaSecret)){
-                if (password.length() > 6 ) {
-                    user.get().setPassword(password);
+                if (password.length() >= 6 ) {
+                    user.get().setPassword(encoder.encode(password));
                     usersRepository.save(user.get());
                     return new ResultDto(true);
                 } else return new ErrorsMessageDto<>(new ErrorsAuthDto(null, "Пароль короче 6-ти символов", null), false);
