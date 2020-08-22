@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ImagePath {
+public class Host2Port {
 
     @Value("${host}")
     private String host;
@@ -14,6 +14,10 @@ public class ImagePath {
 
     public String getImagePath(){
         return host + ":" + port;
+    }
+
+    public String getHost() {
+        return host;
     }
 
 }

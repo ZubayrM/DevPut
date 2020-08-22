@@ -3,7 +3,7 @@ package object.services;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import object.component.ImagePath;
+import object.component.Host2Port;
 import object.config.security.MyUserDetails;
 import object.dto.request.user.MyProfileDto;
 import object.dto.response.ResultDto;
@@ -48,7 +48,7 @@ public class UsersService {
     private PostsRepository postsRepository;
     private MailSender mailSender;
     private CaptchaCodesRepository captchaCodesRepository;
-    private ImagePath imagePath;
+    private Host2Port host2Port;
     private PasswordEncoder encoder;
 
 
@@ -106,10 +106,10 @@ public class UsersService {
             User u = user.get();
             String token = UUID.randomUUID().toString();
             u.setCode(token);
-            String url = imagePath.getImagePath() + "/login/change-password/" + u.getCode();
+            String url = host2Port.getHost() + "/login/change-password/" + u.getCode();
             String message = String.format("Для восстановления пароля перейдите по ссылке %s", url );
             usersRepository.save(u);
-            mailSender.send(u.getEmail(), "Password recovery", message);
+            mailSender.send(u.getEmail(), "Востановление пароля", message);
             return new ResultDto(true);
         } else
             return new ResultDto(false);
