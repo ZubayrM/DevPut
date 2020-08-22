@@ -20,7 +20,9 @@ spring:
 
 
 host: ${HOST_URL:http://localhost}
+server:
+    port: ${PORT:8080}
+
+
 captcha.lifetime: 1
 
-server:
-  port: ${PORT:8080}

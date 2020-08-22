@@ -106,7 +106,7 @@ public class UsersService {
             User u = user.get();
             String token = UUID.randomUUID().toString();
             u.setCode(token);
-            String url = "http://localhost:8080/login/change-password/" + u.getCode();
+            String url = imagePath.getImagePath() + "/login/change-password/" + u.getCode();
             String message = String.format("Для восстановления пароля перейдите по ссылке %s", url );
             usersRepository.save(u);
             mailSender.send(u.getEmail(), "Password recovery", message);
