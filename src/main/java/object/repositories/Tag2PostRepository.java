@@ -14,9 +14,11 @@ public interface Tag2PostRepository extends CrudRepository<Tag2Post, Integer> {
 
 
 
+    @Deprecated
     @Query(value = "SELECT COUNT(*) FROM tag2post WHERE tag_id = ?1", nativeQuery = true)
     Integer countByTag(Integer id);
 
+    @Deprecated
     @Query(value = "SELECT COUNT(*) FROM tag2post", nativeQuery = true)
     Integer countTag2Post();
 

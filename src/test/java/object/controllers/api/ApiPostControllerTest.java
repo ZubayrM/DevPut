@@ -46,8 +46,8 @@ class ApiPostControllerTest {
     @BeforeEach
     public void setMvc() {
 
-        mod = new MyUserDetails("mod@mail.ru", "111222", "Moderator Name", 1);
-        user = new MyUserDetails("user2@mail.ru", "111222", "User2 Name", 0);
+        mod = new MyUserDetails("mod@mail.ru", "111222", "Зубайр", 1);
+        user = new MyUserDetails("user2@mail.ru", "111222", "Курбан", 0);
 
         mvc = MockMvcBuilders
                 .webAppContextSetup(context)
@@ -72,7 +72,7 @@ class ApiPostControllerTest {
         mvc.perform(get("/api/post/search")
                 .param("offset", "0")
                 .param("limit", "10")
-                .param("query", "NEW"))
+                .param("query", "Java"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.posts[0].id",is(1)));
@@ -104,7 +104,7 @@ class ApiPostControllerTest {
         mvc.perform(get("/api/post/byTag")
                 .param("offset", "0")
                 .param("limit", "10")
-                .param("tag", "google"))
+                .param("tag", "Java"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

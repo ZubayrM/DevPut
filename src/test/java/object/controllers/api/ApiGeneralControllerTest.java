@@ -7,6 +7,7 @@ import object.dto.request.post.ModerationPostDto;
 import object.dto.request.post.RequestCommentDto;
 import object.dto.request.user.MyProfileDto;
 import object.model.enums.ModerationStatus;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -57,8 +58,8 @@ class ApiGeneralControllerTest {
     @BeforeEach
     public void setMvc() {
 
-        mod = new MyUserDetails("mod@mail.ru", "111222", "Moderator Name", 1);
-        user = new MyUserDetails("user2@mail.ru", "111444", "User2 Name", 0);
+        mod = new MyUserDetails("mod@mail.ru", "111222", "Зубайр", 1);
+        user = new MyUserDetails("user2@mail.ru", "111444", "Курбан", 0);
 
         mvc = MockMvcBuilders
                 .webAppContextSetup(context)
@@ -84,19 +85,10 @@ class ApiGeneralControllerTest {
                 .param("year", "2019"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.years[0]", is("2019")));
+                .andExpect(jsonPath("$.posts.size()", is(2)));
     }
 
-    @Test
-    @SneakyThrows
-    void profileMy() {
-        mvc.perform(post("/api/profile/my")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(oM.writeValueAsString(new MyProfileDto(user.getEmail(), "Test name", null, null, null)))
-                .with(user(user)))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
+
 
 
 
@@ -115,7 +107,7 @@ class ApiGeneralControllerTest {
         mvc.perform(get("/api/statistics/all"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.likesCount", is(2)));
+                .andExpect(jsonPath("$.likesCount", is(1)));
     }
 
     @Test
@@ -137,44 +129,9 @@ class ApiGeneralControllerTest {
     }
 
 
-    @Test
-    @SneakyThrows
-    void moderation() {
-        mvc.perform(post("/api/moderation")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(oM.writeValueAsString(new ModerationPostDto(2, ModerationStatus.ACCEPTED.toString())))
-                .with(user(mod)))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @SneakyThrows
-    void getSettings() {
-        mvc.perform(get("/api/settings")
-                .with(user(mod)))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
 
 
-    @Test
-    @SneakyThrows
-    void setSettings() {
-        Map<String, Boolean> globalSettings = new TreeMap<String, Boolean>(){{
-            put("MULTIUSER_MODE", true);
-            put("POST_PREMODERATION", false);
-            put("STATISTICS_IS_PUBLIC", false);
-        }};
 
-
-        mvc.perform(put("/api/settings")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(oM.writeValueAsString(globalSettings))
-                .with(user(mod)))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
 
     @Test
     @SneakyThrows
@@ -194,7 +151,7 @@ class ApiGeneralControllerTest {
     @SneakyThrows
     void getTags() {
         mvc.perform(get("/api/tag")
-                .param("query" , "testTag"))
+                .param("tag" , "Java"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
