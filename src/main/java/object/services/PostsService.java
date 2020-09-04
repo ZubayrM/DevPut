@@ -69,7 +69,7 @@ public class PostsService<T> {
         Post post = postsRepository.findById(id).orElse(null);
         if (post != null) {
             post.setViewCount(post.getViewCount() + 1);
-            return createPostAllCommentsAndAllTagsDto(new PostAllCommentsAndAllTagsDto(), postsRepository.save(post), TIME_2_DATE);
+            return createPostAllCommentsAndAllTagsDto(new PostAllCommentsAndAllTagsDto(), postsRepository.save(post));
         }
         else return null;
     }
@@ -188,6 +188,7 @@ public class PostsService<T> {
         return tagsSet;
     }
 
+    @Deprecated
     private Date validDate(Date date) {
         Date today = new Date();
         if (date.after(today)) return date;
@@ -219,7 +220,7 @@ public class PostsService<T> {
 
 
 
-    private<T extends PostAndAuthorDto> T createPostDto(T dto, Post p, SimpleDateFormat format){
+    private<T extends PostAndAuthorDto> T createPostDto(T dto, Post p){
         dto.setId(p.getId());
         dto.setTimestamp(String.valueOf(p.getTime().getTime()/1000));
         dto.setUser(new UserMinDto(p.getAuthor().getId(), p.getAuthor().getName()));
@@ -232,13 +233,13 @@ public class PostsService<T> {
     private ListPostResponseDto<PostAndAuthorDto> createListPostDto(List<Post> posts) {
         List<PostAndAuthorDto> postsList = new ArrayList<>();
         for (Post post: posts) {
-            postsList.add(createPostDto(new PostAndAuthorDto(), post, null));
+            postsList.add(createPostDto(new PostAndAuthorDto(), post));
         }
         return new ListPostResponseDto<>(posts.size(), postsList);
     }
 
     private<T extends PostFullDto> T createPostFullDto(T dto, Post post){
-        T newDto = createPostDto(dto, post, null);
+        T newDto = createPostDto(dto, post);
 
         newDto.setViewCount(post.getViewCount());
         newDto.setLikeCount((int)post.getPostVotesList().stream().filter(votes -> votes.getValue() > 0).count());
@@ -247,19 +248,19 @@ public class PostsService<T> {
         return dto;
     }
 
-    private <T extends PostAllCommentsAndAllTagsDto> T createPostAllCommentsAndAllTagsDto(T dto, Post post, SimpleDateFormat format){
+    private <T extends PostAllCommentsAndAllTagsDto> T createPostAllCommentsAndAllTagsDto(T dto, Post post){
         T newDto = createPostFullDto(dto, post);
         List<CommentDto> postCommentsList  = new ArrayList<>();
         for (PostComments pC : post.getPostCommentsList()) {
 
-            User u = usersRepository.findById(pC.getUserId()).get();
+            User u = usersRepository.findById(pC.getUserId()).orElse(null);
 
             postCommentsList.add(CommentDto.builder()
                     .id(pC.getId())
                     .timestamp(String.valueOf(pC.getTime().getTime()/1000))
                     //.time(dateToString(pC.getTime(), format))
                     .text(pC.getText())
-                    .user(new UserPhotoDto(u.getId(), u.getName(), u.getPhoto()))
+                    .user(u != null ? new UserPhotoDto(u.getId(), u.getName(), u.getPhoto()) : new UserPhotoDto())
                     .build()
             );
         }

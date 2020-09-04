@@ -11,7 +11,6 @@ import object.dto.response.resultPostComment.ResultPostCommentDto;
 import object.model.Post;
 import object.model.PostComments;
 import object.model.User;
-import object.repositories.PostCommentsRepository;
 import object.repositories.PostVotesRepository;
 import object.repositories.PostsRepository;
 import object.services.Component.CaptchaCodeService;
@@ -144,13 +143,17 @@ public class GeneralService {
     public ResultPostCommentDto addComment(Integer parentId, Integer postId, String text) {
         PostComments pC = new PostComments();
         pC.setUserId(usersService.getUser().getId());
-        pC.setPost(postsRepository.findById(postId).get());
-        if (text.length() > 0) pC.setText(text);
-        else return new ErrorCommentDto();
-        pC.setTime( new Date());
-        pC.setParentId(parentId);
-        PostComments result = postCommentsRepository.save(pC);
-        return new OkCommentDto(result.getId());
+
+        Post post = postsRepository.findById(postId).orElse(null);
+        if (post != null){
+            pC.setPost(post);
+            if (text.length() > 0) pC.setText(text);
+            else return new ErrorCommentDto();
+            pC.setTime(new Date());
+            pC.setParentId(parentId);
+            PostComments result = postCommentsRepository.save(pC);
+            return new OkCommentDto(result.getId());
+        } else return new ErrorCommentDto();
     }
 
 

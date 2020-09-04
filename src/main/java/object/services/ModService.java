@@ -19,10 +19,13 @@ public class ModService {
     GlobalSettingsRepository globalSettingsRepository;
 
     public void moderationPost(Integer postId, String status) {
-        Post post = postsRepository.findById(postId).get();
-        post.setModerationId(usersService.getUser().getId());
-        post.setModerationStatus(status.equalsIgnoreCase("ACCEPT") ? ModerationStatus.ACCEPTED : ModerationStatus.DECLINED);
-        postsRepository.save(post);
+        Post post = postsRepository.findById(postId).orElse(null);
+        if (post != null) {
+            post.setModerationId(usersService.getUser().getId());
+            post.setModerationStatus(status.equalsIgnoreCase("ACCEPT") ? ModerationStatus.ACCEPTED : ModerationStatus.DECLINED);
+            postsRepository.save(post);
+        }
+
     }
 
     public Map<String, String> getSetting(){

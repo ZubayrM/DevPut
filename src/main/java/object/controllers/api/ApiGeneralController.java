@@ -1,33 +1,20 @@
 package object.controllers.api;
 
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import object.dto.request.post.RequestCommentDto;
-import object.dto.request.post.ModerationPostDto;
-import object.dto.request.user.MyProfileDto;
 import object.dto.response.InitResponseDto;
-import object.dto.response.ResultDto;
 import object.dto.response.StatisticsDto;
 import object.dto.response.post.CalendarDto;
 import object.dto.response.resultPostComment.ResultPostCommentDto;
 import object.dto.response.tag.TagsDto;
-import object.model.User;
 import object.services.GeneralService;
 import object.services.TagsService;
 import object.services.UsersService;
-import org.apache.commons.io.IOUtils;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api")

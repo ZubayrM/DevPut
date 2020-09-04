@@ -74,7 +74,7 @@ public class CaptchaCodeService {
         graphics2D.fillRect(0,0,100,50);
 
         graphics2D.setPaint(new GradientPaint(0f, 0f, Color.DARK_GRAY,100f, 40f, Color.cyan ));
-        graphics2D.setFont(new Font("ololo", Font.HANGING_BASELINE, 30));
+        graphics2D.setFont(new Font("ololo", Font.ITALIC, 30));
         graphics2D.drawString(code,10 , 30);
         return image;
     }
