@@ -11,6 +11,7 @@ import object.dto.response.resultPostComment.ResultPostCommentDto;
 import object.model.Post;
 import object.model.PostComments;
 import object.model.User;
+import object.repositories.PostCommentsRepository;
 import object.repositories.PostVotesRepository;
 import object.repositories.PostsRepository;
 import object.services.Component.CaptchaCodeService;
